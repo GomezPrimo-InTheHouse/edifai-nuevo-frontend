@@ -1,3 +1,258 @@
+// import { useEffect } from 'react';
+// import {
+//   Box,
+//   Button,
+//   Grid,
+//   MenuItem,
+//   Paper,
+//   Stack,
+//   TextField,
+// } from '@mui/material';
+// import { Controller, useForm } from 'react-hook-form';
+// import { zodResolver } from '@hookform/resolvers/zod';
+
+// import { obraSchema, type ObraSchemaValues } from '../schemas/obra.schema';
+// import type {
+//   EstadoOption,
+//   Obra,
+//   ObraFormValues,
+//   TipoObraOption,
+// } from '../types/obra.types';
+
+// interface ObraFormProps {
+//   initialData?: Obra | null;
+//   tiposObra: TipoObraOption[];
+//   estados: EstadoOption[];
+//   onSubmit: (values: ObraFormValues) => void | Promise<void>;
+//   isSubmitting?: boolean;
+// }
+
+// function toFormDefaults(initialData?: Obra | null): ObraFormValues {
+//   return {
+//     nombre: initialData?.nombre ?? '',
+//     descripcion: initialData?.descripcion ?? '',
+//     ubicacion: initialData?.ubicacion ?? '',
+//     tipo_obra_id: initialData?.tipo_obra_id ?? '',
+//     estado_id: initialData?.estado_id ?? '',
+//     fecha_inicio_estimado: initialData?.fecha_inicio_estimado ?? '',
+//     fecha_fin_estimado: initialData?.fecha_fin_estimado ?? '',
+//     fecha_inicio_real: initialData?.fecha_inicio_real ?? '',
+//     fecha_fin_real: initialData?.fecha_fin_real ?? '',
+//     usuario_creador_id: initialData?.usuario_creador_id ?? 1,
+//   };
+// }
+
+// export function ObraForm({
+//   initialData,
+//   tiposObra,
+//   estados,
+//   onSubmit,
+//   isSubmitting = false,
+// }: ObraFormProps) {
+//   const {
+//     control,
+//     handleSubmit,
+//     reset,
+//     formState: { errors },
+//   } = useForm<ObraSchemaValues>({
+//     resolver: zodResolver(obraSchema),
+//     defaultValues: toFormDefaults(initialData),
+//   });
+
+//   useEffect(() => {
+//     reset(toFormDefaults(initialData));
+//   }, [initialData, reset]);
+
+//   const handleFormSubmit = (values: ObraSchemaValues) => {
+//     onSubmit(values as ObraFormValues);
+//   };
+
+//   return (
+//     <Paper sx={{ p: 3, borderRadius: 3 }}>
+//       <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
+//         <Grid container spacing={2}>
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="nombre"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   label="Nombre de la obra"
+//                   error={!!errors.nombre}
+//                   helperText={errors.nombre?.message ?? ''}
+//                 />
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="ubicacion"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   label="Ubicación"
+//                   error={!!errors.ubicacion}
+//                   helperText={errors.ubicacion?.message ?? ''}
+//                 />
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12 }}>
+//             <Controller
+//               name="descripcion"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   multiline
+//                   minRows={4}
+//                   label="Descripción"
+//                   error={!!errors.descripcion}
+//                   helperText={errors.descripcion?.message ?? ''}
+//                 />
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="tipo_obra_id"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   select
+//                   fullWidth
+//                   label="Tipo de obra"
+//                   value={field.value}
+//                   onChange={(event) => {
+//                     const value = event.target.value;
+//                     field.onChange(value === '' ? '' : Number(value));
+//                   }}
+//                   error={!!errors.tipo_obra_id}
+//                   helperText={errors.tipo_obra_id?.message ?? ''}
+//                 >
+//                   <MenuItem value="">Seleccionar</MenuItem>
+//                   {(Array.isArray(tiposObra) ? tiposObra : []).map((tipo) => (
+//                     <MenuItem key={tipo.id} value={tipo.id}>
+//                       {tipo.nombre}
+//                     </MenuItem>
+//                   ))}
+//                 </TextField>
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="estado_id"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   select
+//                   fullWidth
+//                   label="Estado"
+//                   value={field.value}
+//                   onChange={(event) => {
+//                     const value = event.target.value;
+//                     field.onChange(value === '' ? '' : Number(value));
+//                   }}
+//                   error={!!errors.estado_id}
+//                   helperText={errors.estado_id?.message ?? ''}
+//                 >
+//                   <MenuItem value="">Seleccionar</MenuItem>
+//                   {(Array.isArray(estados) ? estados : []).map((estado) => (
+                   
+//                     <MenuItem key={estado.id} value={estado.id}>
+//                       {estado.nombre}
+//                     </MenuItem>
+//                   ))}
+//                 </TextField>
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="fecha_inicio_estimado"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   type="date"
+//                   label="Inicio estimado"
+//                   InputLabelProps={{ shrink: true }}
+//                 />
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="fecha_fin_estimado"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   type="date"
+//                   label="Fin estimado"
+//                   InputLabelProps={{ shrink: true }}
+//                 />
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="fecha_inicio_real"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   type="date"
+//                   label="Inicio real"
+//                   InputLabelProps={{ shrink: true }}
+//                 />
+//               )}
+//             />
+//           </Grid>
+
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <Controller
+//               name="fecha_fin_real"
+//               control={control}
+//               render={({ field }) => (
+//                 <TextField
+//                   {...field}
+//                   fullWidth
+//                   type="date"
+//                   label="Fin real"
+//                   InputLabelProps={{ shrink: true }}
+//                 />
+//               )}
+//             />
+//           </Grid>
+//         </Grid>
+
+//         <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
+//           <Button type="submit" variant="contained" disabled={isSubmitting}>
+//             {isSubmitting ? 'Guardando...' : 'Guardar obra'}
+//           </Button>
+//         </Stack>
+//       </Box>
+//     </Paper>
+//   );
+// }
+
 import { useEffect } from 'react';
 import {
   Box,
@@ -27,18 +282,25 @@ interface ObraFormProps {
   isSubmitting?: boolean;
 }
 
+// Convierte fecha ISO "2025-06-15T03:00:00.000Z" → "2025-06-15" para input type="date"
+function toDateInput(value?: string | null): string {
+  if (!value) return '';
+  return value.split('T')[0];
+}
+
 function toFormDefaults(initialData?: Obra | null): ObraFormValues {
   return {
     nombre: initialData?.nombre ?? '',
     descripcion: initialData?.descripcion ?? '',
     ubicacion: initialData?.ubicacion ?? '',
+    // Solo asigna IDs si ya hay opciones cargadas — evita out-of-range en MUI Select
     tipo_obra_id: initialData?.tipo_obra_id ?? '',
     estado_id: initialData?.estado_id ?? '',
-    fecha_inicio_estimado: initialData?.fecha_inicio_estimado ?? '',
-    fecha_fin_estimado: initialData?.fecha_fin_estimado ?? '',
-    fecha_inicio_real: initialData?.fecha_inicio_real ?? '',
-    fecha_fin_real: initialData?.fecha_fin_real ?? '',
-    usuario_creador_id: initialData?.usuario_creador_id ?? 1,
+    fecha_inicio_estimado: toDateInput(initialData?.fecha_inicio_estimado),
+    fecha_fin_estimado: toDateInput(initialData?.fecha_fin_estimado),
+    fecha_inicio_real: toDateInput(initialData?.fecha_inicio_real),
+    fecha_fin_real: toDateInput(initialData?.fecha_fin_real),
+    usuario_creador_id: initialData?.usuario_creador_id ?? 2,
   };
 }
 
@@ -59,9 +321,13 @@ export function ObraForm({
     defaultValues: toFormDefaults(initialData),
   });
 
+  // Re-inicializa el form cuando llegan los datos de la obra O cuando cargan las opciones
+  // Esto resuelve el out-of-range: espera a que tiposObra y estados estén disponibles
   useEffect(() => {
-    reset(toFormDefaults(initialData));
-  }, [initialData, reset]);
+    if (initialData && tiposObra.length > 0 && estados.length > 0) {
+      reset(toFormDefaults(initialData));
+    }
+  }, [initialData, tiposObra, estados, reset]);
 
   const handleFormSubmit = (values: ObraSchemaValues) => {
     onSubmit(values as ObraFormValues);
@@ -71,6 +337,7 @@ export function ObraForm({
     <Paper sx={{ p: 3, borderRadius: 3 }}>
       <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
         <Grid container spacing={2}>
+          {/* Nombre */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller
               name="nombre"
@@ -87,6 +354,7 @@ export function ObraForm({
             />
           </Grid>
 
+          {/* Ubicación */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller
               name="ubicacion"
@@ -103,6 +371,7 @@ export function ObraForm({
             />
           </Grid>
 
+          {/* Descripción */}
           <Grid size={{ xs: 12 }}>
             <Controller
               name="descripcion"
@@ -121,6 +390,7 @@ export function ObraForm({
             />
           </Grid>
 
+          {/* Tipo de obra */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller
               name="tipo_obra_id"
@@ -131,15 +401,15 @@ export function ObraForm({
                   fullWidth
                   label="Tipo de obra"
                   value={field.value}
-                  onChange={(event) => {
-                    const value = event.target.value;
+                  onChange={(e) => {
+                    const value = e.target.value;
                     field.onChange(value === '' ? '' : Number(value));
                   }}
                   error={!!errors.tipo_obra_id}
                   helperText={errors.tipo_obra_id?.message ?? ''}
                 >
                   <MenuItem value="">Seleccionar</MenuItem>
-                  {(Array.isArray(tiposObra) ? tiposObra : []).map((tipo) => (
+                  {tiposObra.map((tipo) => (
                     <MenuItem key={tipo.id} value={tipo.id}>
                       {tipo.nombre}
                     </MenuItem>
@@ -149,6 +419,7 @@ export function ObraForm({
             />
           </Grid>
 
+          {/* Estado */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller
               name="estado_id"
@@ -159,16 +430,15 @@ export function ObraForm({
                   fullWidth
                   label="Estado"
                   value={field.value}
-                  onChange={(event) => {
-                    const value = event.target.value;
+                  onChange={(e) => {
+                    const value = e.target.value;
                     field.onChange(value === '' ? '' : Number(value));
                   }}
                   error={!!errors.estado_id}
                   helperText={errors.estado_id?.message ?? ''}
                 >
                   <MenuItem value="">Seleccionar</MenuItem>
-                  {(Array.isArray(estados) ? estados : []).map((estado) => (
-                   
+                  {estados.map((estado) => (
                     <MenuItem key={estado.id} value={estado.id}>
                       {estado.nombre}
                     </MenuItem>
@@ -178,6 +448,7 @@ export function ObraForm({
             />
           </Grid>
 
+          {/* Fechas estimadas */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller
               name="fecha_inicio_estimado"
@@ -210,6 +481,7 @@ export function ObraForm({
             />
           </Grid>
 
+          {/* Fechas reales */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller
               name="fecha_inicio_real"
@@ -243,6 +515,7 @@ export function ObraForm({
           </Grid>
         </Grid>
 
+        {/* Botón de envío */}
         <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
           <Button type="submit" variant="contained" disabled={isSubmitting}>
             {isSubmitting ? 'Guardando...' : 'Guardar obra'}

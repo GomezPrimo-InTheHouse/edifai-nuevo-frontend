@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { ArrowLeft } from 'lucide-react';
 
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
@@ -15,14 +17,8 @@ export const ObraCreatePage: React.FC = () => {
   const navigate = useNavigate();
 
   const createMutation = useCreateObra();
-
-
-
   const { data: tiposObra = [] } = useTiposObraOptions();
   const { data: estados = [] } = useEstadosObraOptions();
-
-  console.log('TIPOS OBRA:', tiposObra);
-  console.log('ESTADOS:', estados);
 
   const handleSubmit = async (values: any) => {
     await createMutation.mutateAsync(values);
@@ -34,6 +30,15 @@ export const ObraCreatePage: React.FC = () => {
       <PageHeader
         title="Nueva obra"
         subtitle="Registrar una nueva obra en el sistema."
+        actions={
+          <Button
+            variant="outlined"
+            startIcon={<ArrowLeft size={16} />}
+            onClick={() => navigate('/obras')}
+          >
+            Volver a obras
+          </Button>
+        }
       />
 
       <ObraForm
@@ -45,4 +50,3 @@ export const ObraCreatePage: React.FC = () => {
     </AppLayout>
   );
 };
-

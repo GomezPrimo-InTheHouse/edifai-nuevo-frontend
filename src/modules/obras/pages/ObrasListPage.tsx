@@ -12,27 +12,32 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Eye, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Eye, Pencil, Plus, Settings, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { EmptyState } from '../../../shared/components/EmptyState/EmptyState';
 import { useDeleteObra, useObrasList } from '../hooks/useObras';
-import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
+import { TipoObraModal } from '../modal/tipoObraModal';
 
 export function ObrasListPage() {
   const navigate = useNavigate();
+
+  // Datos de obras desde el backend
   const { data, isLoading, isError, refetch } = useObrasList();
   const deleteMutation = useDeleteObra();
-  const [search, setSearch] = useState('');
 
+  // Estado local del buscador y del modal de tipos de obra
+  const [search, setSearch] = useState('');
+  const [tipoObraModalOpen, setTipoObraModalOpen] = useState(false);
+
+  // Filtrado de obras según el término de búsqueda
   const filteredData = useMemo(() => {
     if (!data) return [];
     const term = search.trim().toLowerCase();
-
     if (!term) return data;
-
     return data.filter(
       (obra) =>
         obra.nombre?.toLowerCase().includes(term) ||
@@ -41,10 +46,10 @@ export function ObrasListPage() {
     );
   }, [data, search]);
 
+  // Handler de eliminación de obra — confirma antes de proceder
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm('¿Seguro que deseas eliminar esta obra?');
     if (!confirmed) return;
-
     await deleteMutation.mutateAsync(id);
   };
 
@@ -54,16 +59,27 @@ export function ObrasListPage() {
         title="Obras"
         subtitle="Gestión general de obras y proyectos."
         actions={
-          <Button
-            variant="contained"
-            startIcon={<Plus size={18} />}
-            onClick={() => navigate('/obras/nueva')}
-          >
-            Nueva obra
-          </Button>
+          <Stack direction="row" spacing={1}>
+            {/* Botón que abre el modal de gestión de tipos de obra */}
+            <Button
+              variant="outlined"
+              startIcon={<Settings size={16} />}
+              onClick={() => setTipoObraModalOpen(true)}
+            >
+              Tipos de obra
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<Plus size={18} />}
+              onClick={() => navigate('/obras/nueva')}
+            >
+              Nueva obra
+            </Button>
+          </Stack>
         }
       />
 
+      {/* Buscador de obras */}
       <Paper sx={{ p: 2, borderRadius: 3, mb: 2 }}>
         <TextField
           fullWidth
@@ -73,6 +89,7 @@ export function ObrasListPage() {
         />
       </Paper>
 
+      {/* Estados de carga, error y lista vacía */}
       {isLoading && <LoadingState message="Cargando obras..." />}
 
       {isError && (
@@ -95,6 +112,7 @@ export function ObrasListPage() {
         />
       )}
 
+      {/* Tabla principal de obras */}
       {!isLoading && !isError && filteredData.length > 0 && (
         <Paper sx={{ borderRadius: 3, overflow: 'hidden' }}>
           <Table>
@@ -107,7 +125,6 @@ export function ObrasListPage() {
                 <TableCell align="right">Acciones</TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
               {filteredData.map((obra) => (
                 <TableRow key={obra.id} hover>
@@ -122,9 +139,7 @@ export function ObrasListPage() {
                       <IconButton onClick={() => navigate(`/obras/${obra.id}`)}>
                         <Eye size={18} />
                       </IconButton>
-                      <IconButton
-                        onClick={() => navigate(`/obras/${obra.id}/editar`)}
-                      >
+                      <IconButton onClick={() => navigate(`/obras/${obra.id}/editar`)}>
                         <Pencil size={18} />
                       </IconButton>
                       <IconButton
@@ -142,6 +157,12 @@ export function ObrasListPage() {
           </Table>
         </Paper>
       )}
+
+      {/* Modal de gestión de tipos de obra */}
+      <TipoObraModal
+        open={tipoObraModalOpen}
+        onClose={() => setTipoObraModalOpen(false)}
+      />
     </AppLayout>
   );
 }
