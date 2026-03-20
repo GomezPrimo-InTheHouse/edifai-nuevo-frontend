@@ -8,6 +8,11 @@ import type {
 
 const baseUrl = `${env.trabajadoresApiUrl}/trabajador`;
 
+// Estructura de respuesta del endpoint jefesConEquipo
+export interface JefeConEquipo extends Trabajador {
+  equipo: Trabajador[];
+}
+
 // API de trabajadores — microservicio ms-trabajadores (puerto 7003)
 export const trabajadorApi = {
   // Obtiene todos los trabajadores — backend devuelve array directo
@@ -24,11 +29,32 @@ export const trabajadorApi = {
   return response.data.data;
 },
 
-  // Crea un nuevo trabajador
-  async create(payload: CreateTrabajadorPayload): Promise<Trabajador> {
-    const response = await httpClient.post<Trabajador>(`${baseUrl}/crear`, payload);
+ // Obtiene trabajadores filtrados por especialidad
+  async getByEspecialidad(especialidad_id: number): Promise<Trabajador[]> {
+    const response = await httpClient.get<Trabajador[]>(
+      `${baseUrl}/getByEspecialidad/${especialidad_id}`
+    );
     return response.data;
   },
+  // Agregá en trabajadorApi:
+async getJefesConEquipo(especialidad_id: number): Promise<JefeConEquipo[]> {
+  const response = await httpClient.get<JefeConEquipo[]>(
+    `${baseUrl}/getJefesConEquipo/${especialidad_id}`
+  );
+  return response.data;
+},
+
+  // Crea un nuevo trabajador
+ async create(payload: CreateTrabajadorPayload): Promise<Trabajador> {
+  const cleanPayload = {
+    ...payload,
+    jefe_id: payload.jefe_id === ('' as any) ? null : payload.jefe_id,
+    especialidad_id: payload.especialidad_id === ('' as any) ? null : payload.especialidad_id,
+    estado_id: payload.estado_id === ('' as any) ? null : payload.estado_id,
+  };
+  const response = await httpClient.post<Trabajador>(`${baseUrl}/crear`, cleanPayload);
+  return response.data;
+},
 
   // Actualiza un trabajador existente
   async update(payload: UpdateTrabajadorPayload): Promise<Trabajador> {

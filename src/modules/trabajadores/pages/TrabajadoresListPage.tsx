@@ -14,13 +14,43 @@ import { EspecialidadModal } from '../components/EspecialidadModal';
 import { useDeleteTrabajador, useTrabajadoresList } from '../hooks/useTrabajadores';
 import { useEspecialidadesList } from '../hooks/useEspecialidades';
 
+
+import { useNotify } from '../../../shared/hooks/useNotify';
+
+
+
+
+
 export const TrabajadoresListPage = () => {
   const navigate = useNavigate();
+  // Dentro del componente
+  const notify = useNotify();
   const { data, isLoading, isError, refetch } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const deleteMutation = useDeleteTrabajador();
   const [search, setSearch] = useState('');
   const [especialidadModalOpen, setEspecialidadModalOpen] = useState(false);
+
+const handleDelete = async (id: number) => {
+  const confirmed = await notify.confirm({
+    title: '¿Eliminar trabajador?',
+    message: 'Esta acción no se puede deshacer. ¿Seguro que querés continuar?',
+    confirmLabel: 'Sí, eliminar',
+    cancelLabel: 'Cancelar',
+    severity: 'error',
+  });
+  if (!confirmed) return;
+
+  try {
+    await deleteMutation.mutateAsync(id);
+    notify.success('Trabajador eliminado correctamente.');
+  } catch (error: any) {
+    const mensaje = error?.response?.data?.message
+      || error?.response?.data?.error
+      || 'No se pudo eliminar el trabajador.';
+    notify.error(mensaje);
+  }
+};
 
   // Filtrado por nombre, apellido o DNI
   const filteredData = useMemo(() => {
@@ -34,12 +64,7 @@ export const TrabajadoresListPage = () => {
     );
   }, [data, search]);
 
-  // Handler de eliminación
-  const handleDelete = async (id: number) => {
-    const confirmed = window.confirm('¿Seguro que deseas eliminar este trabajador?');
-    if (!confirmed) return;
-    await deleteMutation.mutateAsync(id);
-  };
+
 
   // Resuelve nombre de especialidad desde ID
   const getEspecialidadNombre = (id?: number | null) =>

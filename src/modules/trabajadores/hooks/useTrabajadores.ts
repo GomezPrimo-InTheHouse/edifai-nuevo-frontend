@@ -5,9 +5,9 @@ import type { CreateTrabajadorPayload, UpdateTrabajadorPayload } from '../types/
 export const trabajadoresQueryKeys = {
   all: ['trabajadores'] as const,
   detail: (id: number | string) => ['trabajadores', id] as const,
+  byEspecialidad: (id: number) => ['trabajadores', 'especialidad', id] as const,
 };
 
-// Lista completa de trabajadores
 export function useTrabajadoresList() {
   return useQuery({
     queryKey: trabajadoresQueryKeys.all,
@@ -15,7 +15,6 @@ export function useTrabajadoresList() {
   });
 }
 
-// Detalle de un trabajador por ID
 export function useTrabajadorDetail(id: number | string) {
   return useQuery({
     queryKey: trabajadoresQueryKeys.detail(id),
@@ -24,7 +23,15 @@ export function useTrabajadorDetail(id: number | string) {
   });
 }
 
-// Crear trabajador — invalida la lista al completarse
+// Trabajadores filtrados por especialidad
+export function useTrabajadoresByEspecialidad(especialidad_id: number) {
+  return useQuery({
+    queryKey: trabajadoresQueryKeys.byEspecialidad(especialidad_id),
+    queryFn: () => trabajadorApi.getByEspecialidad(especialidad_id),
+    enabled: Boolean(especialidad_id),
+  });
+}
+
 export function useCreateTrabajador() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -35,7 +42,6 @@ export function useCreateTrabajador() {
   });
 }
 
-// Actualizar trabajador — invalida lista y detalle
 export function useUpdateTrabajador() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -47,7 +53,6 @@ export function useUpdateTrabajador() {
   });
 }
 
-// Eliminar trabajador — invalida la lista
 export function useDeleteTrabajador() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -55,5 +60,13 @@ export function useDeleteTrabajador() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: trabajadoresQueryKeys.all });
     },
+  });
+}
+
+export function useJefesConEquipo(especialidad_id: number) {
+  return useQuery({
+    queryKey: ['trabajadores', 'jefes-equipo', especialidad_id],
+    queryFn: () => trabajadorApi.getJefesConEquipo(especialidad_id),
+    enabled: Boolean(especialidad_id),
   });
 }

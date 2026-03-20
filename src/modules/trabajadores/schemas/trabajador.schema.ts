@@ -5,10 +5,12 @@ export const trabajadorSchema = z.object({
   apellido: z.string().min(1, 'El apellido es obligatorio'),
   dni: z.string().min(1, 'El DNI es obligatorio'),
   email: z.string().email('Email inválido').min(1, 'El email es obligatorio'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
   telefono: z.string().optional().or(z.literal('')),
   fecha_ingreso: z.string().optional().or(z.literal('')),
   especialidad_id: z.union([z.number(), z.literal('')]).optional(),
   estado_id: z.union([z.number(), z.literal('')]).optional(),
+  jefe_id: z.union([z.number(), z.literal('')]).optional(),
   usuario_creador_id: z.number(),
 });
 

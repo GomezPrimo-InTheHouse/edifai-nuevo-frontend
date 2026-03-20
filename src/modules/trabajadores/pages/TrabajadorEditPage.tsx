@@ -20,10 +20,16 @@ export const TrabajadorEditPage: React.FC = () => {
 
   if (isLoading) return <LoadingState message="Cargando trabajador..." />;
 
-  const handleSubmit = async (values: any) => {
-    await updateMutation.mutateAsync({ id: trabajadorId, ...values });
-    navigate(`/trabajadores/${trabajadorId}`);
+ const handleSubmit = async (values: any) => {
+  const cleanValues = {
+    ...values,
+    jefe_id: values.jefe_id === '' ? null : values.jefe_id,
+    especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
+    estado_id: values.estado_id === '' ? null : values.estado_id,
   };
+  await updateMutation.mutateAsync({ id: trabajadorId, ...cleanValues });
+  navigate(`/trabajadores/${trabajadorId}`);
+};
 
   return (
     <AppLayout>

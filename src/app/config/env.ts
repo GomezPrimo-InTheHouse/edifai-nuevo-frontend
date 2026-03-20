@@ -23,6 +23,7 @@ export const env = {
   obraApiUrl: required('VITE_OBRA_API_URL'),
   laboresApiUrl: required('VITE_LABORES_API_URL'),
   estadosApiUrl: required('VITE_ESTADOS_API_URL'),
+  materialesApiUrl: required('VITE_MATERIALES_API_URL'),
   apiUrl: required('VITE_API_URL'),
 
   /**
