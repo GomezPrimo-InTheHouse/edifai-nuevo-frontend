@@ -49,8 +49,14 @@ body {
 }
 
 #root {
-  max-width: 1280px;
+  max-width: 1440px; /* Un poco más de ancho para aprovechar monitores */
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem; 
   min-height: 100vh;
+}
+
+@media (min-width: 768px) {
+  #root {
+    padding: 1.5rem 2rem; /* Más espacio lateral solo en tablets/PC */
+  }
 }

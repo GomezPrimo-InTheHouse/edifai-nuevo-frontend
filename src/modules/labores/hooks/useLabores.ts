@@ -5,6 +5,7 @@ import type { CreateLaborPayload, UpdateLaborPayload } from '../types/labor.type
 export const laboresQueryKeys = {
   all: ['labores'] as const,
   detail: (id: number | string) => ['labores', id] as const,
+  mis: ['labores', 'mis-labores'] as const,  // ← agregar esta línea
 };
 
 export function useLaboresList() {
@@ -62,5 +63,13 @@ export function useCambiarEstadoLabor() {
       queryClient.invalidateQueries({ queryKey: laboresQueryKeys.all });
       queryClient.invalidateQueries({ queryKey: laboresQueryKeys.detail(variables.id) });
     },
+  });
+}
+
+export function useMisLabores() {
+  return useQuery({
+    queryKey: laboresQueryKeys.mis,
+    queryFn: () => laborApi.getMisLabores(),
+    enabled: true,
   });
 }

@@ -2,8 +2,8 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 interface PageHeaderProps {
-  title: string;
-  subtitle?: string;
+  title: string | any;
+  subtitle?: string | React.ReactNode;
   actions?: React.ReactNode;
 }
 

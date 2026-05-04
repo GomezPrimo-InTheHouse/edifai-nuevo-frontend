@@ -5,7 +5,7 @@ export const trabajadorSchema = z.object({
   apellido: z.string().min(1, 'El apellido es obligatorio'),
   dni: z.string().min(1, 'El DNI es obligatorio'),
   email: z.string().email('Email inválido').min(1, 'El email es obligatorio'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  password: z.string().min(5, "Mínimo 5 caracteres").optional().or(z.literal('')), 
   telefono: z.string().optional().or(z.literal('')),
   fecha_ingreso: z.string().optional().or(z.literal('')),
   especialidad_id: z.union([z.number(), z.literal('')]).optional(),

@@ -15,6 +15,7 @@ import { usePresupuestoDetail, useCambiarEstadoPresupuesto } from '../hooks/useP
 import { useLaboresList } from '../../labores/hooks/useLabores';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
 import { useNotify } from '../../../shared/hooks/useNotify';
+import type { PresupuestoMiembro } from '../types/presupuesto.types';
 
 function formatDate(v?: string | null) {
   if (!v) return '-';
@@ -54,9 +55,9 @@ export const PresupuestoDetailPage: React.FC = () => {
   const confirmado = estadoNombre === 'Confirmado';
 
   const costoManoObra = Number(presupuesto.costo_mano_obra ?? 0);
-const totalEstimado = Number(presupuesto.total_estimado ?? 0);
-// Nunca mostrar negativo — si no hay materiales, es 0
-const costoMateriales = Math.max(0, totalEstimado - costoManoObra);
+  const totalEstimado = Number(presupuesto.total_estimado ?? 0);
+  // Nunca mostrar negativo — si no hay materiales, es 0
+  const costoMateriales = Math.max(0, totalEstimado - costoManoObra);
 
   const handleCambiarEstado = async (estado_id: number) => {
     const nuevoEstado = estados.find((e) => e.id === estado_id)?.nombre;
@@ -77,7 +78,7 @@ const costoMateriales = Math.max(0, totalEstimado - costoManoObra);
       notify.error('No se pudo cambiar el estado.');
     }
   };
-console.log('PRESUPUESTO:', presupuesto);
+  console.log('PRESUPUESTO:', presupuesto);
   return (
     <AppLayout>
       <PageHeader
@@ -169,6 +170,80 @@ console.log('PRESUPUESTO:', presupuesto);
                   ${totalEstimado.toLocaleString('es-AR')}
                 </Typography>
               </Box>
+              
+              {/* Trabajador y equipo */}
+              {presupuesto.jefe_nombre && (
+                <>
+                  <Divider sx={{ my: 3 }} />
+                  <Typography variant="body2" fontWeight={700} sx={{ color: '#64748B', mb: 2 }}>
+                    RESPONSABLE
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                    <Box
+                      sx={{
+                        width: 40, height: 40, borderRadius: '50%',
+                        bgcolor: '#0F172A', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      }}
+                    >
+                      <Typography variant="body2" fontWeight={700} sx={{ color: '#fff' }}>
+                        {presupuesto.jefe_nombre[0]}{presupuesto.jefe_apellido?.[0]}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" fontWeight={600}>
+                        {presupuesto.jefe_nombre} {presupuesto.jefe_apellido}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748B' }}>
+                        {presupuesto.jefe_especialidad ?? 'Sin especialidad'}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                 {(presupuesto.equipo?.length ?? 0) > 0 && (
+  <>
+    <Typography variant="caption" fontWeight={600} sx={{ color: '#64748B', display: 'block', mb: 1 }}>
+      EQUIPO ({presupuesto.equipo?.length})
+    </Typography>
+    <Stack spacing={1}>
+      {presupuesto.equipo?.map((miembro: PresupuestoMiembro) => (
+        <Box
+          key={miembro.id}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, borderRadius: 2, bgcolor: '#F8FAFC' }}
+        >
+          <Box
+            sx={{ width: 28, height: 28, borderRadius: '50%', bgcolor: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+          >
+            <Typography variant="caption" fontWeight={700} sx={{ color: '#475569' }}>
+              {miembro.nombre[0]}{miembro.apellido?.[0]}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="body2" fontWeight={500} sx={{ lineHeight: 1.2 }}>
+              {miembro.nombre} {miembro.apellido}
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+              {miembro.especialidad ?? '-'}
+            </Typography>
+          </Box>
+        </Box>
+      ))}
+    </Stack>
+  </>
+)}
+
+                  {presupuesto.obra_nombre && (
+                    <>
+                      <Divider sx={{ my: 2 }} />
+                      <DetailRow
+                        icon={<FileText size={16} />}
+                        label="Obra"
+                        value={presupuesto.obra_nombre}
+                      />
+                    </>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         </Grid>

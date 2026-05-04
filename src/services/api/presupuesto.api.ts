@@ -1,6 +1,6 @@
 import { env } from '../../app/config/env';
 import httpClient from '../httpClient';
-import type { CreatePresupuestoPayload, Presupuesto } from '../../modules/presupuestos/types/presupuesto.types';
+import type { CreatePresupuestoPayload, Presupuesto, PresupuestoContextoPago } from '../../modules/presupuestos/types/presupuesto.types';
 
 const baseUrl = `${env.materialesApiUrl}/presupuestos`;
 
@@ -33,4 +33,11 @@ export const presupuestoApi = {
   async cambiarEstado(id: number | string, estado_id: number): Promise<void> {
     await httpClient.put(`${baseUrl}/cambiarEstado/${id}`, { estado_id });
   },
+
+  async getContextoPago(id: number | string): Promise<PresupuestoContextoPago> {
+  const response = await httpClient.get<{ success: boolean; data: PresupuestoContextoPago }>(
+    `${baseUrl}/contextoPago/${id}`
+  );
+  return response.data.data;
+},
 };

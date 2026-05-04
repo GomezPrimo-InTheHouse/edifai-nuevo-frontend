@@ -3,7 +3,7 @@ import {
   Box, Button, Divider, Grid, InputAdornment, MenuItem,
   Paper, Stack, TextField, Typography,
 } from '@mui/material';
-import { Search } from 'lucide-react';
+import { Search, Lock, User } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { trabajadorSchema, type TrabajadorSchemaValues } from '../schemas/trabajador.schema';
@@ -18,7 +18,6 @@ interface TrabajadorFormProps {
   isSubmitting?: boolean;
 }
 
-// Convierte fecha ISO → "yyyy-MM-dd" para input type="date"
 function toDateInput(value?: string | null): string {
   if (!value) return '';
   return value.split('T')[0];
@@ -40,7 +39,6 @@ function toFormDefaults(initialData?: Trabajador | null): TrabajadorFormValues {
   };
 }
 
-// Hook interno para buscador dentro de un select
 function useSelectSearch(items: { id: number; label: string }[]) {
   const [query, setQuery] = useState('');
   const filtered = items.filter((i) => i.label.toLowerCase().includes(query.toLowerCase()));
@@ -48,31 +46,29 @@ function useSelectSearch(items: { id: number; label: string }[]) {
 }
 
 export function TrabajadorForm({ initialData, especialidades, onSubmit, isSubmitting = false }: TrabajadorFormProps) {
+  // 1. Variable isEdit: detecta si hay datos iniciales para bloquear campos
+  const isEdit = Boolean(initialData && initialData.id);
+
   const { control, handleSubmit, reset, watch, formState: { errors } } = useForm<TrabajadorSchemaValues>({
     resolver: zodResolver(trabajadorSchema),
     defaultValues: toFormDefaults(initialData),
   });
 
-  // Observá especialidad_id para ir filtrando jefes disponibles en el select de jefe_id
-const especialidadSeleccionada = watch('especialidad_id');
-
-
+  const especialidadSeleccionada = watch('especialidad_id');
   const { data: estados = [] } = useEstadosGenerales();
   const { data: trabajadores = [] } = useTrabajadoresList();
 
-  // Buscadores por select
   const especialidadesSearch = useSelectSearch(especialidades.map((e) => ({ id: e.id, label: e.nombre })));
   const estadosSearch = useSelectSearch(estados.map((e) => ({ id: e.id, label: e.nombre })));
-  
-  // Filtrá trabajadores que tengan la misma especialidad Y sean jefes (jefe_id null)
+
   const jefesDisponibles = trabajadores.filter(
     (t) => t.especialidad_id === especialidadSeleccionada && t.jefe_id === null
   );
-  // Actualizá el useSelectSearch de jefes:
+
   const jefesSearch = useSelectSearch(
-    jefesDisponibles.map((t:any) => ({ id: t.id, label: `${t.nombre} ${t.apellido}` }))
+    jefesDisponibles.map((t: any) => ({ id: t.id, label: `${t.nombre} ${t.apellido}` }))
   );
-  // Re-inicializa cuando llegan datos o especialidades
+
   useEffect(() => {
     if (especialidades.length > 0) {
       reset(toFormDefaults(initialData));
@@ -80,27 +76,27 @@ const especialidadSeleccionada = watch('especialidad_id');
   }, [initialData, especialidades, reset]);
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 3 }}>
+    <Paper sx={{ p: { xs: 2, md: 3 }, borderRadius: 3, border: '1px solid var(--border)', boxShadow: 'none' }}>
       <Box component="form" onSubmit={handleSubmit((v) => onSubmit(v as TrabajadorFormValues))}>
 
-        {/* Sección — Datos personales */}
-        <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>
+        {/* SECCIÓN: DATOS PERSONALES */}
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B', letterSpacing: 1 }}>
           DATOS PERSONALES
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="nombre" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth label="Nombre" error={!!errors.nombre} helperText={errors.nombre?.message ?? ''} />
+              <TextField {...field} fullWidth label="Nombre" error={!!errors.nombre} helperText={errors.nombre?.message} />
             )} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="apellido" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth label="Apellido" error={!!errors.apellido} helperText={errors.apellido?.message ?? ''} />
+              <TextField {...field} fullWidth label="Apellido" error={!!errors.apellido} helperText={errors.apellido?.message} />
             )} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="dni" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth label="DNI" error={!!errors.dni} helperText={errors.dni?.message ?? ''} />
+              <TextField {...field} fullWidth label="DNI" error={!!errors.dni} helperText={errors.dni?.message} />
             )} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -114,14 +110,13 @@ const especialidadSeleccionada = watch('especialidad_id');
             )} />
           </Grid>
 
-          {/* Especialidad con buscador */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="especialidad_id" control={control} render={({ field }) => (
               <TextField
                 select fullWidth label="Especialidad"
                 value={field.value}
                 onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
-                error={!!errors.especialidad_id} helperText={errors.especialidad_id?.message ?? ''}
+                error={!!errors.especialidad_id} helperText={errors.especialidad_id?.message}
                 SelectProps={{ MenuProps: { PaperProps: { sx: { maxHeight: 300 } } } }}
               >
                 <Box sx={{ px: 1.5, py: 1, position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1 }}>
@@ -139,7 +134,6 @@ const especialidadSeleccionada = watch('especialidad_id');
             )} />
           </Grid>
 
-          {/* Estado con buscador */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="estado_id" control={control} render={({ field }) => (
               <TextField
@@ -163,7 +157,6 @@ const especialidadSeleccionada = watch('especialidad_id');
             )} />
           </Grid>
 
-          {/* Jefe con buscador */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="jefe_id" control={control} render={({ field }) => (
               <TextField
@@ -188,32 +181,136 @@ const especialidadSeleccionada = watch('especialidad_id');
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 3 }} />
+        <Divider sx={{ my: 4 }} />
 
-        {/* Sección — Acceso al sistema */}
-        <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5, color: '#64748B' }}>
-          ACCESO AL SISTEMA
+                {/* SECCIÓN: DATOS PERSONALES */}
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B', letterSpacing: 1 }}>
+          DATOS ACCESO AL SISTEMA
         </Typography>
-        <Typography variant="caption" sx={{ color: '#94A3B8', display: 'block', mb: 2 }}>
-          Estas credenciales permiten al trabajador iniciar sesión en EDIFAI.
-        </Typography>
-        <Grid container spacing={2}>
+
+        <Grid container spacing={3}>
+          {/* Campo: Correo Electrónico */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller name="email" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth label="Email" type="email" error={!!errors.email} helperText={errors.email?.message ?? ''} />
-            )} />
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Correo Electrónico"
+                  disabled={isEdit}
+                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    input: {
+                      readOnly: isEdit,
+                      startAdornment: (
+              <InputAdornment position="start">
+                <User size={18} color={isEdit ? "var(--accent)" : "#64748B"} style={{ opacity: isEdit ? 0.8 : 1 }} />
+              </InputAdornment>
+            ),
+                      
+                      sx: {
+                        borderRadius: 2,
+                        // 1. Fondo blanco puro
+                        bgcolor: '#ffffff',
+                        // 2. Quitamos la opacidad y el gris de 'disabled'
+                        "&.Mui-disabled": {
+                          bgcolor: '#ffffff',
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: 'var(--border)', // Mantiene el color del borde normal
+                            borderStyle: 'dashed', // Opcional: un toque visual de "no editable"
+                          },
+                        },
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          WebkitTextFillColor: '#8a8888', // Texto en negro/oscuro legible
+                          cursor: 'default',
+                        }
+                      }
+                    }
+                  }}
+                />
+              )}
+            />
           </Grid>
+
+          {/* Campo: Contraseña */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller name="password" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth label="Contraseña" type="password" error={!!errors.password} helperText={errors.password?.message ?? ''} />
-            )} />
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Contraseña"
+                  type="password"
+                  value={isEdit ? "********" : field.value}
+                  disabled={isEdit}
+                  InputLabelProps={{ shrink: true }}
+                  slotProps={{
+                    input: {
+                      readOnly: isEdit,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock size={16} color="var(--accent)" opacity={0.6} />
+                        </InputAdornment>
+                      ),
+                      sx: {
+                        borderRadius: 2,
+                        bgcolor: '#ffffff',
+                        "&.Mui-disabled": {
+                          bgcolor: '#ffffff',
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: 'var(--border)',
+                            borderStyle: 'dashed',
+                          },
+                        },
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          WebkitTextFillColor: '#8a8888',
+                          cursor: 'default',
+                        }
+                      }
+                    }
+                  }}
+                />
+              )}
+            />
+            
           </Grid>
+          
         </Grid>
+        {isEdit && (
+  <Box sx={{ 
+    mt: 3, 
+    p: 2, 
+    bgcolor: 'rgba(170, 59, 255, 0.05)', 
+    borderRadius: 2, 
+    border: '1px dashed var(--accent-border)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1.5
+  }}>
+    <Lock size={14} color="#aa3bff" />
+    <Typography variant="caption" sx={{ color: 'var(--accent)', fontWeight: 600 }}>
+      Próximamente podrás gestionar credenciales desde el módulo de Usuarios.
+    </Typography>
+  </Box>
+)}
+        
 
-        {/* Botón de envío */}
-        <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
-          <Button type="submit" variant="contained" disabled={isSubmitting}>
-            {isSubmitting ? 'Guardando...' : 'Guardar trabajador'}
+
+
+        {/* BOTONES DE ACCIÓN */}
+        <Stack direction="row" justifyContent="flex-end" sx={{ mt: 4 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            disabled={isSubmitting}
+            sx={{ borderRadius: 2, px: 6, py: 1.5, fontWeight: 700 }}
+          >
+            {isSubmitting ? 'Guardando...' : isEdit ? 'Actualizar Trabajador' : 'Registrar Trabajador'}
           </Button>
         </Stack>
       </Box>

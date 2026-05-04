@@ -13,10 +13,11 @@ export const laborApi = {
   },
 
   // Obtiene una labor por ID — backend devuelve el objeto directo
-  async getById(id: number | string): Promise<Labor> {
-    const response = await httpClient.get<Labor>(`${baseUrl}/getOne/${id}`);
-    return response.data;
-  },
+ 
+async getById(id: number | string): Promise<Labor> {
+  const response = await httpClient.get<{ success: boolean; data: Labor }>(`${baseUrl}/getOne/${id}`);
+  return response.data.data;
+},
 
   // Crea una nueva labor
   async create(payload: CreateLaborPayload): Promise<Labor> {
@@ -41,4 +42,12 @@ export const laborApi = {
     const response = await httpClient.put<{ success: boolean; data: Labor }>(`${baseUrl}/cambiarEstadoLabor/${id}`, { estado_id });
     return response.data.data;
   },
+
+  async getMisLabores() : Promise<Labor[]> {
+  const response = await httpClient.get(
+    `${baseUrl}/mis-labores`
+  );
+  return response.data.data;
+}
 };
+

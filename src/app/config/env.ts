@@ -19,13 +19,18 @@ function required(name: string): string {
 export const env = {
   authApiUrl: required('VITE_AUTH_API_URL'),
   usuarioApiUrl: required('VITE_USUARIO_API_URL'),
+  
   trabajadoresApiUrl: required('VITE_TRABAJADORES_API_URL'),
+  presentismoApiUrl: required('VITE_PRESENTISMO_API_URL'),
+
   obraApiUrl: required('VITE_OBRA_API_URL'),
   laboresApiUrl: required('VITE_LABORES_API_URL'),
   estadosApiUrl: required('VITE_ESTADOS_API_URL'),
   materialesApiUrl: required('VITE_MATERIALES_API_URL'),
-  apiUrl: required('VITE_API_URL'),
-
+  pagosApiUrl: required('VITE_PAGOS_API_URL'),
+  notificacionesApiUrl: required('VITE_NOTIFICACIONES_API_URL'),
+  dashboardApiUrl: required('VITE_DASHBOARD_API_URL'),
+  clientesApiUrl: required('VITE_CLIENTES_API_URL'),
   /**
    * Permite saltar autenticación en desarrollo
    */

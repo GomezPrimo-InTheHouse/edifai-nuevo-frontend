@@ -74,7 +74,7 @@ import {
   useTiposObraOptions,
   useEstadosObraOptions,
 } from '../hooks/useObras';
-
+import { useNotify } from '../../../shared/context/NotifyContext';
 export const ObraEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -88,10 +88,36 @@ export const ObraEditPage: React.FC = () => {
   if (isLoading) return <LoadingState message="Cargando obra..." />;
 
   // Handler de edición — redirige al detalle al completarse
-  const handleSubmit = async (values: any) => {
+ 
+    const notify = useNotify(); 
+    
+    const handleSubmit = async (values: any) => {
+
+  try {
     await updateMutation.mutateAsync({ id: obraId, ...values });
+    notify.success('La obra se ha registrado exitosamente.');
     navigate(`/obras/${obraId}`);
-  };
+  } catch (error: any) {
+    // 1. Log para diagnóstico (Míralo en la consola F12)
+    console.error("DEBUG ERROR COMPLETO:", error);
+    console.log("DATA DEL ERROR:", error.response?.data);
+
+    // 2. Extracción ultra-flexible del mensaje
+    const errorMessage = 
+      error.response?.data?.error ||        // Caso: { error: "..." }
+      error.response?.data?.message ||      // Caso: { message: "..." }
+      error.response?.data ||               // Caso: "Mensaje directo"
+      error.message ||                      // Error genérico de JS/Network
+      'Error desconocido al procesar la solicitud';
+
+    // 3. Lanzar la notificación
+    console.log("MENSAJE EXTRAÍDO PARA NOTIFICACIÓN:", errorMessage);
+    console.log('RESPONSE DATA:', error.response?.data);
+    console.log('STATUS:', error.response?.status);
+    
+    notify.error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
+  }
+};
 
   return (
     <AppLayout>

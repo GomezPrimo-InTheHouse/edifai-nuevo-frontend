@@ -58,3 +58,11 @@ export function useCambiarEstadoPresupuesto() {
     },
   });
 }
+
+export function usePresupuestoContextoPago(id: number | string) {
+  return useQuery({
+    queryKey: ['presupuestos', 'contextoPago', id] as const,
+    queryFn: () => presupuestoApi.getContextoPago(id),
+    enabled: Boolean(id),
+  });
+}

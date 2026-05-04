@@ -54,3 +54,10 @@ export function useAjustePreciosMasivo() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: materialesQueryKeys.all }),
   });
 }
+
+export function useEstadisticasMateriales() {
+  return useQuery({
+    queryKey: ['materiales-estadisticas'],
+    queryFn: () => materialApi.getEstadisticas(),
+  });
+}

@@ -19,21 +19,22 @@ export const PresupuestoEditPage: React.FC = () => {
 
   if (isLoading) return <LoadingState message="Cargando presupuesto..." />;
 
-  const handleSubmit = async (values: any) => {
-    try {
-      await updateMutation.mutateAsync({
-        id: presupuestoId,
-        nombre: values.nombre,
-        descripcion: values.descripcion,
-        estado_id: values.estado_id === '' ? undefined : Number(values.estado_id),
-        costo_mano_obra: values.costo_mano_obra === '' ? 0 : Number(values.costo_mano_obra),
-      });
-      notify.success('Presupuesto actualizado.');
-      navigate(`/presupuestos/${presupuestoId}`);
-    } catch {
-      notify.error('No se pudo actualizar.');
-    }
-  };
+const handleSubmit = async (values: any) => {
+  console.log('handleSubmit llamado con values:', values); // ← agregar
+  try {
+    await updateMutation.mutateAsync({
+      id: presupuestoId,
+      nombre: values.nombre,
+      descripcion: values.descripcion,
+      estado_id: values.estado_id === '' ? undefined : Number(values.estado_id),
+      costo_mano_obra: values.costo_mano_obra === '' ? 0 : Number(values.costo_mano_obra),
+    });
+    notify.success('Presupuesto actualizado.');
+    navigate(`/presupuestos/${presupuestoId}`);
+  } catch {
+    notify.error('No se pudo actualizar.');
+  }
+};
 
   return (
     <AppLayout>

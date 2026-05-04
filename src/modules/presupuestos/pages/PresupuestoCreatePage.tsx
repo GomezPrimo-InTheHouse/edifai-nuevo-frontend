@@ -37,7 +37,11 @@ export const PresupuestoCreatePage: React.FC = () => {
                 subtitle="Crear un presupuesto vinculado a una labor."
                 actions={<Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/presupuestos')}>Volver</Button>}
             />
-            <PresupuestoForm onSubmit={handleSubmit} isSubmitting={createMutation.isPending} />
+            <PresupuestoForm
+  onSubmit={handleSubmit}
+  isSubmitting={createMutation.isPending}
+  hideEstado  // ← ocultar en create también
+/>
         </AppLayout>
     );
 };

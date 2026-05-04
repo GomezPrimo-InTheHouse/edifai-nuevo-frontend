@@ -5,7 +5,7 @@ interface LaborEstadoChipProps {
 }
 
 const colorMap: Record<string, 'success' | 'warning' | 'error' | 'default' | 'info'> = {
-  'En proceso': 'success',
+  'Labor en proceso': 'success',
   'Pausada': 'warning',
   'Cancelada': 'error',
   'Finalizada': 'default',
