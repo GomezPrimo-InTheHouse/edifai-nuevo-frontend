@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { laborApi } from '../../../services/api/labor.api';
+import { useAuthStore } from '../../../app/store/auth.store';
 import type { CreateLaborPayload, UpdateLaborPayload } from '../types/labor.types';
 
 export const laboresQueryKeys = {
   all: ['labores'] as const,
   detail: (id: number | string) => ['labores', id] as const,
-  mis: ['labores', 'mis-labores'] as const,  // ← agregar esta línea
-  byObra: (obra_id: number) => ['labores', 'by-obra', obra_id] as const,  // ← agregar esta línea
-  
+  mis: ['labores', 'mis-labores'] as const,
+  byObra: (obra_id: number) => ['labores', 'by-obra', obra_id] as const,
 };
 
 export function useLaboresList() {
@@ -69,13 +69,15 @@ export function useCambiarEstadoLabor() {
 }
 
 export function useMisLabores() {
+  const user = useAuthStore((s) => s.user);
+  const esWorker = user?.rol_id === 7 || user?.rol_id === 8;
+
   return useQuery({
     queryKey: laboresQueryKeys.mis,
     queryFn: () => laborApi.getMisLabores(),
-    enabled: true,
+    enabled: esWorker, // ← solo ejecuta para workers, nunca para admins
   });
 }
-
 
 export function useLaborsByObra(obra_id: number) {
   return useQuery({

@@ -1,19 +1,25 @@
-// import { useEffect, useRef, useState } from 'react';
+// import { useEffect, useRef, useState, useCallback } from 'react';
 // import { useAuthStore } from '../../app/store/auth.store';
 // import { notificacionesApi, type Notificacion } from '../../services/api/notificaciones.api';
 // import { env } from '../../app/config/env';
 
 // export function useNotificaciones() {
 //   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(false);
-//   const accessToken = useAuthStore((s) => s.accessToken);
-//   const eventSourceRef = useRef<EventSource | null>(null);
+//   const [loading, setLoading]   = useState(true);
+//   const [error, setError]       = useState(false);
+//   const eventSourceRef          = useRef<EventSource | null>(null);
 
-//   // ── Carga inicial ─────────────────────────────────────────
+//   // Leer accessToken del store — el hook se re-ejecuta cada vez que cambia
+//   const accessToken = useAuthStore((s) => s.accessToken);
+
+//   // ── Carga inicial — se repite cada vez que cambia el token ──
+//   // Esto cubre el caso donde el token expiró durante la sesión
 //   useEffect(() => {
+//     if (!accessToken) return;
+
 //     setLoading(true);
 //     setError(false);
+
 //     notificacionesApi
 //       .getAll()
 //       .then((data) => setNotificaciones(data))
@@ -22,49 +28,60 @@
 //         setError(true);
 //       })
 //       .finally(() => setLoading(false));
-//   }, []);
 
-//   // ── SSE — tiempo real ─────────────────────────────────────
+//   }, [accessToken]); // ← dependencia en accessToken, no array vacío
+
+//   // ── SSE — reconecta automáticamente cuando cambia el token ──
 //   useEffect(() => {
-//     if (!accessToken) return;
-
-//     const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${accessToken}`;
-
-//     // Cerrar conexión anterior si existe
-//     if (eventSourceRef.current) {
-//       eventSourceRef.current.close();
+//     if (!accessToken) {
+//       // Sin token → cerrar conexión si existe
+//       eventSourceRef.current?.close();
+//       return;
 //     }
 
-//     const es = new EventSource(url);
-//     eventSourceRef.current = es;
+//     const conectarSSE = () => {
+//       // Cerrar conexión anterior
+//       eventSourceRef.current?.close();
 
-//     es.onopen = () => {
-//       console.log('SSE conectado');
+//       const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${accessToken}`;
+//       const es  = new EventSource(url);
+//       eventSourceRef.current = es;
+
+//       es.onopen = () => {
+//         console.log('SSE conectado');
+//       };
+
+//       es.onmessage = (event) => {
+//         try {
+//           const nueva: Notificacion = JSON.parse(event.data);
+//           setNotificaciones((prev) => [nueva, ...prev]);
+//         } catch (e) {
+//           console.error('Error parseando notificación SSE:', e);
+//         }
+//       };
+
+//       es.onerror = () => {
+//         console.error('SSE error — cerrando conexión');
+//         es.close();
+//         eventSourceRef.current = null;
+//         // No reconectar acá — esperar a que el interceptor de Axios
+//         // renueve el token, lo que dispara este useEffect de nuevo
+//       };
 //     };
 
-//     es.onmessage = (event) => {
-//       try {
-//         const nueva: Notificacion = JSON.parse(event.data);
-//         setNotificaciones((prev) => [nueva, ...prev]);
-//       } catch (e) {
-//         console.error('Error parseando notificación SSE:', e);
-//       }
-//     };
-
-//     es.onerror = (err) => {
-//       console.error('SSE error:', err);
-//       es.close();
-//     };
+//     conectarSSE();
 
 //     return () => {
-//       es.close();
+//       eventSourceRef.current?.close();
+//       eventSourceRef.current = null;
 //     };
-//   }, [accessToken]);
+
+//   }, [accessToken]); // ← mismo trigger: cuando Axios renueva el token, este effect se re-ejecuta
 
 //   // ── Acciones ──────────────────────────────────────────────
 //   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 
-//   const marcarLeida = async (id: number) => {
+//   const marcarLeida = useCallback(async (id: number) => {
 //     try {
 //       await notificacionesApi.marcarLeida(id);
 //       setNotificaciones((prev) =>
@@ -73,16 +90,16 @@
 //     } catch (err) {
 //       console.error('Error marcando leída:', err);
 //     }
-//   };
+//   }, []);
 
-//   const marcarTodasLeidas = async () => {
+//   const marcarTodasLeidas = useCallback(async () => {
 //     try {
 //       await notificacionesApi.marcarTodasLeidas();
 //       setNotificaciones((prev) => prev.map((n) => ({ ...n, leida: true })));
 //     } catch (err) {
 //       console.error('Error marcando todas leídas:', err);
 //     }
-//   };
+//   }, []);
 
 //   return { notificaciones, noLeidas, loading, error, marcarLeida, marcarTodasLeidas };
 // }
@@ -98,11 +115,9 @@ export function useNotificaciones() {
   const [error, setError]       = useState(false);
   const eventSourceRef          = useRef<EventSource | null>(null);
 
-  // Leer accessToken del store — el hook se re-ejecuta cada vez que cambia
   const accessToken = useAuthStore((s) => s.accessToken);
 
-  // ── Carga inicial — se repite cada vez que cambia el token ──
-  // Esto cubre el caso donde el token expiró durante la sesión
+  // ── Carga inicial ─────────────────────────────────────────
   useEffect(() => {
     if (!accessToken) return;
 
@@ -118,18 +133,16 @@ export function useNotificaciones() {
       })
       .finally(() => setLoading(false));
 
-  }, [accessToken]); // ← dependencia en accessToken, no array vacío
+  }, [accessToken]);
 
-  // ── SSE — reconecta automáticamente cuando cambia el token ──
+  // ── SSE ───────────────────────────────────────────────────
   useEffect(() => {
     if (!accessToken) {
-      // Sin token → cerrar conexión si existe
       eventSourceRef.current?.close();
       return;
     }
 
     const conectarSSE = () => {
-      // Cerrar conexión anterior
       eventSourceRef.current?.close();
 
       const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${accessToken}`;
@@ -149,12 +162,21 @@ export function useNotificaciones() {
         }
       };
 
-      es.onerror = () => {
-        console.error('SSE error — cerrando conexión');
+      // Token expirado — el servidor manda este evento antes de cerrar
+      es.addEventListener('auth_error', () => {
+        // console.warn('SSE auth_error — token expirado, esperando renovación');
         es.close();
         eventSourceRef.current = null;
-        // No reconectar acá — esperar a que el interceptor de Axios
-        // renueve el token, lo que dispara este useEffect de nuevo
+        // No reconectar — el interceptor de Axios renovará el token
+        // lo que dispara este useEffect de nuevo con el token nuevo
+      });
+
+      es.onerror = () => {
+        // Solo llega acá si es un error de red real (servidor caído, CORS, etc.)
+        if (es.readyState === EventSource.CLOSED) return;
+        console.error('SSE error de red — cerrando conexión');
+        es.close();
+        eventSourceRef.current = null;
       };
     };
 
@@ -165,7 +187,7 @@ export function useNotificaciones() {
       eventSourceRef.current = null;
     };
 
-  }, [accessToken]); // ← mismo trigger: cuando Axios renueva el token, este effect se re-ejecuta
+  }, [accessToken]);
 
   // ── Acciones ──────────────────────────────────────────────
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
