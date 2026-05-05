@@ -53,6 +53,7 @@ export function PresupuestoForm({ initialData, onSubmit, isSubmitting = false, h
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<PresupuestoSchemaValues>({
     resolver: zodResolver(presupuestoSchema),
@@ -69,6 +70,14 @@ export function PresupuestoForm({ initialData, onSubmit, isSubmitting = false, h
   const laborSeleccionada    = labores.find((l) => l.id === Number(laborIdSeleccionada));
   const obraVinculada        = obras.find((o) => o.id === laborSeleccionada?.obra_id);
   const trabajadorVinculado  = trabajadores.find((t) => t.id === laborSeleccionada?.trabajador_id);
+  
+useEffect(() => {
+  if (laborSeleccionada?.obra_id) {
+    setValue('obra_id', laborSeleccionada.obra_id);
+  } else {
+    setValue('obra_id', '');
+  }
+}, [laborSeleccionada, setValue]);
 
   useEffect(() => {
     reset(toFormDefaults(initialData));

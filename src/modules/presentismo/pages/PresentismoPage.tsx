@@ -19,7 +19,7 @@ import {
   useMarcarPresentismo,
 } from '../hooks/usePresentismo';
 
-// ── Helper tiempo ────────────────────────────────────────────
+// ── Helper tiempo 
 function formatFecha(fecha: string) {
   return new Date(fecha).toLocaleDateString('es-AR', {
     day: '2-digit', month: '2-digit', year: 'numeric',
@@ -32,7 +32,7 @@ function formatHora(fecha: string) {
   });
 }
 
-// ── Componente ───────────────────────────────────────────────
+// ── Componente 
 export const PresentismoPage: React.FC = () => {
   const notify = useNotify();
 

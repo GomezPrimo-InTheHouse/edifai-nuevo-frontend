@@ -46,3 +46,19 @@ export interface UpdateLaborPayload extends CreateLaborPayload {
   fecha_inicio_real?: string | null;
   fecha_fin_real?: string | null;
 }
+
+export interface LaborDeObra {
+  id: number;
+  nombre: string;
+  descripcion?: string | null;
+  estado_id?: number | null;
+  estado_nombre?: string | null;
+  especialidad_id?: number | null;
+  especialidad_nombre?: string | null;
+  trabajador_id?: number | null;
+  trabajador_nombre?: string | null;
+  fecha_inicio_estimada?: string | null;
+  fecha_fin_estimada?: string | null;
+  fecha_inicio_real?: string | null;
+  fecha_fin_real?: string | null;
+}

@@ -6,6 +6,8 @@ export const laboresQueryKeys = {
   all: ['labores'] as const,
   detail: (id: number | string) => ['labores', id] as const,
   mis: ['labores', 'mis-labores'] as const,  // ← agregar esta línea
+  byObra: (obra_id: number) => ['labores', 'by-obra', obra_id] as const,  // ← agregar esta línea
+  
 };
 
 export function useLaboresList() {
@@ -71,5 +73,14 @@ export function useMisLabores() {
     queryKey: laboresQueryKeys.mis,
     queryFn: () => laborApi.getMisLabores(),
     enabled: true,
+  });
+}
+
+
+export function useLaborsByObra(obra_id: number) {
+  return useQuery({
+    queryKey: laboresQueryKeys.byObra(obra_id),
+    queryFn: () => laborApi.getByObra(obra_id),
+    enabled: Boolean(obra_id),
   });
 }

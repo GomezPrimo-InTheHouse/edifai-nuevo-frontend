@@ -1,6 +1,6 @@
 import { env } from '../../app/config/env';
 import httpClient from '../httpClient';
-import type { CreateLaborPayload, Labor, UpdateLaborPayload } from '../../modules/labores/types/labor.types';
+import type { CreateLaborPayload, Labor, UpdateLaborPayload, LaborDeObra } from '../../modules/labores/types/labor.types';
 
 const baseUrl = `${env.laboresApiUrl}/labor`;
 
@@ -48,6 +48,11 @@ async getById(id: number | string): Promise<Labor> {
     `${baseUrl}/mis-labores`
   );
   return response.data.data;
-}
+},
+
+getByObra: async (obra_id: number) => {
+  const res = await httpClient.get(`${baseUrl}/getByObra/${obra_id}`);
+  return res.data.data as LaborDeObra[];
+},
 };
 

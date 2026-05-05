@@ -29,9 +29,21 @@ const ROUTE_MAP: Record<string, string> = {
 
 export function useBreadcrumbs(): Breadcrumb[] {
   const location = useLocation();
+  const state = location.state as { from?: string; obraId?: number; obraLabel?: string } | null;
   const segments = location.pathname.split('/').filter(Boolean);
 
   if (segments.length === 0) return [{ label: 'Dashboard' }];
+
+  // Si viene desde una obra, construir breadcrumb contextual
+  if (state?.from === 'obra' && state.obraId) {
+    const laborSegment = segments[segments.length - 1];
+    return [
+      { label: 'Dashboard',                    path: '/' },
+      { label: 'Obras',                         path: '/obras' },
+      { label: state.obraLabel ?? `#${state.obraId}`, path: `/obras/${state.obraId}` },
+      { label: `#${laborSegment}` },
+    ];
+  }
 
   const crumbs: Breadcrumb[] = [{ label: 'Dashboard', path: '/' }];
   let accumulatedPath = '';
