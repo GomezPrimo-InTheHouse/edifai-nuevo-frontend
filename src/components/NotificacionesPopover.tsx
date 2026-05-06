@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   Badge, Box, Button, CircularProgress, Divider,
-  IconButton, Popover, Stack, Tooltip, Typography,
+  IconButton, Popover, Tooltip, Typography,
 } from '@mui/material';
 import {
   Bell, CheckCheck, LogIn, Hammer, DollarSign,
