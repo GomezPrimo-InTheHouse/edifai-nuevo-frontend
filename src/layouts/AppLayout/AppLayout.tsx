@@ -58,7 +58,7 @@ const menuSections = [
 
 // ── NavItem reutilizable ──────────────────────────────────────
 function NavItem({
-  label, icon, path, isActive, onClick, indent = false,
+  label, icon, isActive, onClick, indent = false,
 }: {
   label: string; icon?: React.ReactNode; path?: string;
   isActive: boolean; onClick: () => void; indent?: boolean;
