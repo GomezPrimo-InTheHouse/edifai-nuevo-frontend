@@ -107,10 +107,11 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
   const progreso = PROGRESO_MAP[estadoSeleccionado?.nombre ?? ''] ?? 0;
   const progressColor = getProgressColor(progreso);
 
-  // Pagos y presupuestos del trabajador
-  const { data: pagosDelTrabajador = [] } = usePagosByTrabajador(
+// Pagos y presupuestos del trabajador
+  const { data: pagosRaw } = usePagosByTrabajador(
     trabajadorSeleccionado ? Number(trabajadorIdSeleccionado) : 0
   );
+  const pagosDelTrabajador = pagosRaw?.data ?? [];
 
   const laborasDelTrabajador = labores.filter(
     (l) => l.trabajador_id === Number(trabajadorIdSeleccionado)
@@ -118,6 +119,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
   const presupuestosDelTrabajador = todosPresupuestos.filter((p) =>
     laborasDelTrabajador.some((l) => l.id === p.labor_id)
   );
+
   const totalPresupuestado = presupuestosDelTrabajador.reduce(
     (acc, p) => acc + Number(p.total_estimado ?? 0), 0
   );

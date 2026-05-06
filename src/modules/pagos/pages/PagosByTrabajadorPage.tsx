@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Box, Button, Card, CardContent, Divider, Paper,
+  Box, Button, Card, CardContent, Paper,
   Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography,
 } from '@mui/material';
 import { ArrowLeft, Plus } from 'lucide-react';

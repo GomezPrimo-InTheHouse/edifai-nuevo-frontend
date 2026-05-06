@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Button, Card, CardContent, Divider, Grid,
-  Stack, Typography, LinearProgress,
+  Stack, Typography,
 } from '@mui/material';
 import { ArrowLeft, MapPin, FileText, Calendar, Hammer, Pencil, Clock, CheckCircle2, Building2 } from 'lucide-react';
 

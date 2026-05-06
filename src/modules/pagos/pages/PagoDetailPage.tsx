@@ -15,14 +15,14 @@ import { useNotify } from '../../../shared/hooks/useNotify';
 
 const ESTADOS = ['Pendiente', 'Pagado', 'Parcial', 'Cancelado'];
 
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <Stack direction="row" justifyContent="space-between" sx={{ py: 1, borderBottom: '1px solid #F1F5F9' }}>
-      <Typography variant="body2" color="text.secondary">{label}</Typography>
-      <Typography variant="body2" fontWeight={600}>{value}</Typography>
-    </Stack>
-  );
-}
+// function DetailRow({ label, value }: { label: string; value: string }) {
+//   return (
+//     <Stack direction="row" justifyContent="space-between" sx={{ py: 1, borderBottom: '1px solid #F1F5F9' }}>
+//       <Typography variant="body2" color="text.secondary">{label}</Typography>
+//       <Typography variant="body2" fontWeight={600}>{value}</Typography>
+//     </Stack>
+//   );
+// }
 
 export const PagoDetailPage: React.FC = () => {
   const navigate = useNavigate();
