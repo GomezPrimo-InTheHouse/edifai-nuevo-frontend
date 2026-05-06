@@ -23,15 +23,15 @@ const ROLES = ALL_ROLES.filter((r) => ROLES_ADMIN.includes(r.id));
 // Roles que corresponden a trabajadores
 const ROLES_TRABAJADOR = [7, 8];
 
-function toFormDefaults(initialData?: Usuario | null): UsuarioFormValues {
-  return {
-    nombre: initialData?.nombre ?? '',
-    email:  initialData?.email  ?? '',
-    password: '',
-    rol_id: initialData?.rol_id ?? '',
-    usuario_creador_id: initialData?.usuario_creador_id ?? null,
-  };
-}
+// function toFormDefaults(initialData?: Usuario | null): UsuarioFormValues {
+//   return {
+//     nombre: initialData?.nombre ?? '',
+//     email:  initialData?.email  ?? '',
+//     password: '',
+//     rol_id: initialData?.rol_id ?? '',
+//     usuario_creador_id: initialData?.usuario_creador_id ?? null,
+//   };
+// }
 
 export function UsuarioForm({ initialData, onSubmit, isSubmitting = false, isEdit = false }: Props) {
 

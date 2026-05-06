@@ -20,10 +20,11 @@ export const PagosByTrabajadorPage: React.FC = () => {
   const [pagoModalOpen, setPagoModalOpen] = useState(false);
 
   const { data: trabajador } = useTrabajadorDetail(trabajadorId);
-  const { data: pagos = [], isLoading } = usePagosByTrabajador(trabajadorId);
+  const { data: pagosData, isLoading } = usePagosByTrabajador(trabajadorId);
+  const pagos = pagosData?.data ?? [];
 
-  const totalPagado = pagos.filter((p) => p.estado === 'Pagado').reduce((acc, p) => acc + Number(p.monto), 0);
-  const totalPendiente = pagos.filter((p) => p.estado === 'Pendiente').reduce((acc, p) => acc + Number(p.monto), 0);
+  const totalPagado = pagosData?.resumen?.total_pagado ?? 0;
+  const totalPendiente = pagosData?.resumen?.saldo_pendiente ?? 0;
 
   if (isLoading) return <LoadingState message="Cargando pagos..." />;
 

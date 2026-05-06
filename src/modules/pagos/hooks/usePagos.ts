@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { pagoApi } from '../../../services/api/pago.api';
 import type { CreatePagoPayload } from '../types/pago.types';
-import { presupuestoApi } from '../../../services/api/presupuesto.api';
+// import { presupuestoApi } from '../../../services/api/presupuesto.api';
 
 export const pagosQueryKeys = {
   all: ['pagos'] as const,
