@@ -45,3 +45,5 @@ export function useDeleteCliente() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: clientesQueryKeys.all }),
   });
 }
+
+

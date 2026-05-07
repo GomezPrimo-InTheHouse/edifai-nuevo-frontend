@@ -8,6 +8,8 @@ import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { ObraForm } from '../components/ObraForm';
 import { useNotify } from '../../../shared/context/NotifyContext'; 
 
+import { useClientesList } from '../../clientes/hooks/useClientes';
+
 import {
   useCreateObra,
   useEstadosObraOptions,
@@ -23,7 +25,8 @@ export const ObraCreatePage: React.FC = () => {
   const createMutation = useCreateObra();
   const { data: tiposObra = [] } = useTiposObraOptions();
   const { data: estados = [] } = useEstadosObraOptions();
-
+  const { data: clientes = [] } = useClientesList();
+  
   const handleSubmit = async (values: any) => {
   try {
     await createMutation.mutateAsync(values);
@@ -71,6 +74,7 @@ export const ObraCreatePage: React.FC = () => {
 
       <ObraForm
         tiposObra={tiposObra}
+        clientes={clientes}
         estados={estados}
         onSubmit={handleSubmit}
         isSubmitting={createMutation.isPending}

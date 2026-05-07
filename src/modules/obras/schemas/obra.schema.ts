@@ -12,6 +12,9 @@ export const obraSchema = z
 
     ubicacion: z.string().trim().optional().or(z.literal('')),
 
+    latitud:  z.number().nullable().optional(),
+    longitud: z.number().nullable().optional(),
+
     tipo_obra_id: z
       .union([z.number().int().positive(), z.literal('')])
       .refine((v) => v !== '', { message: 'Seleccioná un tipo de obra' }),
@@ -20,20 +23,18 @@ export const obraSchema = z
       .union([z.number().int().positive(), z.literal('')])
       .refine((v) => v !== '', { message: 'Seleccioná un estado' }),
 
-    // Cliente opcional — puede ser número, vacío o null
     cliente_id: z
       .union([z.number().int().positive(), z.literal(''), z.null()])
       .optional(),
 
     fecha_inicio_estimado: z.string().optional(),
-    fecha_fin_estimado: z.string().optional(),
-    fecha_inicio_real: z.string().optional(),
-    fecha_fin_real: z.string().optional(),
+    fecha_fin_estimado:    z.string().optional(),
+    fecha_inicio_real:     z.string().optional(),
+    fecha_fin_real:        z.string().optional(),
 
     usuario_creador_id: z.number().int().positive(),
   })
   .superRefine((data, ctx) => {
-    // Fechas estimadas: inicio no puede ser posterior al fin
     if (data.fecha_inicio_estimado && data.fecha_fin_estimado) {
       if (data.fecha_inicio_estimado > data.fecha_fin_estimado) {
         ctx.addIssue({
@@ -43,7 +44,6 @@ export const obraSchema = z
         });
       }
     }
-    // Fechas reales: misma lógica
     if (data.fecha_inicio_real && data.fecha_fin_real) {
       if (data.fecha_inicio_real > data.fecha_fin_real) {
         ctx.addIssue({

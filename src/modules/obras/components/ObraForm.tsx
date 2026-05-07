@@ -1,35 +1,27 @@
-
-
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Box,
-  Button,
-  Grid,
-  MenuItem,
-  Paper,
-  Stack,
-  TextField,
+  Box, Button, Grid, IconButton, InputAdornment,
+  MenuItem, Paper, Stack, TextField, Tooltip, Typography,
 } from '@mui/material';
+import { MapPin, X } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { obraSchema, type ObraSchemaValues } from '../schemas/obra.schema';
 import type {
-  EstadoOption,
-  Obra,
-  ObraFormValues,
-  TipoObraOption,
+  ClienteOption, EstadoOption, Obra, ObraFormValues, TipoObraOption,
 } from '../types/obra.types';
+import { MapPickerModal, type MapPickerResult } from './MapPickerModal';
 
 interface ObraFormProps {
-  initialData?: Obra | null;
-  tiposObra: TipoObraOption[];
-  estados: EstadoOption[];
-  onSubmit: (values: ObraFormValues) => void | Promise<void>;
+  initialData?:  Obra | null;
+  tiposObra:     TipoObraOption[];
+  estados:       EstadoOption[];
+  clientes:      ClienteOption[];
+  onSubmit:      (values: ObraFormValues) => void | Promise<void>;
   isSubmitting?: boolean;
 }
 
-// Convierte fecha ISO "2025-06-15T03:00:00.000Z" → "2025-06-15" para input type="date"
 function toDateInput(value?: string | null): string {
   if (!value) return '';
   return value.split('T')[0];
@@ -37,238 +29,262 @@ function toDateInput(value?: string | null): string {
 
 function toFormDefaults(initialData?: Obra | null): ObraFormValues {
   return {
-    nombre: initialData?.nombre ?? '',
-    descripcion: initialData?.descripcion ?? '',
-    ubicacion: initialData?.ubicacion ?? '',
-    // Solo asigna IDs si ya hay opciones cargadas — evita out-of-range en MUI Select
-    tipo_obra_id: initialData?.tipo_obra_id ?? '',
-    estado_id: initialData?.estado_id ?? '',
+    nombre:                initialData?.nombre                ?? '',
+    descripcion:           initialData?.descripcion           ?? '',
+    ubicacion:             initialData?.ubicacion             ?? '',
+    latitud:               initialData?.latitud               ?? null,
+    longitud:              initialData?.longitud              ?? null,
+    tipo_obra_id:          initialData?.tipo_obra_id          ?? '',
+    estado_id:             initialData?.estado_id             ?? '',
+    cliente_id:            initialData?.cliente_id            ?? '',
     fecha_inicio_estimado: toDateInput(initialData?.fecha_inicio_estimado),
-    fecha_fin_estimado: toDateInput(initialData?.fecha_fin_estimado),
-    fecha_inicio_real: toDateInput(initialData?.fecha_inicio_real),
-    fecha_fin_real: toDateInput(initialData?.fecha_fin_real),
-    usuario_creador_id: initialData?.usuario_creador_id ?? 2,
+    fecha_fin_estimado:    toDateInput(initialData?.fecha_fin_estimado),
+    fecha_inicio_real:     toDateInput(initialData?.fecha_inicio_real),
+    fecha_fin_real:        toDateInput(initialData?.fecha_fin_real),
+    usuario_creador_id:    initialData?.usuario_creador_id    ?? 2,
   };
 }
 
-export function ObraForm({
-  initialData,
-  tiposObra,
-  estados,
-  onSubmit,
-  isSubmitting = false,
-}: ObraFormProps) {
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ObraSchemaValues>({
-    resolver: zodResolver(obraSchema),
-    defaultValues: toFormDefaults(initialData),
-  });
+function clienteLabel(c: ClienteOption): string {
+  if (c.razon_social) return c.razon_social;
+  return `${c.nombre}${c.apellido ? ` ${c.apellido}` : ''}`;
+}
 
-  // Re-inicializa el form cuando llegan los datos de la obra O cuando cargan las opciones
-  // Esto resuelve el out-of-range: espera a que tiposObra y estados estén disponibles
+export function ObraForm({
+  initialData, tiposObra, estados, clientes, onSubmit, isSubmitting = false,
+}: ObraFormProps) {
+  const [mapOpen, setMapOpen] = useState(false);
+
+  const { control, handleSubmit, reset, setValue, watch, formState: { errors } } =
+    useForm<ObraSchemaValues>({
+      resolver: zodResolver(obraSchema),
+      defaultValues: toFormDefaults(initialData) as unknown as ObraSchemaValues,
+    });
+
+  const ubicacionWatch = watch('ubicacion');
+  const latitudWatch   = watch('latitud');
+  const longitudWatch  = watch('longitud');
+  const tieneCoords    = latitudWatch != null && longitudWatch != null;
+
   useEffect(() => {
     if (initialData && tiposObra.length > 0 && estados.length > 0) {
-      reset(toFormDefaults(initialData));
+      reset(toFormDefaults(initialData) as unknown as ObraSchemaValues);
     }
   }, [initialData, tiposObra, estados, reset]);
 
+  const handleMapConfirm = (result: MapPickerResult) => {
+    setValue('ubicacion', result.direccion);
+    setValue('latitud',   result.latitud);
+    setValue('longitud',  result.longitud);
+  };
+
+  const handleClearLocation = () => {
+    setValue('ubicacion', '');
+    setValue('latitud',   null);
+    setValue('longitud',  null);
+  };
+
   const handleFormSubmit = (values: ObraSchemaValues) => {
-    onSubmit(values as ObraFormValues);
+    onSubmit(values as unknown as ObraFormValues);
   };
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3 }}>
       <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
         <Grid container spacing={2}>
+
           {/* Nombre */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="nombre"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Nombre de la obra"
-                  error={!!errors.nombre}
-                  helperText={errors.nombre?.message ?? ''}
-                />
-              )}
-            />
+            <Controller name="nombre" control={control} render={({ field }) => (
+              <TextField
+                {...field} fullWidth label="Nombre de la obra *"
+                error={!!errors.nombre} helperText={errors.nombre?.message ?? ''}
+              />
+            )} />
           </Grid>
 
-          {/* Ubicación */}
+          {/* Ubicación + botón mapa */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="ubicacion"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Ubicación"
-                  error={!!errors.ubicacion}
-                  helperText={errors.ubicacion?.message ?? ''}
-                />
-              )}
-            />
+            <Controller name="ubicacion" control={control} render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label="Ubicación"
+                placeholder="Buscá en el mapa o escribí manualmente"
+                error={!!errors.ubicacion}
+                helperText={
+                  tieneCoords
+                    ? `📍 ${(latitudWatch as number).toFixed(5)}, ${(longitudWatch as number).toFixed(5)}`
+                    : errors.ubicacion?.message ?? 'Usá el botón del mapa para mayor precisión'
+                }
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {(ubicacionWatch || tieneCoords) && (
+                        <Tooltip title="Limpiar ubicación">
+                          <IconButton size="small" onClick={handleClearLocation} sx={{ mr: 0.5 }}>
+                            <X size={14} />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      <Tooltip title="Seleccionar en el mapa">
+                        <IconButton
+                          size="small"
+                          onClick={() => setMapOpen(true)}
+                          sx={{
+                            bgcolor: tieneCoords ? '#0F172A' : '#F1F5F9',
+                            color:   tieneCoords ? '#FFFFFF'  : '#475569',
+                            '&:hover': { bgcolor: tieneCoords ? '#1E293B' : '#E2E8F0' },
+                          }}
+                        >
+                          <MapPin size={16} />
+                        </IconButton>
+                      </Tooltip>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )} />
           </Grid>
 
           {/* Descripción */}
           <Grid size={{ xs: 12 }}>
-            <Controller
-              name="descripcion"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  multiline
-                  minRows={4}
-                  label="Descripción"
-                  error={!!errors.descripcion}
-                  helperText={errors.descripcion?.message ?? ''}
-                />
-              )}
-            />
+            <Controller name="descripcion" control={control} render={({ field }) => (
+              <TextField
+                {...field} fullWidth multiline minRows={3} label="Descripción"
+                error={!!errors.descripcion} helperText={errors.descripcion?.message ?? ''}
+              />
+            )} />
           </Grid>
 
           {/* Tipo de obra */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="tipo_obra_id"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  select
-                  fullWidth
-                  label="Tipo de obra"
-                  value={field.value}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value === '' ? '' : Number(value));
-                  }}
-                  error={!!errors.tipo_obra_id}
-                  helperText={errors.tipo_obra_id?.message ?? ''}
-                >
-                  <MenuItem value="">Seleccionar</MenuItem>
-                  {tiposObra.map((tipo) => (
-                    <MenuItem key={tipo.id} value={tipo.id}>
-                      {tipo.nombre}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )}
-            />
+            <Controller name="tipo_obra_id" control={control} render={({ field }) => (
+              <TextField
+                select fullWidth label="Tipo de obra *"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
+                error={!!errors.tipo_obra_id} helperText={errors.tipo_obra_id?.message ?? ''}
+              >
+                <MenuItem value="">Seleccionar</MenuItem>
+                {tiposObra.map((t) => <MenuItem key={t.id} value={t.id}>{t.nombre}</MenuItem>)}
+              </TextField>
+            )} />
           </Grid>
 
           {/* Estado */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="estado_id"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  select
-                  fullWidth
-                  label="Estado"
-                  value={field.value}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value === '' ? '' : Number(value));
-                  }}
-                  error={!!errors.estado_id}
-                  helperText={errors.estado_id?.message ?? ''}
-                >
-                  <MenuItem value="">Seleccionar</MenuItem>
-                  {estados.map((estado) => (
-                    <MenuItem key={estado.id} value={estado.id}>
-                      {estado.nombre}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )}
-            />
+            <Controller name="estado_id" control={control} render={({ field }) => (
+              <TextField
+                select fullWidth label="Estado *"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
+                error={!!errors.estado_id} helperText={errors.estado_id?.message ?? ''}
+              >
+                <MenuItem value="">Seleccionar</MenuItem>
+                {estados.map((e) => <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>)}
+              </TextField>
+            )} />
+          </Grid>
+
+          {/* Cliente (opcional) */}
+          <Grid size={{ xs: 12 }}>
+            <Controller name="cliente_id" control={control} render={({ field }) => (
+              <TextField
+                select fullWidth label="Cliente asociado (opcional)"
+                value={field.value ?? ''}
+                onChange={(e) => field.onChange(e.target.value === '' ? null : Number(e.target.value))}
+                error={!!errors.cliente_id}
+                helperText={errors.cliente_id?.message ?? 'Podés asociar un cliente o dejarlo sin asignar.'}
+              >
+                <MenuItem value="">Sin cliente asignado</MenuItem>
+                {clientes.map((c) => (
+                  <MenuItem key={c.id} value={c.id}>
+                    {clienteLabel(c)}
+                    {c.telefono && (
+                      <Typography component="span" variant="caption" sx={{ ml: 1, color: '#94A3B8' }}>
+                        · {c.telefono}
+                      </Typography>
+                    )}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )} />
           </Grid>
 
           {/* Fechas estimadas */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="fecha_inicio_estimado"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Inicio estimado"
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="caption" fontWeight={700}
+              sx={{ color: '#64748B', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              Fechas estimadas
+            </Typography>
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="fecha_fin_estimado"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Fin estimado"
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+            <Controller name="fecha_inicio_estimado" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth type="date" label="Inicio estimado"
+                InputLabelProps={{ shrink: true }}
+                error={!!errors.fecha_inicio_estimado}
+                helperText={errors.fecha_inicio_estimado?.message ?? ''}
+              />
+            )} />
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="fecha_fin_estimado" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth type="date" label="Fin estimado"
+                InputLabelProps={{ shrink: true }}
+                error={!!errors.fecha_fin_estimado}
+                helperText={errors.fecha_fin_estimado?.message ?? ''}
+              />
+            )} />
           </Grid>
 
           {/* Fechas reales */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="fecha_inicio_real"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Inicio real"
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+          <Grid size={{ xs: 12 }}>
+            <Typography variant="caption" fontWeight={700}
+              sx={{ color: '#64748B', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              Fechas reales
+            </Typography>
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="fecha_fin_real"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Fin real"
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+            <Controller name="fecha_inicio_real" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth type="date" label="Inicio real"
+                InputLabelProps={{ shrink: true }}
+                error={!!errors.fecha_inicio_real}
+                helperText={errors.fecha_inicio_real?.message ?? ''}
+              />
+            )} />
           </Grid>
+
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="fecha_fin_real" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth type="date" label="Fin real"
+                InputLabelProps={{ shrink: true }}
+                error={!!errors.fecha_fin_real}
+                helperText={errors.fecha_fin_real?.message ?? ''}
+              />
+            )} />
+          </Grid>
+
         </Grid>
 
-        {/* Botón de envío */}
         <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
           <Button type="submit" variant="contained" disabled={isSubmitting}>
             {isSubmitting ? 'Guardando...' : 'Guardar obra'}
           </Button>
         </Stack>
       </Box>
+
+      <MapPickerModal
+        open={mapOpen}
+        onClose={() => setMapOpen(false)}
+        onConfirm={handleMapConfirm}
+        initialLatitud={latitudWatch as number | null}
+        initialLongitud={longitudWatch as number | null}
+        initialDireccion={ubicacionWatch ?? ''}
+      />
     </Paper>
   );
 }

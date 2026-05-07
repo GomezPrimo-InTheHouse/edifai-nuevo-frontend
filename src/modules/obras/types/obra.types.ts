@@ -3,9 +3,11 @@ export interface Obra {
   nombre: string;
   descripcion?: string | null;
   ubicacion?: string | null;
+  latitud?: number | null;              // ← nuevo
+  longitud?: number | null;             // ← nuevo
   tipo_obra_id?: number | null;
   estado_id?: number | null;
-  cliente_id?: number | null;           // ← nuevo
+  cliente_id?: number | null;
   fecha_inicio_estimado?: string | null;
   fecha_fin_estimado?: string | null;
   fecha_inicio_real?: string | null;
@@ -19,9 +21,11 @@ export interface ObraFormValues {
   nombre: string;
   descripcion: string;
   ubicacion: string;
+  latitud: number | null;               // ← nuevo
+  longitud: number | null;              // ← nuevo
   tipo_obra_id: number | '';
   estado_id: number | '';
-  cliente_id: number | '' | null;       // ← nuevo
+  cliente_id: number | '' | null;
   fecha_inicio_estimado: string;
   fecha_fin_estimado: string;
   fecha_inicio_real: string;
@@ -43,7 +47,6 @@ export interface EstadoOption {
   ambito: string;
 }
 
-// Cliente simplificado — solo lo que necesita el select de obra
 export interface ClienteOption {
   id: number;
   nombre: string;
@@ -58,9 +61,11 @@ export interface CreateObraPayload {
   nombre: string;
   descripcion?: string | null;
   ubicacion?: string | null;
+  latitud?: number | null;              // ← nuevo
+  longitud?: number | null;             // ← nuevo
   tipo_obra_id?: number | null;
   estado_id?: number | null;
-  cliente_id?: number | null;           // ← nuevo
+  cliente_id?: number | null;
   fecha_inicio_estimado?: string | null;
   fecha_fin_estimado?: string | null;
   fecha_inicio_real?: string | null;
