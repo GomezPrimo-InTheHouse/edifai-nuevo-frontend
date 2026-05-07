@@ -32,8 +32,8 @@ function toFormDefaults(initialData?: Obra | null): ObraFormValues {
     nombre:                initialData?.nombre                ?? '',
     descripcion:           initialData?.descripcion           ?? '',
     ubicacion:             initialData?.ubicacion             ?? '',
-    latitud:               initialData?.latitud               ?? null,
-    longitud:              initialData?.longitud              ?? null,
+    latitud:               initialData?.latitud  != null ? Number(initialData.latitud)  : null,
+    longitud:              initialData?.longitud != null ? Number(initialData.longitud) : null,
     tipo_obra_id:          initialData?.tipo_obra_id          ?? '',
     estado_id:             initialData?.estado_id             ?? '',
     cliente_id:            initialData?.cliente_id            ?? '',
@@ -64,7 +64,11 @@ export function ObraForm({
   const ubicacionWatch = watch('ubicacion');
   const latitudWatch   = watch('latitud');
   const longitudWatch  = watch('longitud');
-  const tieneCoords    = latitudWatch != null && longitudWatch != null;
+
+  // Conversión segura a number — la DB puede devolver string
+  const latNum      = latitudWatch  != null ? Number(latitudWatch)  : null;
+  const lngNum      = longitudWatch != null ? Number(longitudWatch) : null;
+  const tieneCoords = latNum != null && !isNaN(latNum) && lngNum != null && !isNaN(lngNum);
 
   useEffect(() => {
     if (initialData && tiposObra.length > 0 && estados.length > 0) {
@@ -114,7 +118,7 @@ export function ObraForm({
                 error={!!errors.ubicacion}
                 helperText={
                   tieneCoords
-                    ? `📍 ${(latitudWatch as number).toFixed(5)}, ${(longitudWatch as number).toFixed(5)}`
+                    ? `📍 ${latNum!.toFixed(5)}, ${lngNum!.toFixed(5)}`
                     : errors.ubicacion?.message ?? 'Usá el botón del mapa para mayor precisión'
                 }
                 InputProps={{
@@ -281,8 +285,8 @@ export function ObraForm({
         open={mapOpen}
         onClose={() => setMapOpen(false)}
         onConfirm={handleMapConfirm}
-        initialLatitud={latitudWatch as number | null}
-        initialLongitud={longitudWatch as number | null}
+        initialLatitud={latNum}
+        initialLongitud={lngNum}
         initialDireccion={ubicacionWatch ?? ''}
       />
     </Paper>

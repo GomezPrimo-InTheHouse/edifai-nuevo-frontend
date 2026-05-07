@@ -33,6 +33,10 @@ interface Props {
   initialDireccion?: string;
 }
 
+function acortarDireccion(displayName: string): string {
+  return displayName.split(',').slice(0, 4).join(',').trim();
+}
+
 const DEFAULT_LAT  = -32.4098;
 const DEFAULT_LNG  = -63.2439;
 const DEFAULT_ZOOM = 13;
@@ -49,7 +53,7 @@ async function reverseGeocode(lat: number, lon: number): Promise<string> {
   const url  = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
   const res  = await fetch(url, { headers: { 'Accept-Language': 'es' } });
   const data = await res.json();
-  return data?.display_name ?? `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+  return data?.display_name ? acortarDireccion(data.display_name) : `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
 }
 
 export function MapPickerModal({
@@ -162,7 +166,7 @@ export function MapPickerModal({
       }
 
       setCoords({ lat, lng: lon });
-      setDireccion(display_name);
+    setDireccion(acortarDireccion(display_name));
     } catch {
       setSearchError('Error al buscar. Verificá tu conexión.');
     } finally {
