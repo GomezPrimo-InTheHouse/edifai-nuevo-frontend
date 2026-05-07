@@ -75,10 +75,12 @@ import {
   useEstadosObraOptions,
 } from '../hooks/useObras';
 import { useNotify } from '../../../shared/context/NotifyContext';
+import { useClientesList } from '../../clientes/hooks/useClientes';
 export const ObraEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const obraId = Number(id);
+  const { data: clientes = [] } = useClientesList();
 
   const { data: obra, isLoading } = useObraDetail(obraId);
   const updateMutation = useUpdateObra();
@@ -141,6 +143,7 @@ export const ObraEditPage: React.FC = () => {
       <ObraForm
         initialData={obra}
         tiposObra={tiposObra}
+         clientes={clientes} 
         estados={estados}
         onSubmit={handleSubmit}
         isSubmitting={updateMutation.isPending}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Box, Button, CircularProgress, Dialog, DialogContent,
-  DialogTitle, IconButton, InputAdornment, Stack, TextField, Tooltip, Typography,
+  DialogTitle, IconButton, InputAdornment, Stack, TextField, Typography,
 } from '@mui/material';
 import { MapPin, Search, X } from 'lucide-react';
 import L from 'leaflet';
