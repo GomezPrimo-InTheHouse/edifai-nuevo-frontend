@@ -52,3 +52,9 @@ export function useCambiarPassword() {
       usuarioApi.cambiarPassword(id, password),
   });
 }
+
+export function useRegenerarTotp() {
+  return useMutation({
+    mutationFn: (id: number) => usuarioApi.regenerarTotp(id),
+  });
+}

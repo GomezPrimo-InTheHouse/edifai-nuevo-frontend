@@ -65,4 +65,23 @@ export const usuarioApi = {
     const response = await httpClient.get(`${baseUrl}-rol/getAllRoles`);
     return response.data;
   },
+
+  async regenerarTotp(id: number): Promise<{
+  qrCodeDataURL: string;
+  totp_seed:     string;
+  message:       string;
+}> {
+  const response = await httpClient.post<{
+    ok:            boolean;
+    qrCodeDataURL: string;
+    totp_seed:     string;
+    message:       string;
+  }>(`${baseUrl}/${id}/regenerar-totp`, {});
+
+  return {
+    qrCodeDataURL: response.data.qrCodeDataURL,
+    totp_seed:     response.data.totp_seed,
+    message:       response.data.message,
+  };
+},
 };

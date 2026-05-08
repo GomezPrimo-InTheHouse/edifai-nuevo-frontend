@@ -22,6 +22,35 @@ export const UsuarioCreatePage: React.FC = () => {
     totpSeed: string;   // ← nuevo
   } | null>(null);
 
+  // const handleSubmit = async (values: any) => {
+  //   try {
+  //     const result = await createMutation.mutateAsync({
+  //       nombre:             values.nombre,
+  //       email:              values.email,
+  //       password:           values.password,
+  //       rol_id:             Number(values.rol_id),
+  //       usuario_creador_id: user?.id ?? null,
+  //     });
+
+  //     if (result.qrCodeDataURL) {
+  //       setQrData({
+  //         qrUrl:    result.qrCodeDataURL,
+  //         email:    values.email,
+  //         totpSeed: result.totp_seed ?? '',   // ← viene del backend
+  //       });
+  //     } else {
+  //       notify.success('Usuario creado correctamente');
+  //       navigate('/usuarios');
+  //     }
+  //   } catch (error: any) {
+  //     const mensaje =
+  //       error?.response?.data?.message ||
+  //       error?.response?.data?.error ||
+  //       'No se pudo crear el usuario.';
+  //     notify.error(mensaje);
+  //   }
+  // };
+
   const handleSubmit = async (values: any) => {
     try {
       const result = await createMutation.mutateAsync({
@@ -32,11 +61,15 @@ export const UsuarioCreatePage: React.FC = () => {
         usuario_creador_id: user?.id ?? null,
       });
 
+      // ← AGREGÁ ESTO
+      console.log('RESULT COMPLETO:', result);
+      console.log('totp_seed recibido:', result.totp_seed);
+
       if (result.qrCodeDataURL) {
         setQrData({
           qrUrl:    result.qrCodeDataURL,
           email:    values.email,
-          totpSeed: result.totp_seed ?? '',   // ← viene del backend
+          totpSeed: result.totp_seed ?? '',
         });
       } else {
         notify.success('Usuario creado correctamente');
@@ -50,7 +83,6 @@ export const UsuarioCreatePage: React.FC = () => {
       notify.error(mensaje);
     }
   };
-
   return (
     <AppLayout>
       <PageHeader
