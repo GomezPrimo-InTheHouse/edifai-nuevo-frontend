@@ -21,24 +21,24 @@ export const usuarioApi = {
   },
 
   // Crea usuario vía ms-usuario → ms-auth (genera TOTP + QR)
-async create(payload: CreateUsuarioPayload): Promise<{
+  async create(payload: CreateUsuarioPayload): Promise<{
     data:          Usuario;
     qrCodeDataURL: string | null;
-    totp_seed:     string | null;   // ← agregar
+    totp_seed:     string | null;
     message:       string;
   }> {
     const response = await httpClient.post<{
       ok:            boolean;
-      data:          Usuario;
+      user:          Usuario;       // ← "user" en lugar de "data"
       qrCodeDataURL: string | null;
-      totp_seed:     string | null;   // ← agregar
+      totp_seed:     string | null;
       message:       string;
     }>(`${baseUrl}/create`, payload);
 
     return {
-      data:          response.data.data,
+      data:          response.data.user,          // ← .user en lugar de .data.data
       qrCodeDataURL: response.data.qrCodeDataURL ?? null,
-      totp_seed:     response.data.totp_seed     ?? null,   // ← agregar
+      totp_seed:     response.data.totp_seed     ?? null,
       message:       response.data.message,
     };
   },
