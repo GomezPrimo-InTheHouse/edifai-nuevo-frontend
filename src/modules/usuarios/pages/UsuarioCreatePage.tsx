@@ -15,23 +15,28 @@ export const UsuarioCreatePage: React.FC = () => {
   const notify = useNotify();
   const createMutation = useCreateUsuario();
   const user = useAuthStore((s) => s.user);
-  const [qrData, setQrData] = useState<{ qrUrl: string; email: string } | null>(null);
+
+  const [qrData, setQrData] = useState<{
+    qrUrl:    string;
+    email:    string;
+    totpSeed: string;   // ← nuevo
+  } | null>(null);
 
   const handleSubmit = async (values: any) => {
     try {
       const result = await createMutation.mutateAsync({
-        nombre: values.nombre,
-        email: values.email,
-        password: values.password,
-        rol_id: Number(values.rol_id),
+        nombre:             values.nombre,
+        email:              values.email,
+        password:           values.password,
+        rol_id:             Number(values.rol_id),
         usuario_creador_id: user?.id ?? null,
       });
 
-      // El backend devuelve qrCodeDataURL
       if (result.qrCodeDataURL) {
         setQrData({
-          qrUrl: result.qrCodeDataURL,
-          email: values.email,
+          qrUrl:    result.qrCodeDataURL,
+          email:    values.email,
+          totpSeed: result.totp_seed ?? '',   // ← viene del backend
         });
       } else {
         notify.success('Usuario creado correctamente');
@@ -61,9 +66,9 @@ export const UsuarioCreatePage: React.FC = () => {
           </Button>
         }
       />
+
       <UsuarioForm onSubmit={handleSubmit} isSubmitting={createMutation.isPending} />
 
-      {/* QR Modal — aparece después de crear, se cierra manualmente */}
       {qrData && (
         <QRCodeModal
           open={!!qrData}
@@ -73,6 +78,7 @@ export const UsuarioCreatePage: React.FC = () => {
           }}
           qrUrl={qrData.qrUrl}
           email={qrData.email}
+          totpSeed={qrData.totpSeed}   // ← ahora viene del estado
         />
       )}
     </AppLayout>

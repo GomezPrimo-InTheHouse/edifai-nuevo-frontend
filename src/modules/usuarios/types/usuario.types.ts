@@ -8,6 +8,7 @@ export interface Usuario {
   estado_id?: number | null;
   estado_nombre?: string | null;
   totp_seed?: string | null;
+ 
   created_at?: string | null;
   updated_at?: string | null;
   usuario_creador_id?: number | null; // Agregado para mantener consistencia con el nuevo campo
@@ -34,4 +35,11 @@ export interface UpdateUsuarioPayload {
   nombre: string;
   email: string;
   rol_id: number;
+}
+// Agregá esta interface en usuario.types.ts
+export interface CreateUsuarioResponse {
+  data:          Usuario;
+  qrCodeDataURL: string | null;
+  totp_seed:     string | null;   // ← agregar
+  message:       string;
 }
