@@ -24,7 +24,7 @@ export function useEstadosGenerales() {
 export function useCreateEspecialidad() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { nombre: string; descripcion?: string; estado_id?: number }) =>
+    mutationFn: (payload: { nombre: string; descripcion: string }) =>
       especialidadApi.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: especialidadesQueryKeys.all });
