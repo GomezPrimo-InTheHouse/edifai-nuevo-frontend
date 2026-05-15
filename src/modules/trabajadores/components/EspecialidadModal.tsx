@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
-  Alert, Box, Button, CircularProgress, Dialog, DialogContent, DialogTitle,
-  Divider, IconButton, List, ListItem, ListItemText,
-  Snackbar, Stack, TextField, Typography,
+  Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent,
+  DialogContentText, DialogTitle, Divider, IconButton, List, ListItem,
+  ListItemText, Snackbar, Stack, TextField, Typography,
 } from '@mui/material';
 import { Trash2, X } from 'lucide-react';
 import { useCreateEspecialidad, useDeleteEspecialidad, useEspecialidadesList } from '../hooks/useEspecialidades';
+import type { EspecialidadOption } from '../types/trabajador.types';
 
 interface EspecialidadModalProps {
   open: boolean;
@@ -15,6 +16,9 @@ interface EspecialidadModalProps {
 export const EspecialidadModal: React.FC<EspecialidadModalProps> = ({ open, onClose }) => {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; especialidad: EspecialidadOption | null }>({
+    open: false, especialidad: null,
+  });
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false, message: '', severity: 'success',
   });
@@ -38,13 +42,16 @@ export const EspecialidadModal: React.FC<EspecialidadModalProps> = ({ open, onCl
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('¿Eliminar esta especialidad?')) return;
+  const handleDeleteConfirm = async () => {
+    if (!confirmDialog.especialidad) return;
     try {
-      await deleteMutation.mutateAsync(id);
-      showSnackbar('Especialidad eliminada', 'success');
-    } catch {
-      showSnackbar('Error al eliminar la especialidad', 'error');
+      await deleteMutation.mutateAsync(confirmDialog.especialidad.id);
+      showSnackbar('Especialidad eliminada correctamente', 'success');
+    } catch (err: any) {
+      const msg = err?.response?.data?.error ?? 'Error al eliminar la especialidad';
+      showSnackbar(msg, 'error');
+    } finally {
+      setConfirmDialog({ open: false, especialidad: null });
     }
   };
 
@@ -118,7 +125,7 @@ export const EspecialidadModal: React.FC<EspecialidadModalProps> = ({ open, onCl
                   />
                   <IconButton
                     size="small" color="error"
-                    onClick={() => handleDelete(esp.id)}
+                    onClick={() => setConfirmDialog({ open: true, especialidad: esp })}
                     disabled={deleteMutation.isPending}
                   >
                     <Trash2 size={16} />
@@ -130,9 +137,32 @@ export const EspecialidadModal: React.FC<EspecialidadModalProps> = ({ open, onCl
         </DialogContent>
       </Dialog>
 
+      {/* Dialog de confirmación */}
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ open: false, especialidad: null })} maxWidth="xs" fullWidth>
+        <DialogTitle fontWeight={700}>Eliminar especialidad</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Estás seguro que querés eliminar <strong>{confirmDialog.especialidad?.nombre}</strong>? Esta acción no se puede deshacer.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setConfirmDialog({ open: false, especialidad: null })} variant="outlined">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            variant="contained" color="error"
+            disabled={deleteMutation.isPending}
+          >
+            {deleteMutation.isPending ? 'Eliminando...' : 'Eliminar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar de feedback */}
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={3500}
         onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >

@@ -13,6 +13,11 @@ export interface Labor {
   usuario_creador_id: number;
   created_at?: string | null;
   updated_at?: string | null;
+  // Campos enriquecidos desde JOIN
+  obra_nombre?: string | null;
+  trabajador_nombre?: string | null;
+  trabajador_apellido?: string | null;
+  especialidad_nombre?: string | null;
 }
 
 export interface LaborFormValues {
