@@ -86,3 +86,10 @@ export function useLaborsByObra(obra_id: number) {
     enabled: Boolean(obra_id),
   });
 }
+
+export function useLaboresArchivadas() {
+  return useQuery({
+    queryKey: ['labores', 'archivadas'],
+    queryFn: () => laborApi.getAllArchivadas(),
+  });
+}

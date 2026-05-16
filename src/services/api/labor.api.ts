@@ -54,5 +54,10 @@ getByObra: async (obra_id: number) => {
   const res = await httpClient.get(`${baseUrl}/getByObra/${obra_id}`);
   return res.data.data as LaborDeObra[];
 },
+
+async getAllArchivadas(): Promise<Labor[]> {
+  const response = await httpClient.get<{ success: boolean; data: Labor[] }>(`${baseUrl}/archivadas`);
+  return response.data.data;
+},
 };
 

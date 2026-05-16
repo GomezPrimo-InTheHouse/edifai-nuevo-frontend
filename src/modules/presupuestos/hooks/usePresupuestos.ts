@@ -66,3 +66,10 @@ export function usePresupuestoContextoPago(id: number | string) {
     enabled: Boolean(id),
   });
 }
+
+export function usePresupuestosArchivados() {
+  return useQuery({
+    queryKey: ['presupuestos', 'archivados'],
+    queryFn: () => presupuestoApi.getAllArchivados(),
+  });
+}

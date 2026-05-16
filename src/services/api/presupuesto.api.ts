@@ -40,4 +40,8 @@ export const presupuestoApi = {
   );
   return response.data.data;
 },
+async getAllArchivados(): Promise<Presupuesto[]> {
+  const response = await httpClient.get<{ success: boolean; data: Presupuesto[] }>(`${baseUrl}/archivados`);
+  return response.data.data;
+},
 };

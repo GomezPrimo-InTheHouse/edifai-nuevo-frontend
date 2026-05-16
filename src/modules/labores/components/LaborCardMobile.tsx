@@ -1,4 +1,4 @@
-import { Box, Divider, IconButton, LinearProgress, Paper, Stack, Typography } from '@mui/material';
+import { Box, Chip, Divider, IconButton, LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import { Calendar, HardHat, Pencil, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { Labor } from '../types/labor.types';
@@ -10,25 +10,22 @@ interface Props {
   progreso: number;
   color: string;
   esWorker: boolean;
+  archivado?: boolean;
   onDelete: (id: number) => void;
   isDeleting: boolean;
 }
 
-export function LaborCardMobile({ labor, estadoNombre, obraNombre, progreso, color, esWorker, onDelete, isDeleting }: Props) {
+export function LaborCardMobile({ labor, estadoNombre, obraNombre, progreso, color, esWorker, archivado = false, onDelete, isDeleting }: Props) {
   const navigate = useNavigate();
 
   return (
     <Paper
       onClick={() => navigate(`/labores/${labor.id}`)}
       sx={{
-        p: 0,
-        borderRadius: 3,
-        border: '1px solid #E2E8F0',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-        bgcolor: '#ffffff',
-        overflow: 'hidden',
-        display: 'flex',
-        cursor: 'pointer',
+        p: 0, borderRadius: 3, border: '1px solid #E2E8F0',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.02)', bgcolor: '#ffffff',
+        overflow: 'hidden', display: 'flex', cursor: 'pointer',
+        opacity: archivado ? 0.75 : 1,
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:active': { transform: 'scale(0.98)' },
       }}
@@ -37,10 +34,13 @@ export function LaborCardMobile({ labor, estadoNombre, obraNombre, progreso, col
       <Stack spacing={1.5} sx={{ p: 2, flex: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <Box sx={{ pr: 1 }}>
-            <Typography variant="caption" sx={{ color, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 10 }}>
-              {estadoNombre}
-            </Typography>
-            <Typography variant="subtitle1" fontWeight={800} sx={{ color: '#1E293B', lineHeight: 1.2, mt: 0.2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.2 }}>
+              <Typography variant="caption" sx={{ color, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 10 }}>
+                {estadoNombre}
+              </Typography>
+              {archivado && <Chip label="Archivada" size="small" color="warning" variant="outlined" sx={{ height: 16, fontSize: 10 }} />}
+            </Box>
+            <Typography variant="subtitle1" fontWeight={800} sx={{ color: '#1E293B', lineHeight: 1.2 }}>
               {labor.nombre}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
@@ -73,16 +73,12 @@ export function LaborCardMobile({ labor, estadoNombre, obraNombre, progreso, col
             <Typography variant="caption" fontWeight={800} sx={{ color }}>{progreso}%</Typography>
           </Box>
           <LinearProgress
-            variant="determinate"
-            value={progreso}
-            sx={{
-              height: 10, borderRadius: 5, backgroundColor: '#F1F5F9',
-              '& .MuiLinearProgress-bar': { borderRadius: 5, backgroundColor: color },
-            }}
+            variant="determinate" value={progreso}
+            sx={{ height: 10, borderRadius: 5, backgroundColor: '#F1F5F9', '& .MuiLinearProgress-bar': { borderRadius: 5, backgroundColor: color } }}
           />
         </Box>
 
-        {!esWorker && (
+        {!esWorker && !archivado && (
           <>
             <Divider sx={{ borderStyle: 'dashed' }} />
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
@@ -94,8 +90,7 @@ export function LaborCardMobile({ labor, estadoNombre, obraNombre, progreso, col
                 <Pencil size={16} color="#64748B" />
               </IconButton>
               <IconButton
-                size="small"
-                color="error"
+                size="small" color="error"
                 onClick={(e) => { e.stopPropagation(); onDelete(labor.id); }}
                 disabled={isDeleting}
                 sx={{ bgcolor: '#FFF1F2', border: '1px solid #FECACA' }}

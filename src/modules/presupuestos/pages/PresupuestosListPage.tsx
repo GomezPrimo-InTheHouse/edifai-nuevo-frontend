@@ -2,17 +2,17 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box, Button, Chip, CircularProgress, Divider, IconButton, InputAdornment, MenuItem,
-  Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow,
-  TextField, Typography, useMediaQuery, useTheme,
+  Paper, Stack, Tab, Table, TableBody, TableCell, TableHead, TableRow,
+  Tabs, TextField, Typography, useMediaQuery, useTheme,
 } from '@mui/material';
-import { Download, Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { Archive, Download, Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { EmptyState } from '../../../shared/components/EmptyState/EmptyState';
 import { PresupuestoEstadoChip } from '../components/PresupuestoEstadoChip';
-import { useDeletePresupuesto, usePresupuestosList } from '../hooks/usePresupuestos';
+import { useDeletePresupuesto, usePresupuestosList, usePresupuestosArchivados } from '../hooks/usePresupuestos';
 import { useLaboresList } from '../../labores/hooks/useLabores';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
 import { useNotify } from '../../../shared/hooks/useNotify';
@@ -26,11 +26,13 @@ export const PresupuestosListPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { data, isLoading, isError, refetch } = usePresupuestosList();
+  const { data: presupuestosArchivados = [], isLoading: loadingArchivados } = usePresupuestosArchivados();
   const { data: labores = [] } = useLaboresList();
   const { data: todosEstados = [] } = useEstadosGenerales();
   const estados = todosEstados.filter((e) => e.ambito === 'presupuesto');
   const deleteMutation = useDeletePresupuesto();
 
+  const [tab, setTab] = useState(0);
   const [search, setSearch] = useState('');
   const [filtroObra, setFiltroObra] = useState('');
   const [filtroEspecialidad, setFiltroEspecialidad] = useState('');
@@ -59,15 +61,12 @@ export const PresupuestosListPage = () => {
     const seen = new Set<number>();
     return labores
       .filter((l) => l.trabajador_id && !seen.has(l.trabajador_id) && seen.add(l.trabajador_id))
-      .map((l) => ({
-        id: l.trabajador_id as number,
-        nombre: `${l.trabajador_nombre ?? ''} ${l.trabajador_apellido ?? ''}`.trim(),
-      }));
+      .map((l) => ({ id: l.trabajador_id as number, nombre: `${l.trabajador_nombre ?? ''} ${l.trabajador_apellido ?? ''}`.trim() }));
   }, [labores]);
 
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    return data.filter((p) => {
+  const applyFilters = (list: typeof data) => {
+    if (!list) return [];
+    return list.filter((p) => {
       const labor = getLaborById(p.labor_id);
       const termOk = !search.trim() || p.nombre?.toLowerCase().includes(search.trim().toLowerCase());
       const obraOk = !filtroObra || String(labor?.obra_id) === filtroObra;
@@ -75,25 +74,29 @@ export const PresupuestosListPage = () => {
       const trabOk = !filtroTrabajador || String(labor?.trabajador_id) === filtroTrabajador;
       return termOk && obraOk && espOk && trabOk;
     });
-  }, [data, search, filtroObra, filtroEspecialidad, filtroTrabajador, labores]);
+  };
+
+  const filteredData = useMemo(
+    () => applyFilters(tab === 0 ? data : presupuestosArchivados),
+    [tab, data, presupuestosArchivados, search, filtroObra, filtroEspecialidad, filtroTrabajador, labores]
+  );
 
   const hayFiltros = search || filtroObra || filtroEspecialidad || filtroTrabajador;
   const limpiarFiltros = () => { setSearch(''); setFiltroObra(''); setFiltroEspecialidad(''); setFiltroTrabajador(''); };
+
+  const handleTabChange = (_: any, v: number) => { setTab(v); limpiarFiltros(); };
+
+  const isLoadingCurrent = tab === 0 ? isLoading : loadingArchivados;
 
   const handleExportarPdf = async () => {
     if (filteredData.length === 0) return;
     setExportando(true);
     try {
       const materialesPorPresupuesto: Record<number, any[]> = {};
-      await Promise.all(
-        filteredData.map(async (p) => {
-          try {
-            materialesPorPresupuesto[p.id] = await presupuestoMaterialApi.getByPresupuesto(p.id);
-          } catch {
-            materialesPorPresupuesto[p.id] = [];
-          }
-        })
-      );
+      await Promise.all(filteredData.map(async (p) => {
+        try { materialesPorPresupuesto[p.id] = await presupuestoMaterialApi.getByPresupuesto(p.id); }
+        catch { materialesPorPresupuesto[p.id] = []; }
+      }));
       await generarPdfReporteFiltrado(filteredData, labores, materialesPorPresupuesto, getEstadoNombre);
     } catch {
       notify.error('Error al generar el PDF.');
@@ -106,8 +109,7 @@ export const PresupuestosListPage = () => {
     const confirmed = await notify.confirm({
       title: '¿Eliminar presupuesto?',
       message: 'Se eliminarán también los materiales asociados.',
-      confirmLabel: 'Eliminar',
-      severity: 'error',
+      confirmLabel: 'Eliminar', severity: 'error',
     });
     if (!confirmed) return;
     try {
@@ -117,6 +119,8 @@ export const PresupuestosListPage = () => {
       notify.error(error?.response?.data?.message || 'No se pudo eliminar.');
     }
   };
+
+  const isArchivado = tab === 1;
 
   return (
     <AppLayout>
@@ -135,12 +139,23 @@ export const PresupuestosListPage = () => {
                 {exportando ? 'Generando...' : 'Exportar PDF'}
               </Button>
             )}
-            <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/presupuestos/nuevo')}>
-              Nuevo presupuesto
-            </Button>
+            {!isArchivado && (
+              <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/presupuestos/nuevo')}>
+                Nuevo presupuesto
+              </Button>
+            )}
           </Stack>
         }
       />
+
+      <Tabs value={tab} onChange={handleTabChange} sx={{ mb: 2 }}>
+        <Tab label={`Activos${data ? ` (${data.length})` : ''}`} />
+        <Tab
+          label={`Archivados${presupuestosArchivados.length > 0 ? ` (${presupuestosArchivados.length})` : ''}`}
+          icon={<Archive size={14} />}
+          iconPosition="start"
+        />
+      </Tabs>
 
       <Paper sx={{ p: 2, borderRadius: 3, mb: 2 }}>
         <Stack spacing={1.5}>
@@ -150,58 +165,58 @@ export const PresupuestosListPage = () => {
             InputProps={{ startAdornment: <InputAdornment position="start"><Search size={16} /></InputAdornment> }}
           />
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-            <TextField
-              select fullWidth size="small" label="Obra"
-              value={filtroObra}
+            <TextField select fullWidth size="small" label="Obra" value={filtroObra}
               onChange={(e) => { setFiltroObra(e.target.value); setFiltroEspecialidad(''); }}
             >
               <MenuItem value="">Todas las obras</MenuItem>
               {obras.map((o) => <MenuItem key={o.id} value={String(o.id)}>{o.nombre}</MenuItem>)}
             </TextField>
-            <TextField
-              select fullWidth size="small" label="Especialidad"
-              value={filtroEspecialidad} onChange={(e) => setFiltroEspecialidad(e.target.value)}
+            <TextField select fullWidth size="small" label="Especialidad" value={filtroEspecialidad}
+              onChange={(e) => setFiltroEspecialidad(e.target.value)}
             >
               <MenuItem value="">Todas</MenuItem>
               {especialidades.map((esp) => <MenuItem key={esp} value={esp}>{esp}</MenuItem>)}
             </TextField>
-            <TextField
-              select fullWidth size="small" label="Trabajador"
-              value={filtroTrabajador} onChange={(e) => setFiltroTrabajador(e.target.value)}
+            <TextField select fullWidth size="small" label="Trabajador" value={filtroTrabajador}
+              onChange={(e) => setFiltroTrabajador(e.target.value)}
             >
               <MenuItem value="">Todos</MenuItem>
               {trabajadores.map((t) => <MenuItem key={t.id} value={String(t.id)}>{t.nombre}</MenuItem>)}
             </TextField>
           </Stack>
           {hayFiltros && (
-            <Box>
-              <Chip label="Limpiar filtros" size="small" onDelete={limpiarFiltros} onClick={limpiarFiltros} />
-            </Box>
+            <Box><Chip label="Limpiar filtros" size="small" onDelete={limpiarFiltros} onClick={limpiarFiltros} /></Box>
           )}
         </Stack>
       </Paper>
 
-      {isLoading && <LoadingState message="Cargando presupuestos..." />}
-      {isError && <ErrorState title="Error" message="No se pudieron cargar los presupuestos." onRetry={refetch} />}
-      {!isLoading && !isError && filteredData.length === 0 && (
+      {isLoadingCurrent && <LoadingState message="Cargando presupuestos..." />}
+      {isError && !isArchivado && <ErrorState title="Error" message="No se pudieron cargar los presupuestos." onRetry={refetch} />}
+      {!isLoadingCurrent && filteredData.length === 0 && (
         <EmptyState
-          title="Sin presupuestos"
-          description={hayFiltros ? 'No hay resultados para los filtros aplicados.' : 'No hay presupuestos creados.'}
-          action={!hayFiltros ? <Button variant="contained" onClick={() => navigate('/presupuestos/nuevo')}>Crear primero</Button> : undefined}
+          title={isArchivado ? 'Sin presupuestos archivados' : 'Sin presupuestos'}
+          description={
+            isArchivado ? 'No hay presupuestos archivados.' :
+            hayFiltros ? 'No hay resultados para los filtros aplicados.' : 'No hay presupuestos creados.'
+          }
+          action={!isArchivado && !hayFiltros ? <Button variant="contained" onClick={() => navigate('/presupuestos/nuevo')}>Crear primero</Button> : undefined}
         />
       )}
 
       {/* Vista mobile — cards */}
-      {!isLoading && !isError && filteredData.length > 0 && isMobile && (
+      {!isLoadingCurrent && filteredData.length > 0 && isMobile && (
         <Stack spacing={2}>
           {filteredData.map((p) => {
             const labor = getLaborById(p.labor_id);
             return (
-              <Paper key={p.id} sx={{ p: 2, borderRadius: 3, border: '1px solid var(--border)', boxShadow: 'none' }}>
+              <Paper key={p.id} sx={{ p: 2, borderRadius: 3, border: '1px solid var(--border)', boxShadow: 'none', opacity: isArchivado ? 0.8 : 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                  <Typography variant="subtitle1" fontWeight={700} color="primary">
-                    {p.nombre || `Presupuesto #${p.id}`}
-                  </Typography>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={700} color="primary">
+                      {p.nombre || `Presupuesto #${p.id}`}
+                    </Typography>
+                    {isArchivado && <Chip label="Archivado" size="small" color="warning" variant="outlined" sx={{ mt: 0.5 }} />}
+                  </Box>
                   <PresupuestoEstadoChip estadoNombre={getEstadoNombre(p.estado_id)} />
                 </Box>
                 <Stack spacing={0.5} sx={{ mb: 2 }}>
@@ -222,10 +237,14 @@ export const PresupuestosListPage = () => {
                 <Divider sx={{ my: 1.5, borderStyle: 'dashed' }} />
                 <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
                   <Button size="small" startIcon={<Eye size={16} />} onClick={() => navigate(`/presupuestos/${p.id}`)}>Ver</Button>
-                  <Button size="small" startIcon={<Pencil size={16} />} onClick={() => navigate(`/presupuestos/${p.id}/editar`)}>Editar</Button>
-                  <IconButton color="error" size="small" onClick={() => handleDelete(p.id)} disabled={deleteMutation.isPending}>
-                    <Trash2 size={16} />
-                  </IconButton>
+                  {!isArchivado && (
+                    <>
+                      <Button size="small" startIcon={<Pencil size={16} />} onClick={() => navigate(`/presupuestos/${p.id}/editar`)}>Editar</Button>
+                      <IconButton color="error" size="small" onClick={() => handleDelete(p.id)} disabled={deleteMutation.isPending}>
+                        <Trash2 size={16} />
+                      </IconButton>
+                    </>
+                  )}
                 </Box>
               </Paper>
             );
@@ -234,7 +253,7 @@ export const PresupuestosListPage = () => {
       )}
 
       {/* Vista desktop — tabla */}
-      {!isLoading && !isError && filteredData.length > 0 && !isMobile && (
+      {!isLoadingCurrent && filteredData.length > 0 && !isMobile && (
         <Paper sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'none' }}>
           <Table>
             <TableHead sx={{ bgcolor: 'var(--social-bg)' }}>
@@ -253,8 +272,13 @@ export const PresupuestosListPage = () => {
               {filteredData.map((p) => {
                 const labor = getLaborById(p.labor_id);
                 return (
-                  <TableRow key={p.id} hover>
-                    <TableCell><Typography variant="body2" fontWeight={600}>{p.nombre || `Presupuesto #${p.id}`}</Typography></TableCell>
+                  <TableRow key={p.id} hover sx={{ opacity: isArchivado ? 0.8 : 1 }}>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" fontWeight={600}>{p.nombre || `Presupuesto #${p.id}`}</Typography>
+                        {isArchivado && <Chip label="Archivado" size="small" color="warning" variant="outlined" />}
+                      </Box>
+                    </TableCell>
                     <TableCell><Typography variant="body2">{labor?.nombre ?? '-'}</Typography></TableCell>
                     <TableCell><Typography variant="body2">{labor?.obra_nombre ?? '-'}</Typography></TableCell>
                     <TableCell><Typography variant="body2">{labor?.especialidad_nombre ?? '-'}</Typography></TableCell>
@@ -268,8 +292,12 @@ export const PresupuestosListPage = () => {
                     <TableCell align="right">
                       <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
                         <IconButton size="small" onClick={() => navigate(`/presupuestos/${p.id}`)}><Eye size={18} /></IconButton>
-                        <IconButton size="small" onClick={() => navigate(`/presupuestos/${p.id}/editar`)}><Pencil size={18} /></IconButton>
-                        <IconButton size="small" color="error" onClick={() => handleDelete(p.id)} disabled={deleteMutation.isPending}><Trash2 size={18} /></IconButton>
+                        {!isArchivado && (
+                          <>
+                            <IconButton size="small" onClick={() => navigate(`/presupuestos/${p.id}/editar`)}><Pencil size={18} /></IconButton>
+                            <IconButton size="small" color="error" onClick={() => handleDelete(p.id)} disabled={deleteMutation.isPending}><Trash2 size={18} /></IconButton>
+                          </>
+                        )}
                       </Stack>
                     </TableCell>
                   </TableRow>
