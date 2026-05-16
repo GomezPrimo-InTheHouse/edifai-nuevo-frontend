@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Box, Button, Chip, Divider, IconButton, InputAdornment, MenuItem,
+  Box, Button, Chip, CircularProgress, Divider, IconButton, InputAdornment, MenuItem,
   Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow,
   TextField, Typography, useMediaQuery, useTheme,
 } from '@mui/material';
-import { Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { Download, Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
@@ -16,6 +16,8 @@ import { useDeletePresupuesto, usePresupuestosList } from '../hooks/usePresupues
 import { useLaboresList } from '../../labores/hooks/useLabores';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
 import { useNotify } from '../../../shared/hooks/useNotify';
+import { presupuestoMaterialApi } from '../../../services/api/presupuestoMaterial.api';
+import { generarPdfReporteFiltrado } from '../../../services/pdf/presupuestoPdf';
 
 export const PresupuestosListPage = () => {
   const navigate = useNavigate();
@@ -33,11 +35,11 @@ export const PresupuestosListPage = () => {
   const [filtroObra, setFiltroObra] = useState('');
   const [filtroEspecialidad, setFiltroEspecialidad] = useState('');
   const [filtroTrabajador, setFiltroTrabajador] = useState('');
+  const [exportando, setExportando] = useState(false);
 
   const getLaborById = (id?: number | null) => labores.find((l) => l.id === id);
   const getEstadoNombre = (id?: number | null) => estados.find((e) => e.id === id)?.nombre;
 
-  // Opciones únicas de obras
   const obras = useMemo(() => {
     const seen = new Set<string>();
     return labores
@@ -45,18 +47,14 @@ export const PresupuestosListPage = () => {
       .map((l) => ({ id: l.obra_id, nombre: l.obra_nombre as string }));
   }, [labores]);
 
-  // Especialidades: dependiente de obra seleccionada
   const especialidades = useMemo(() => {
-    const base = filtroObra
-      ? labores.filter((l) => String(l.obra_id) === filtroObra)
-      : labores;
+    const base = filtroObra ? labores.filter((l) => String(l.obra_id) === filtroObra) : labores;
     const seen = new Set<string>();
     return base
       .filter((l) => l.especialidad_nombre && !seen.has(l.especialidad_nombre) && seen.add(l.especialidad_nombre))
       .map((l) => l.especialidad_nombre as string);
   }, [labores, filtroObra]);
 
-  // Trabajadores: sin cascada
   const trabajadores = useMemo(() => {
     const seen = new Set<number>();
     return labores
@@ -80,11 +78,28 @@ export const PresupuestosListPage = () => {
   }, [data, search, filtroObra, filtroEspecialidad, filtroTrabajador, labores]);
 
   const hayFiltros = search || filtroObra || filtroEspecialidad || filtroTrabajador;
-  const limpiarFiltros = () => {
-    setSearch('');
-    setFiltroObra('');
-    setFiltroEspecialidad('');
-    setFiltroTrabajador('');
+  const limpiarFiltros = () => { setSearch(''); setFiltroObra(''); setFiltroEspecialidad(''); setFiltroTrabajador(''); };
+
+  const handleExportarPdf = async () => {
+    if (filteredData.length === 0) return;
+    setExportando(true);
+    try {
+      const materialesPorPresupuesto: Record<number, any[]> = {};
+      await Promise.all(
+        filteredData.map(async (p) => {
+          try {
+            materialesPorPresupuesto[p.id] = await presupuestoMaterialApi.getByPresupuesto(p.id);
+          } catch {
+            materialesPorPresupuesto[p.id] = [];
+          }
+        })
+      );
+      await generarPdfReporteFiltrado(filteredData, labores, materialesPorPresupuesto, getEstadoNombre);
+    } catch {
+      notify.error('Error al generar el PDF.');
+    } finally {
+      setExportando(false);
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -109,13 +124,24 @@ export const PresupuestosListPage = () => {
         title="Presupuestos"
         subtitle="Gestión de presupuestos vinculados a labores."
         actions={
-          <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/presupuestos/nuevo')}>
-            Nuevo presupuesto
-          </Button>
+          <Stack direction="row" spacing={1}>
+            {filteredData.length > 0 && (
+              <Button
+                variant="outlined"
+                startIcon={exportando ? <CircularProgress size={16} /> : <Download size={18} />}
+                onClick={handleExportarPdf}
+                disabled={exportando}
+              >
+                {exportando ? 'Generando...' : 'Exportar PDF'}
+              </Button>
+            )}
+            <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/presupuestos/nuevo')}>
+              Nuevo presupuesto
+            </Button>
+          </Stack>
         }
       />
 
-      {/* Filtros */}
       <Paper sx={{ p: 2, borderRadius: 3, mb: 2 }}>
         <Stack spacing={1.5}>
           <TextField
@@ -127,33 +153,24 @@ export const PresupuestosListPage = () => {
             <TextField
               select fullWidth size="small" label="Obra"
               value={filtroObra}
-              onChange={(e) => {
-                setFiltroObra(e.target.value);
-                setFiltroEspecialidad('');
-              }}
+              onChange={(e) => { setFiltroObra(e.target.value); setFiltroEspecialidad(''); }}
             >
               <MenuItem value="">Todas las obras</MenuItem>
-              {obras.map((o) => (
-                <MenuItem key={o.id} value={String(o.id)}>{o.nombre}</MenuItem>
-              ))}
+              {obras.map((o) => <MenuItem key={o.id} value={String(o.id)}>{o.nombre}</MenuItem>)}
             </TextField>
             <TextField
               select fullWidth size="small" label="Especialidad"
               value={filtroEspecialidad} onChange={(e) => setFiltroEspecialidad(e.target.value)}
             >
               <MenuItem value="">Todas</MenuItem>
-              {especialidades.map((esp) => (
-                <MenuItem key={esp} value={esp}>{esp}</MenuItem>
-              ))}
+              {especialidades.map((esp) => <MenuItem key={esp} value={esp}>{esp}</MenuItem>)}
             </TextField>
             <TextField
               select fullWidth size="small" label="Trabajador"
               value={filtroTrabajador} onChange={(e) => setFiltroTrabajador(e.target.value)}
             >
               <MenuItem value="">Todos</MenuItem>
-              {trabajadores.map((t) => (
-                <MenuItem key={t.id} value={String(t.id)}>{t.nombre}</MenuItem>
-              ))}
+              {trabajadores.map((t) => <MenuItem key={t.id} value={String(t.id)}>{t.nombre}</MenuItem>)}
             </TextField>
           </Stack>
           {hayFiltros && (
@@ -187,18 +204,11 @@ export const PresupuestosListPage = () => {
                   </Typography>
                   <PresupuestoEstadoChip estadoNombre={getEstadoNombre(p.estado_id)} />
                 </Box>
-
                 <Stack spacing={0.5} sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Labor:</strong> {labor?.nombre ?? '-'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Obra:</strong> {labor?.obra_nombre ?? '-'}
-                  </Typography>
+                  <Typography variant="body2" color="text.secondary"><strong>Labor:</strong> {labor?.nombre ?? '-'}</Typography>
+                  <Typography variant="body2" color="text.secondary"><strong>Obra:</strong> {labor?.obra_nombre ?? '-'}</Typography>
                   {labor?.especialidad_nombre && (
-                    <Typography variant="body2" color="text.secondary">
-                      <strong>Especialidad:</strong> {labor.especialidad_nombre}
-                    </Typography>
+                    <Typography variant="body2" color="text.secondary"><strong>Especialidad:</strong> {labor.especialidad_nombre}</Typography>
                   )}
                   {(labor?.trabajador_nombre || labor?.trabajador_apellido) && (
                     <Typography variant="body2" color="text.secondary">
@@ -209,9 +219,7 @@ export const PresupuestosListPage = () => {
                     ${Number(p.total_estimado ?? 0).toLocaleString('es-AR')}
                   </Typography>
                 </Stack>
-
                 <Divider sx={{ my: 1.5, borderStyle: 'dashed' }} />
-
                 <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
                   <Button size="small" startIcon={<Eye size={16} />} onClick={() => navigate(`/presupuestos/${p.id}`)}>Ver</Button>
                   <Button size="small" startIcon={<Pencil size={16} />} onClick={() => navigate(`/presupuestos/${p.id}/editar`)}>Editar</Button>

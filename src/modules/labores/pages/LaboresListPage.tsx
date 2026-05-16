@@ -43,6 +43,7 @@ export const LaboresListPage = () => {
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
+  const [filtroEspecialidad, setFiltroEspecialidad] = useState('');
 
   const user = useAuthStore((s) => s.user);
   const esWorker = user?.rol_id === 7 || user?.rol_id === 8;
@@ -67,16 +68,28 @@ export const LaboresListPage = () => {
 
   const obraIdFiltro = searchParams.get('obra_id') ? Number(searchParams.get('obra_id')) : '';
 
+  // Especialidades disponibles según obra seleccionada
+  const especialidadesOpciones = useMemo(() => {
+    const base = obraIdFiltro
+      ? (data ?? []).filter((l) => l.obra_id === obraIdFiltro)
+      : (data ?? []);
+    const seen = new Set<string>();
+    return base
+      .filter((l) => l.especialidad_nombre && !seen.has(l.especialidad_nombre) && seen.add(l.especialidad_nombre))
+      .map((l) => l.especialidad_nombre as string);
+  }, [data, obraIdFiltro]);
+
   const filteredData = useMemo(() => {
     if (!data) return [];
     let result = data;
     if (obraIdFiltro) result = result.filter((l) => l.obra_id === obraIdFiltro);
+    if (filtroEspecialidad) result = result.filter((l) => l.especialidad_nombre === filtroEspecialidad);
     const term = search.trim().toLowerCase();
     if (term) result = result.filter((l) =>
       l.nombre?.toLowerCase().includes(term) || l.descripcion?.toLowerCase().includes(term)
     );
     return result;
-  }, [data, search, obraIdFiltro]);
+  }, [data, search, obraIdFiltro, filtroEspecialidad]);
 
   const laboresConTrabajador = useMemo(() => (data ?? []).filter((l) => l.trabajador_id != null), [data]);
 
@@ -116,15 +129,39 @@ export const LaboresListPage = () => {
 
         <Paper sx={{ p: 1.5, borderRadius: 3, mb: 2 }}>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-            <TextField fullWidth size="small" label="Buscar por nombre o descripción" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <TextField
+              fullWidth size="small"
+              label="Buscar por nombre o descripción"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
             {!esWorker && (
               <TextField
                 select fullWidth size="small" label="Filtrar por obra"
                 value={obraIdFiltro}
-                onChange={(e) => e.target.value ? setSearchParams({ obra_id: String(e.target.value) }) : setSearchParams({})}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setSearchParams({ obra_id: String(e.target.value) });
+                  } else {
+                    setSearchParams({});
+                  }
+                  setFiltroEspecialidad(''); // reset especialidad al cambiar obra
+                }}
               >
                 <MenuItem value="">Todas las obras</MenuItem>
                 {obras.map((o) => <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>)}
+              </TextField>
+            )}
+            {!esWorker && (
+              <TextField
+                select fullWidth size="small" label="Filtrar por especialidad"
+                value={filtroEspecialidad}
+                onChange={(e) => setFiltroEspecialidad(e.target.value)}
+              >
+                <MenuItem value="">Todas</MenuItem>
+                {especialidadesOpciones.map((esp) => (
+                  <MenuItem key={esp} value={esp}>{esp}</MenuItem>
+                ))}
               </TextField>
             )}
           </Stack>

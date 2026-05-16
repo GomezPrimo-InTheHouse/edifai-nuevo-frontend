@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Button, Card, CardContent, Divider, Grid,
-  MenuItem, Stack, TextField, Typography,
+  MenuItem, Stack, TextField, Typography, CircularProgress
 } from '@mui/material';
 import { ArrowLeft, Calendar, FileText, Pencil, DollarSign } from 'lucide-react';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
@@ -16,6 +16,11 @@ import { useLaboresList } from '../../labores/hooks/useLabores';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import type { PresupuestoMiembro } from '../types/presupuesto.types';
+// Agregar a los imports existentes:
+import { Download } from 'lucide-react';
+import { useState } from 'react';
+import { presupuestoMaterialApi } from '../../../services/api/presupuestoMaterial.api';
+import { generarPdfPresupuesto } from '../../../services/pdf/presupuestoPdf';
 
 function formatDate(v?: string | null) {
   if (!v) return '-';
@@ -79,19 +84,47 @@ export const PresupuestoDetailPage: React.FC = () => {
     }
   };
   console.log('PRESUPUESTO:', presupuesto);
+
+  // Agregar dentro del componente, antes del return:
+const [exportando, setExportando] = useState(false);
+
+const handleExportarPdf = async () => {
+  setExportando(true);
+  try {
+    const materiales = await presupuestoMaterialApi.getByPresupuesto(presupuestoId);
+    generarPdfPresupuesto(presupuesto, materiales);
+  } catch {
+    notify.error('Error al generar el PDF.');
+  } finally {
+    setExportando(false);
+  }
+};
   return (
     <AppLayout>
       <PageHeader
         title={presupuesto.nombre || `Presupuesto #${presupuesto.id}`}
         subtitle="Vista detallada del presupuesto."
-        actions={
-          <Stack direction="row" spacing={1}>
-            <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/presupuestos')}>Volver</Button>
-            {!confirmado && (
-              <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/presupuestos/${presupuesto.id}/editar`)}>Editar</Button>
-            )}
-          </Stack>
-        }
+// Reemplazar el bloque actions del PageHeader:
+actions={
+  <Stack direction="row" spacing={1}>
+    <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/presupuestos')}>
+      Volver
+    </Button>
+    <Button
+      variant="outlined"
+      startIcon={exportando ? <CircularProgress size={16} /> : <Download size={16} />}
+      onClick={handleExportarPdf}
+      disabled={exportando}
+    >
+      {exportando ? 'Generando...' : 'Exportar PDF'}
+    </Button>
+    {!confirmado && (
+      <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/presupuestos/${presupuesto.id}/editar`)}>
+        Editar
+      </Button>
+    )}
+  </Stack>
+}
       />
 
       <Grid container spacing={3}>
