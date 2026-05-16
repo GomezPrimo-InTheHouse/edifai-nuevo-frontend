@@ -44,6 +44,8 @@ export const PresupuestoDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const presupuestoId = Number(id);
   const notify = useNotify();
+  // Agregar dentro del componente, antes del return:
+const [exportando, setExportando] = useState(false);
 
   const { data: presupuesto, isLoading, isError, refetch } = usePresupuestoDetail(presupuestoId);
   const { data: labores = [] } = useLaboresList();
@@ -85,8 +87,6 @@ export const PresupuestoDetailPage: React.FC = () => {
   };
   console.log('PRESUPUESTO:', presupuesto);
 
-  // Agregar dentro del componente, antes del return:
-const [exportando, setExportando] = useState(false);
 
 const handleExportarPdf = async () => {
   setExportando(true);
