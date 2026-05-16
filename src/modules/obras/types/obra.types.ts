@@ -3,8 +3,8 @@ export interface Obra {
   nombre: string;
   descripcion?: string | null;
   ubicacion?: string | null;
-  latitud?: number | null;              // ← nuevo
-  longitud?: number | null;             // ← nuevo
+  latitud?: number | null;              
+  longitud?: number | null;             
   tipo_obra_id?: number | null;
   estado_id?: number | null;
   cliente_id?: number | null;
@@ -15,14 +15,15 @@ export interface Obra {
   usuario_creador_id: number;
   created_at?: string | null;
   updated_at?: string | null;
+archivado?: boolean;
 }
 
 export interface ObraFormValues {
   nombre: string;
   descripcion: string;
   ubicacion: string;
-  latitud: number | null;               // ← nuevo
-  longitud: number | null;              // ← nuevo
+  latitud: number | null;               
+  longitud: number | null;              
   tipo_obra_id: number | '';
   estado_id: number | '';
   cliente_id: number | '' | null;

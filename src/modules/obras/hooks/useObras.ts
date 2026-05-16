@@ -78,3 +78,23 @@ export function useDeleteObra() {
     },
   });
 }
+
+//funciones de archivo y desarchivo de obra
+
+export function useObrasArchivadas() {
+  return useQuery({
+    queryKey: ['obras', 'archivadas'],
+    queryFn: () => obraApi.getAllArchivadas(),
+  });
+}
+
+export function useArchivarObra() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, archivar }: { id: number; archivar: boolean }) =>
+      obraApi.archivar(id, archivar),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['obras'] });
+    },
+  });
+}
