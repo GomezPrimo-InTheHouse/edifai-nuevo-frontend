@@ -149,18 +149,19 @@ export function useNotificaciones() {
       const es  = new EventSource(url);
       eventSourceRef.current = es;
 
-      es.onopen = () => {
-        console.log('SSE conectado');
-      };
+es.onopen = () => {
+  console.log('✅ SSE conectado:', new Date().toISOString());
+};
 
-      es.onmessage = (event) => {
-        try {
-          const nueva: Notificacion = JSON.parse(event.data);
-          setNotificaciones((prev) => [nueva, ...prev]);
-        } catch (e) {
-          console.error('Error parseando notificación SSE:', e);
-        }
-      };
+es.onmessage = (event) => {
+  console.log('📨 SSE mensaje recibido:', event.data);
+  try {
+    const nueva: Notificacion = JSON.parse(event.data);
+    setNotificaciones((prev) => [nueva, ...prev]);
+  } catch (e) {
+    console.error('Error parseando notificación SSE:', e);
+  }
+};
 
       // Token expirado — el servidor manda este evento antes de cerrar
       es.addEventListener('auth_error', () => {
