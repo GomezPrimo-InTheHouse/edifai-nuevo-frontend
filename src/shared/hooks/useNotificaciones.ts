@@ -2,15 +2,12 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuthStore } from '../../app/store/auth.store';
 import { notificacionesApi, type Notificacion } from '../../services/api/notificaciones.api';
 import { env } from '../../app/config/env';
-import axios from 'axios';
 
 export function useNotificaciones() {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const conectandoRef = useRef(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   // ── Carga inicial ─────────────────────────────────────────
   useEffect(() => {
@@ -24,71 +21,95 @@ export function useNotificaciones() {
       .finally(() => setLoading(false));
   }, []);
 
-  // ── SSE — se monta una sola vez ───────────────────────────
+  // ── SSE con fetch — sin auto-reconexión del browser ───────
   useEffect(() => {
+    let activo = true;
+
     const conectar = async () => {
-      if (conectandoRef.current) return;
-      conectandoRef.current = true;
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
 
       const token = useAuthStore.getState().accessToken;
-      if (!token) { conectandoRef.current = false; return; }
+      if (!token) return;
 
-      eventSourceRef.current?.close();
-      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+      try {
+        const response = await fetch(
+          `${env.notificacionesApiUrl}/notificaciones/sse?token=${token}`,
+          { signal: controller.signal }
+        );
 
-      const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${token}`;
-      const es = new EventSource(url);
-      eventSourceRef.current = es;
-      conectandoRef.current = false;
-
-      es.onopen = () => console.log('✅ SSE conectado:', new Date().toISOString());
-
-      es.onmessage = (event) => {
-        console.log('📨 SSE mensaje recibido:', event.data);
-        try {
-          const nueva: Notificacion = JSON.parse(event.data);
-          setNotificaciones((prev) => [nueva, ...prev]);
-        } catch (e) {
-          console.error('Error parseando SSE:', e);
+        if (!response.ok || !response.body) {
+          console.error('SSE: respuesta inválida', response.status);
+          return;
         }
-      };
 
-      es.addEventListener('auth_error', async () => {
-        console.log('🔄 SSE auth_error — renovando token...');
-        es.close();
-        eventSourceRef.current = null;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
 
-        try {
-          const refreshToken = useAuthStore.getState().refreshToken;
-          const { data } = await axios.post(
-            `${env.authApiUrl}/auth/refresh-token`,
-            { refreshToken }
-          );
-          useAuthStore.getState().setAccessToken(data.accessToken);
-          reconnectTimer.current = setTimeout(conectar, 500);
-        } catch {
-          console.error('SSE: sesión expirada');
-          useAuthStore.getState().logout();
-          window.location.href = '/login';
+        while (activo) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            if (line.startsWith('event: auth_error')) {
+              console.log('🔄 SSE auth_error — token expirado');
+              reader.cancel();
+              // Esperar a que Axios renueve el token y reconectar
+              setTimeout(async () => {
+                if (!activo) return;
+                // Forzar refresh
+                try {
+                  const refreshToken = useAuthStore.getState().refreshToken;
+                  const res = await fetch(`${env.authApiUrl}/auth/refresh-token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refreshToken }),
+                  });
+                  const data = await res.json();
+                  if (data.accessToken) {
+                    useAuthStore.getState().setAccessToken(data.accessToken);
+                  }
+                } catch {
+                  console.error('SSE: no se pudo renovar token');
+                }
+                if (activo) conectar();
+              }, 1000);
+              return;
+            }
+
+            if (line.startsWith('data:')) {
+              const jsonStr = line.slice(5).trim();
+              if (!jsonStr) continue;
+              try {
+                const nueva: Notificacion = JSON.parse(jsonStr);
+                console.log('📨 SSE mensaje recibido:', nueva);
+                setNotificaciones((prev) => [nueva, ...prev]);
+              } catch {
+                // heartbeat u otro evento — ignorar
+              }
+            }
+          }
         }
-      });
-
-      es.onerror = () => {
-        if (es.readyState === EventSource.CLOSED) return;
-        es.close();
-        eventSourceRef.current = null;
-        reconnectTimer.current = setTimeout(conectar, 3000);
-      };
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        console.error('SSE error de red:', err.message);
+        setTimeout(() => { if (activo) conectar(); }, 3000);
+      }
     };
 
     conectar();
 
     return () => {
-      eventSourceRef.current?.close();
-      eventSourceRef.current = null;
-      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
+      activo = false;
+      abortRef.current?.abort();
     };
-  }, []); // ← sin dependencias, se monta una sola vez
+  }, []);
 
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 
