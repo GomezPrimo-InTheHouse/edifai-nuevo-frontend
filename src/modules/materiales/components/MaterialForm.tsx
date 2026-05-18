@@ -42,14 +42,14 @@ export function MaterialForm({ initialData, onSubmit, isSubmitting = false }: Ma
 
   const { data: tipos = [] } = useTiposMaterialList();
   const { data: todosEstados = [] } = useEstadosGenerales();
-  const estados = todosEstados.filter((e) => e.ambito === 'gastos imprevistos' || e.ambito === 'material' || !e.ambito);
+  // const estados = todosEstados.filter((e) => e.ambito === 'gastos imprevistos' || e.ambito === 'material' || !e.ambito);
 
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.imagen_url ?? null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const imagenUrl = watch('imagen_url');
+  // const imagenUrl = watch('imagen_url');
 
   useEffect(() => {
     if (tipos.length > 0) reset(toFormDefaults(initialData));
