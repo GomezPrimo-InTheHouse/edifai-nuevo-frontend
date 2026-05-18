@@ -13,17 +13,18 @@ import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { EmptyState } from '../../../shared/components/EmptyState/EmptyState';
 import { PresupuestoEstadoChip } from '../components/PresupuestoEstadoChip';
 import { useDeletePresupuesto, usePresupuestosList, usePresupuestosArchivados } from '../hooks/usePresupuestos';
-import { useLaboresList } from '../../labores/hooks/useLabores';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { presupuestoMaterialApi } from '../../../services/api/presupuestoMaterial.api';
 import { generarPdfReporteFiltrado } from '../../../services/pdf/presupuestoPdf';
+import { useLaboresList, useLaboresArchivadas } from '../../labores/hooks/useLabores';
 
 export const PresupuestosListPage = () => {
   const navigate = useNavigate();
   const notify = useNotify();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { data: laboresArchivadas = [] } = useLaboresArchivadas();
 
   const { data, isLoading, isError, refetch } = usePresupuestosList();
   const { data: presupuestosArchivados = [], isLoading: loadingArchivados } = usePresupuestosArchivados();
@@ -39,7 +40,8 @@ export const PresupuestosListPage = () => {
   const [filtroTrabajador, setFiltroTrabajador] = useState('');
   const [exportando, setExportando] = useState(false);
 
-  const getLaborById = (id?: number | null) => labores.find((l) => l.id === id);
+const getLaborById = (id?: number | null) =>
+  labores.find((l) => l.id === id) ?? laboresArchivadas.find((l) => l.id === id);
   const getEstadoNombre = (id?: number | null) => estados.find((e) => e.id === id)?.nombre;
 
   const obras = useMemo(() => {
