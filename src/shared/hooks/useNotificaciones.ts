@@ -25,7 +25,7 @@ export function useNotificaciones() {
   }, [accessToken]);
 
   // ── SSE — solo conecta una vez, no reconecta por refresh de token ─────────
-  useEffect(() => {
+ useEffect(() => {
     if (!accessToken) {
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
@@ -33,51 +33,48 @@ export function useNotificaciones() {
       return;
     }
 
-    // Si ya hay conexión activa y solo cambió el token por refresh, no reconectar
-    if (eventSourceRef.current && eventSourceRef.current.readyState !== EventSource.CLOSED) {
+    // Si ya hay conexión activa, solo actualizar el tokenRef
+    if (
+      eventSourceRef.current &&
+      eventSourceRef.current.readyState !== EventSource.CLOSED
+    ) {
       tokenRef.current = accessToken;
       return;
     }
 
     tokenRef.current = accessToken;
 
-    const conectarSSE = () => {
-      const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${tokenRef.current}`;
-      const es = new EventSource(url);
-      eventSourceRef.current = es;
+    const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${accessToken}`;
+    const es = new EventSource(url);
+    eventSourceRef.current = es;
 
-      es.onopen = () => {
-        console.log('✅ SSE conectado:', new Date().toISOString());
-      };
-
-      es.onmessage = (event) => {
-        console.log('📨 SSE mensaje recibido:', event.data);
-        try {
-          const nueva: Notificacion = JSON.parse(event.data);
-          setNotificaciones((prev) => [nueva, ...prev]);
-        } catch (e) {
-          console.error('Error parseando notificación SSE:', e);
-        }
-      };
-
-      es.addEventListener('auth_error', () => {
-        es.close();
-        eventSourceRef.current = null;
-        // Reconectar con el token actualizado que ya tiene el store
-        setTimeout(() => {
-          if (tokenRef.current) conectarSSE();
-        }, 500);
-      });
-
-      es.onerror = () => {
-        if (es.readyState === EventSource.CLOSED) return;
-        console.error('SSE error de red — cerrando conexión');
-        es.close();
-        eventSourceRef.current = null;
-      };
+    es.onopen = () => {
+      console.log('✅ SSE conectado:', new Date().toISOString());
     };
 
-    conectarSSE();
+    es.onmessage = (event) => {
+      console.log('📨 SSE mensaje recibido:', event.data);
+      try {
+        const nueva: Notificacion = JSON.parse(event.data);
+        setNotificaciones((prev) => [nueva, ...prev]);
+      } catch (e) {
+        console.error('Error parseando notificación SSE:', e);
+      }
+    };
+
+    es.addEventListener('auth_error', () => {
+      es.close();
+      eventSourceRef.current = null;
+      // No reconectar acá — el interceptor de Axios renovará el token
+      // lo que cambia accessToken en el store y re-ejecuta este useEffect
+    });
+
+    es.onerror = () => {
+      if (es.readyState === EventSource.CLOSED) return;
+      console.error('SSE error de red — cerrando conexión');
+      es.close();
+      eventSourceRef.current = null;
+    };
 
     return () => {
       eventSourceRef.current?.close();
