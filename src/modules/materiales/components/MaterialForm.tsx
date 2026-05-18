@@ -35,7 +35,7 @@ function toFormDefaults(initialData?: Material | null): MaterialFormValues {
 }
 
 export function MaterialForm({ initialData, onSubmit, isSubmitting = false }: MaterialFormProps) {
-  const { control, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<MaterialSchemaValues>({
+  const { control, handleSubmit, reset, setValue, formState: { errors } } = useForm<MaterialSchemaValues>({
     resolver: zodResolver(materialSchema),
     defaultValues: toFormDefaults(initialData),
   });
