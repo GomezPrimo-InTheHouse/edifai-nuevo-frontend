@@ -2,15 +2,18 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useAuthStore } from '../../app/store/auth.store';
 import { notificacionesApi, type Notificacion } from '../../services/api/notificaciones.api';
 import { env } from '../../app/config/env';
+import axios from 'axios';
 
 export function useNotificaciones() {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [reconectar, setReconectar] = useState(0); // forzar reconexión
   const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const accessToken = useAuthStore((s) => s.accessToken);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
+  const setAccessToken = useAuthStore((s) => s.setAccessToken);
 
   // ── Carga inicial ─────────────────────────────────────────
   useEffect(() => {
@@ -32,47 +35,64 @@ export function useNotificaciones() {
       return;
     }
 
-    eventSourceRef.current?.close();
+    const conectar = (token: string) => {
+      eventSourceRef.current?.close();
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
 
-    const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${accessToken}`;
-    const es = new EventSource(url);
-    eventSourceRef.current = es;
+      const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${token}`;
+      const es = new EventSource(url);
+      eventSourceRef.current = es;
 
-    es.onopen = () => {
-      console.log('✅ SSE conectado:', new Date().toISOString());
+      es.onopen = () => console.log('✅ SSE conectado:', new Date().toISOString());
+
+      es.onmessage = (event) => {
+        console.log('📨 SSE mensaje recibido:', event.data);
+        try {
+          const nueva: Notificacion = JSON.parse(event.data);
+          setNotificaciones((prev) => [nueva, ...prev]);
+        } catch (e) {
+          console.error('Error parseando SSE:', e);
+        }
+      };
+
+      es.addEventListener('auth_error', async () => {
+        console.log('🔄 SSE auth_error — renovando token...');
+        es.close();
+        eventSourceRef.current = null;
+
+        // Renovar token via refresh antes de reconectar
+        try {
+          const { data } = await axios.post(
+            `${env.authApiUrl}/auth/refresh-token`,
+            { refreshToken }
+          );
+          const nuevoToken = data.accessToken;
+          setAccessToken(nuevoToken);
+          reconnectTimer.current = setTimeout(() => conectar(nuevoToken), 500);
+        } catch {
+          console.error('SSE: no se pudo renovar el token — sesión expirada');
+          useAuthStore.getState().logout();
+          window.location.href = '/login';
+        }
+      });
+
+      es.onerror = () => {
+        if (es.readyState === EventSource.CLOSED) return;
+        console.error('SSE error de red');
+        es.close();
+        eventSourceRef.current = null;
+        reconnectTimer.current = setTimeout(() => conectar(useAuthStore.getState().accessToken!), 3000);
+      };
     };
 
-    es.onmessage = (event) => {
-      console.log('📨 SSE mensaje recibido:', event.data);
-      try {
-        const nueva: Notificacion = JSON.parse(event.data);
-        setNotificaciones((prev) => [nueva, ...prev]);
-      } catch (e) {
-        console.error('Error parseando notificación SSE:', e);
-      }
-    };
-
-    es.addEventListener('auth_error', () => {
-      console.log('🔄 SSE auth_error — esperando token renovado...');
-      es.close();
-      eventSourceRef.current = null;
-      // Esperar a que el interceptor renueve el token y forzar reconexión
-      setTimeout(() => setReconectar((n) => n + 1), 1000);
-    });
-
-    es.onerror = () => {
-      if (es.readyState === EventSource.CLOSED) return;
-      console.error('SSE error de red');
-      es.close();
-      eventSourceRef.current = null;
-      setTimeout(() => setReconectar((n) => n + 1), 2000);
-    };
+    conectar(accessToken);
 
     return () => {
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
+      if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
     };
-  }, [accessToken, reconectar]);
+  }, [accessToken]);
 
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 
