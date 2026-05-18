@@ -7,8 +7,8 @@ export function useNotificaciones() {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [reconectar, setReconectar] = useState(0); // forzar reconexión
   const eventSourceRef = useRef<EventSource | null>(null);
-  const tokenRef = useRef<string | null>(null);
 
   const accessToken = useAuthStore((s) => s.accessToken);
 
@@ -24,25 +24,15 @@ export function useNotificaciones() {
       .finally(() => setLoading(false));
   }, [accessToken]);
 
-  // ── SSE — solo conecta una vez, no reconecta por refresh de token ─────────
- useEffect(() => {
+  // ── SSE ───────────────────────────────────────────────────
+  useEffect(() => {
     if (!accessToken) {
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
-      tokenRef.current = null;
       return;
     }
 
-    // Si ya hay conexión activa, solo actualizar el tokenRef
-    if (
-      eventSourceRef.current &&
-      eventSourceRef.current.readyState !== EventSource.CLOSED
-    ) {
-      tokenRef.current = accessToken;
-      return;
-    }
-
-    tokenRef.current = accessToken;
+    eventSourceRef.current?.close();
 
     const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${accessToken}`;
     const es = new EventSource(url);
@@ -63,24 +53,26 @@ export function useNotificaciones() {
     };
 
     es.addEventListener('auth_error', () => {
+      console.log('🔄 SSE auth_error — esperando token renovado...');
       es.close();
       eventSourceRef.current = null;
-      // No reconectar acá — el interceptor de Axios renovará el token
-      // lo que cambia accessToken en el store y re-ejecuta este useEffect
+      // Esperar a que el interceptor renueve el token y forzar reconexión
+      setTimeout(() => setReconectar((n) => n + 1), 1000);
     });
 
     es.onerror = () => {
       if (es.readyState === EventSource.CLOSED) return;
-      console.error('SSE error de red — cerrando conexión');
+      console.error('SSE error de red');
       es.close();
       eventSourceRef.current = null;
+      setTimeout(() => setReconectar((n) => n + 1), 2000);
     };
 
     return () => {
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
     };
-  }, [accessToken]);
+  }, [accessToken, reconectar]);
 
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 
