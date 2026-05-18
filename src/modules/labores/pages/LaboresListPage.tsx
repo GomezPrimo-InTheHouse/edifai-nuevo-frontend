@@ -180,112 +180,113 @@ export const LaboresListPage = () => {
         {isLoading && <LoadingState message="Cargando labores..." />}
         {isError && <ErrorState title="Error al cargar labores" message="Revisa la conexión con el microservicio." onRetry={refetch} />}
 
-        {!isLoading && !isError && (
-          <>
-            {filteredData.length === 0 ? (
-              <EmptyState
-                title={tab === 1 ? 'Sin labores archivadas' : 'No hay labores'}
-                description={
-                  tab === 1 ? 'No hay labores archivadas.' :
-                  esWorker ? 'No tenés labores asignadas.' : 'No existen labores o la búsqueda no devolvió resultados.'
-                }
-                action={!esWorker && tab === 0 ? <Button variant="contained" onClick={() => navigate('/labores/nueva')}>Crear primera labor</Button> : undefined}
-              />
-            ) : (
-              <>
-                <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5, color: '#64748B' }}>
-                  {tab === 1 ? 'LABORES ARCHIVADAS' : 'LABORES REGISTRADAS'} ({filteredData.length})
-                </Typography>
+{!isLoading && !isError && (
+  <>
+    {filteredData.length === 0 ? (
+      <EmptyState
+        title={tab === 1 ? 'Sin labores archivadas' : 'No hay labores'}
+        description={
+          tab === 1 ? 'No hay labores archivadas.' :
+          esWorker ? 'No tenés labores asignadas.' : 'No existen labores o la búsqueda no devolvió resultados.'
+        }
+        action={!esWorker && tab === 0 ? <Button variant="contained" onClick={() => navigate('/labores/nueva')}>Crear primera labor</Button> : undefined}
+      />
+    ) : (
+      <>
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5, color: '#64748B' }}>
+          {tab === 1 ? 'LABORES ARCHIVADAS' : 'LABORES REGISTRADAS'} ({filteredData.length})
+        </Typography>
 
-                {/* VISTA MÓVIL */}
-                <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
-                  {filteredData.map((l) => (
-                    <LaborCardMobile
-                      key={l.id}
-                      labor={l}
-                      estadoNombre={getEstadoNombre(l.estado_id)}
-                      obraNombre={getObraNombre(l.obra_id)}
-                      progreso={getProgreso(l.estado_id)}
-                      color={getProgressColor(getProgreso(l.estado_id))}
-                      esWorker={esWorker}
-                      archivado={tab === 1}
-                      onDelete={handleDelete}
-                      isDeleting={deleteMutation.isPending}
-                    />
-                  ))}
-                </Box>
+        {/* VISTA MÓVIL */}
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
+          {filteredData.map((l) => (
+            <LaborCardMobile
+              key={l.id}
+              labor={l}
+              estadoNombre={getEstadoNombre(l.estado_id)}
+              obraNombre={tab === 1 ? (l.obra_nombre ?? '-') : getObraNombre(l.obra_id)}
+              progreso={getProgreso(l.estado_id)}
+              color={getProgressColor(getProgreso(l.estado_id))}
+              esWorker={esWorker}
+              archivado={tab === 1}
+              onDelete={handleDelete}
+              isDeleting={deleteMutation.isPending}
+            />
+          ))}
+        </Box>
 
-                {/* VISTA ESCRITORIO */}
-                <Paper sx={{ display: { xs: 'none', md: 'block' }, borderRadius: 3, overflow: 'hidden' }}>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: 700 }}>Nombre</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>Obra</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>Inicio estimado</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>Fin estimado</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>Progreso</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 700 }}>Acciones</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {filteredData.map((l) => {
-                        const progreso = getProgreso(l.estado_id);
-                        const color = getProgressColor(progreso);
-                        return (
-                          <TableRow key={l.id} hover sx={{ opacity: tab === 1 ? 0.8 : 1 }}>
-                            <TableCell>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2" fontWeight={600}>{l.nombre}</Typography>
-                                {tab === 1 && <Chip label="Archivada" size="small" color="warning" variant="outlined" />}
-                              </Box>
-                            </TableCell>
-                            <TableCell><Typography variant="body2">{getObraNombre(l.obra_id)}</Typography></TableCell>
-                            <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
-                            <TableCell><Typography variant="body2">{l.fecha_fin_estimada ? new Date(l.fecha_fin_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
-                            <TableCell sx={{ minWidth: 160 }}>
-                              <Stack spacing={0.5}>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                  <LaborEstadoChip estadoNombre={getEstadoNombre(l.estado_id)} />
-                                  <Typography variant="caption" fontWeight={700} sx={{ color }}>{progreso}%</Typography>
-                                </Stack>
-                                <LinearProgress variant="determinate" value={progreso} sx={{ height: 6, borderRadius: 3, bgcolor: '#E2E8F0', '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: color } }} />
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="right">
-                              <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
-                                <IconButton size="small" onClick={() => navigate(`/labores/${l.id}`)}><Eye size={16} /></IconButton>
-                                {!esWorker && tab === 0 && (
-                                  <>
-                                    <IconButton size="small" onClick={() => navigate(`/labores/${l.id}/editar`)}><Pencil size={16} /></IconButton>
-                                    <IconButton size="small" color="error" onClick={() => handleDelete(l.id)} disabled={deleteMutation.isPending}><Trash2 size={16} /></IconButton>
-                                  </>
-                                )}
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              </>
-            )}
+        {/* VISTA ESCRITORIO */}
+        <Paper sx={{ display: { xs: 'none', md: 'block' }, borderRadius: 3, overflow: 'hidden' }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 700 }}>Nombre</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Obra</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Inicio estimado</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Fin estimado</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>Progreso</TableCell>
+                <TableCell align="right" sx={{ fontWeight: 700 }}>Acciones</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredData.map((l) => {
+                const progreso = getProgreso(l.estado_id);
+                const color = getProgressColor(progreso);
+                const obraNombre = tab === 1 ? (l.obra_nombre ?? '-') : getObraNombre(l.obra_id);
+                return (
+                  <TableRow key={l.id} hover sx={{ opacity: tab === 1 ? 0.8 : 1 }}>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" fontWeight={600}>{l.nombre}</Typography>
+                        {tab === 1 && <Chip label="Archivada" size="small" color="warning" variant="outlined" />}
+                      </Box>
+                    </TableCell>
+                    <TableCell><Typography variant="body2">{obraNombre}</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
+                    <TableCell><Typography variant="body2">{l.fecha_fin_estimada ? new Date(l.fecha_fin_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
+                    <TableCell sx={{ minWidth: 160 }}>
+                      <Stack spacing={0.5}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                          <LaborEstadoChip estadoNombre={getEstadoNombre(l.estado_id)} />
+                          <Typography variant="caption" fontWeight={700} sx={{ color }}>{progreso}%</Typography>
+                        </Stack>
+                        <LinearProgress variant="determinate" value={progreso} sx={{ height: 6, borderRadius: 3, bgcolor: '#E2E8F0', '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: color } }} />
+                      </Stack>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
+                        <IconButton size="small" onClick={() => navigate(`/labores/${l.id}`)}><Eye size={16} /></IconButton>
+                        {!esWorker && tab === 0 && (
+                          <>
+                            <IconButton size="small" onClick={() => navigate(`/labores/${l.id}/editar`)}><Pencil size={16} /></IconButton>
+                            <IconButton size="small" color="error" onClick={() => handleDelete(l.id)} disabled={deleteMutation.isPending}><Trash2 size={16} /></IconButton>
+                          </>
+                        )}
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
+      </>
+    )}
 
-            {tab === 0 && (
-              <TrabajadoresAsignados
-                laboresConTrabajador={laboresConTrabajador}
-                getObraNombre={getObraNombre}
-                getEstadoNombre={getEstadoNombre}
-                getTrabajador={getTrabajador}
-                getEspecialidadNombre={getEspecialidadNombre}
-                getProgreso={getProgreso}
-                getProgressColor={getProgressColor}
-                esWorker={esWorker}
-              />
-            )}
-          </>
-        )}
+    {tab === 0 && (
+      <TrabajadoresAsignados
+        laboresConTrabajador={laboresConTrabajador}
+        getObraNombre={getObraNombre}
+        getEstadoNombre={getEstadoNombre}
+        getTrabajador={getTrabajador}
+        getEspecialidadNombre={getEspecialidadNombre}
+        getProgreso={getProgreso}
+        getProgressColor={getProgressColor}
+        esWorker={esWorker}
+      />
+    )}
+  </>
+)}
       </Box>
     </AppLayout>
   );
