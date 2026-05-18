@@ -10,38 +10,36 @@ export function useNotificaciones() {
   const [error, setError] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const accessToken = useAuthStore((s) => s.accessToken);
-  const refreshToken = useAuthStore((s) => s.refreshToken);
-  const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  const conectandoRef = useRef(false);
 
   // ── Carga inicial ─────────────────────────────────────────
   useEffect(() => {
-    if (!accessToken) return;
+    const token = useAuthStore.getState().accessToken;
+    if (!token) return;
     setLoading(true);
-    setError(false);
     notificacionesApi
       .getAll()
       .then((data) => setNotificaciones(data))
-      .catch((err) => { console.error('Error cargando notificaciones:', err); setError(true); })
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [accessToken]);
+  }, []);
 
-  // ── SSE ───────────────────────────────────────────────────
+  // ── SSE — se monta una sola vez ───────────────────────────
   useEffect(() => {
-    if (!accessToken) {
-      eventSourceRef.current?.close();
-      eventSourceRef.current = null;
-      return;
-    }
+    const conectar = async () => {
+      if (conectandoRef.current) return;
+      conectandoRef.current = true;
 
-    const conectar = (token: string) => {
+      const token = useAuthStore.getState().accessToken;
+      if (!token) { conectandoRef.current = false; return; }
+
       eventSourceRef.current?.close();
       if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
 
       const url = `${env.notificacionesApiUrl}/notificaciones/sse?token=${token}`;
       const es = new EventSource(url);
       eventSourceRef.current = es;
+      conectandoRef.current = false;
 
       es.onopen = () => console.log('✅ SSE conectado:', new Date().toISOString());
 
@@ -60,17 +58,16 @@ export function useNotificaciones() {
         es.close();
         eventSourceRef.current = null;
 
-        // Renovar token via refresh antes de reconectar
         try {
+          const refreshToken = useAuthStore.getState().refreshToken;
           const { data } = await axios.post(
             `${env.authApiUrl}/auth/refresh-token`,
             { refreshToken }
           );
-          const nuevoToken = data.accessToken;
-          setAccessToken(nuevoToken);
-          reconnectTimer.current = setTimeout(() => conectar(nuevoToken), 500);
+          useAuthStore.getState().setAccessToken(data.accessToken);
+          reconnectTimer.current = setTimeout(conectar, 500);
         } catch {
-          console.error('SSE: no se pudo renovar el token — sesión expirada');
+          console.error('SSE: sesión expirada');
           useAuthStore.getState().logout();
           window.location.href = '/login';
         }
@@ -78,21 +75,20 @@ export function useNotificaciones() {
 
       es.onerror = () => {
         if (es.readyState === EventSource.CLOSED) return;
-        console.error('SSE error de red');
         es.close();
         eventSourceRef.current = null;
-        reconnectTimer.current = setTimeout(() => conectar(useAuthStore.getState().accessToken!), 3000);
+        reconnectTimer.current = setTimeout(conectar, 3000);
       };
     };
 
-    conectar(accessToken);
+    conectar();
 
     return () => {
       eventSourceRef.current?.close();
       eventSourceRef.current = null;
       if (reconnectTimer.current) clearTimeout(reconnectTimer.current);
     };
-  }, [accessToken]);
+  }, []); // ← sin dependencias, se monta una sola vez
 
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 
