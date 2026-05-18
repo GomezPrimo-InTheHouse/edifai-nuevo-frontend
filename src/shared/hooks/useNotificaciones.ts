@@ -31,6 +31,12 @@ export function useNotificaciones() {
       abortRef.current = controller;
 
       const token = useAuthStore.getState().accessToken;
+        if (token) {
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    const expira = new Date(decoded.exp * 1000);
+    const ahora = new Date();
+    console.log('🔑 Token expira:', expira.toISOString(), '| Ahora:', ahora.toISOString(), '| Válido:', expira > ahora);
+  }
       if (!token) return;
 
       try {
