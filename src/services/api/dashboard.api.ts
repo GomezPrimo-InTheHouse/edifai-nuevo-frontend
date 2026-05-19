@@ -24,7 +24,7 @@ export interface DashboardAdminData {
 }
 
 export interface DashboardTrabajadorData {
-  trabajador:     { id: number; nombre: string; apellido: string };
+  trabajador:     { id: number; nombre: string; apellido: string, puntos:number };
   obra_actual:    { obra_nombre: string; rol_en_obra: string } | null;
   kpis: {
     labores_activas:  number;

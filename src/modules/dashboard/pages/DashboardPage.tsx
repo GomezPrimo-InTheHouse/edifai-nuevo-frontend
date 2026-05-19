@@ -22,8 +22,8 @@ import { LoadingState } from '../../../shared/components/LoadingState/LoadingSta
 import { useAuthStore } from '../../../app/store/auth.store';
 import { dashboardApi } from '../../../services/api/dashboard.api';
 
-const ROLES_ADMIN   = [1, 3, 4, 6];
-const ROLES_WORKER  = [7, 8];
+const ROLES_ADMIN = [1, 3, 4, 6];
+const ROLES_WORKER = [7, 8];
 
 const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0, 'Labor en proceso': 25,
@@ -123,7 +123,7 @@ function DashboardAdmin() {
   if (!data) return null;
 
   const { kpis, ausentes_hoy, materiales_criticos, pagos_evolucion,
-          obras_por_estado, labores_por_progreso, actividad_reciente } = data;
+    obras_por_estado, labores_por_progreso, actividad_reciente } = data;
 
   return (
     <Stack spacing={3}>
@@ -140,7 +140,7 @@ function DashboardAdmin() {
                 sx={{
                   fontWeight: 700, cursor: 'pointer',
                   bgcolor: periodo === p && !fechaDesde ? '#F59E0B' : '#F1F5F9',
-                  color:   periodo === p && !fechaDesde ? '#0F172A' : '#64748B',
+                  color: periodo === p && !fechaDesde ? '#0F172A' : '#64748B',
                 }}
               />
             ))}
@@ -333,7 +333,7 @@ function DashboardAdmin() {
                   <Chip label={ausentes_hoy.length} size="small" sx={{
                     ml: 'auto', fontWeight: 700, fontSize: 11,
                     bgcolor: ausentes_hoy.length > 0 ? '#FEF2F2' : '#F0FDF4',
-                    color:   ausentes_hoy.length > 0 ? '#DC2626' : '#15803D',
+                    color: ausentes_hoy.length > 0 ? '#DC2626' : '#15803D',
                   }} />
                 </Stack>
                 {ausentes_hoy.length === 0 ? (
@@ -447,8 +447,8 @@ function DashboardTrabajador() {
 
   const { trabajador, obra_actual, kpis, labores, dias_asistencia, ultimos_pagos, mes_actual } = data;
 
-  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
-                 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
   // Generar grid del mes para calendario de asistencia
   const primerDia = new Date(mes_actual.anio, mes_actual.mes - 1, 1).getDay();
@@ -469,7 +469,9 @@ function DashboardTrabajador() {
   return (
     <Stack spacing={3}>
 
+
       {/* Header personalizado */}
+
       <Card elevation={0} sx={{
         borderRadius: 3, border: '1px solid #E2E8F0',
         background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
@@ -490,14 +492,24 @@ function DashboardTrabajador() {
                 </Typography>
               )}
             </Box>
-            <Box sx={{ textAlign: 'right' }}>
-              <Typography sx={{ fontSize: 24, fontWeight: 800, color: '#F59E0B' }}>
-                {kpis.tasa_asistencia}%
-              </Typography>
-              <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
-                asistencia {MESES[mes_actual.mes - 1].toLowerCase()}
-              </Typography>
-            </Box>
+            <Stack alignItems="flex-end" spacing={1}>
+              <Box sx={{ textAlign: 'right' }}>
+                <Typography sx={{ fontSize: 24, fontWeight: 800, color: '#F59E0B' }}>
+                  {kpis.tasa_asistencia}%
+                </Typography>
+                <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+                  asistencia {MESES[mes_actual.mes - 1].toLowerCase()}
+                </Typography>
+              </Box>
+              <Box sx={{ textAlign: 'right', borderTop: '1px solid rgba(255,255,255,0.1)', pt: 1 }}>
+                <Typography sx={{ fontSize: 20, fontWeight: 800, color: '#F59E0B' }}>
+                  {trabajador.puntos ?? 0} pts
+                </Typography>
+                <Typography sx={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+                  puntos acumulados
+                </Typography>
+              </Box>
+            </Stack>
           </Stack>
         </CardContent>
       </Card>
@@ -525,6 +537,16 @@ function DashboardTrabajador() {
             value={formatMoney(kpis.pendiente_mes)}
             color={kpis.pendiente_mes > 0 ? '#EF4444' : '#10B981'} />
         </Grid>
+        <Grid size={{ xs: 6, sm: 3 }}>
+          <KpiCard
+            icon={<Award size={20} />}
+            label="Mis puntos"
+            value={trabajador.puntos ?? 0}
+            sub="puntos acumulados"
+            color="#F59E0B"
+          />
+        </Grid>
+
       </Grid>
 
       <Grid container spacing={2}>
@@ -542,7 +564,7 @@ function DashboardTrabajador() {
 
               {/* Cabecera días */}
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', mb: 1 }}>
-                {['Lu','Ma','Mi','Ju','Vi','Sa','Do'].map((d) => (
+                {['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'].map((d) => (
                   <Typography key={d} sx={{ fontSize: 11, textAlign: 'center', color: '#94A3B8', fontWeight: 600 }}>
                     {d}
                   </Typography>
@@ -553,11 +575,11 @@ function DashboardTrabajador() {
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
                 {diasGrid.map((d, i) => {
                   if (d === null) return <Box key={`e-${i}`} />;
-                  const str    = diaStr(d);
-                  const hoy    = new Date().toISOString().split('T')[0];
-                  const finde  = esFinDeSemana(d);
+                  const str = diaStr(d);
+                  const hoy = new Date().toISOString().split('T')[0];
+                  const finde = esFinDeSemana(d);
                   const marcado = dias_asistencia.includes(str);
-                  const esHoy  = str === hoy;
+                  const esHoy = str === hoy;
                   const futuro = str > hoy;
 
                   let bg = '#F1F5F9';
@@ -568,7 +590,7 @@ function DashboardTrabajador() {
                   else { bg = '#FEE2E2'; color = '#DC2626'; }
 
                   return (
-                    <Box key={`dia-${d}`}  sx={{
+                    <Box key={`dia-${d}`} sx={{
                       height: 32, borderRadius: 1, display: 'flex',
                       alignItems: 'center', justifyContent: 'center',
                       bgcolor: bg,
@@ -616,7 +638,7 @@ function DashboardTrabajador() {
               ) : (
                 <Stack spacing={2}>
                   {labores.slice(0, 5).map((l) => {
-                    const pct   = PROGRESO_MAP[l.estado_nombre] ?? 0;
+                    const pct = PROGRESO_MAP[l.estado_nombre] ?? 0;
                     const color = PROGRESO_COLOR[l.estado_nombre] ?? '#94A3B8';
                     return (
                       <Box
@@ -701,7 +723,7 @@ function DashboardTrabajador() {
                           <Chip label={p.estado} size="small" sx={{
                             fontSize: 11, fontWeight: 700, height: 20,
                             bgcolor: p.estado === 'Pagado' ? '#DCFCE7' : p.estado === 'Pendiente' ? '#FEF9C3' : '#FEE2E2',
-                            color:   p.estado === 'Pagado' ? '#15803D' : p.estado === 'Pendiente' ? '#854D0E' : '#DC2626',
+                            color: p.estado === 'Pagado' ? '#15803D' : p.estado === 'Pendiente' ? '#854D0E' : '#DC2626',
                           }} />
                         </TableCell>
                         <TableCell>
@@ -725,10 +747,10 @@ function DashboardTrabajador() {
 
 // ── Componente principal — detecta rol y renderiza el correcto ─
 const DashboardPage: React.FC = () => {
-  const user  = useAuthStore((s) => s.user);
+  const user = useAuthStore((s) => s.user);
   const rolId = user?.rol_id ?? -1;
 
-  const esAdmin  = ROLES_ADMIN.includes(rolId);
+  const esAdmin = ROLES_ADMIN.includes(rolId);
   const esWorker = ROLES_WORKER.includes(rolId);
 
   return (
@@ -740,7 +762,7 @@ const DashboardPage: React.FC = () => {
           : `Bienvenido — aquí está tu resumen`
         }
       />
-      {esAdmin  && <DashboardAdmin />}
+      {esAdmin && <DashboardAdmin />}
       {esWorker && <DashboardTrabajador />}
       {!esAdmin && !esWorker && (
         <Typography color="text.secondary">No hay dashboard disponible para tu rol.</Typography>
