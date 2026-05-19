@@ -5,13 +5,19 @@ export const trabajadorSchema = z.object({
   apellido: z.string().min(1, 'El apellido es obligatorio'),
   dni: z.string().min(1, 'El DNI es obligatorio'),
   email: z.string().email('Email inválido').min(1, 'El email es obligatorio'),
-  password: z.string().min(5, "Mínimo 5 caracteres").optional().or(z.literal('')), 
+  password: z.string().min(5, "Mínimo 5 caracteres").optional().or(z.literal('')),
   telefono: z.string().optional().or(z.literal('')),
   fecha_ingreso: z.string().optional().or(z.literal('')),
   especialidad_id: z.union([z.number(), z.literal('')]).optional(),
   estado_id: z.union([z.number(), z.literal('')]).optional(),
   jefe_id: z.union([z.number(), z.literal('')]).optional(),
   usuario_creador_id: z.number(),
+  razon_social: z.string().optional(),
+  cuit: z.string().optional(),
+  condicion_iva: z.string().optional(),
+  direccion_fiscal: z.string().optional(),
+  cbu: z.string().optional(),
+  alias_cbu: z.string().optional(),
 });
 
 export type TrabajadorSchemaValues = z.infer<typeof trabajadorSchema>;

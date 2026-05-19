@@ -36,6 +36,12 @@ function toFormDefaults(initialData?: Trabajador | null): TrabajadorFormValues {
     estado_id: initialData?.estado_id ?? '',
     jefe_id: initialData?.jefe_id ?? '',
     usuario_creador_id: initialData?.usuario_creador_id ?? 2,
+    razon_social: initialData?.razon_social ?? '',
+    cuit: initialData?.cuit ?? '',
+    condicion_iva: initialData?.condicion_iva ?? '',
+    direccion_fiscal: initialData?.direccion_fiscal ?? '',
+    cbu: initialData?.cbu ?? '',
+    alias_cbu: initialData?.alias_cbu ?? '',
   };
 }
 
@@ -183,7 +189,52 @@ export function TrabajadorForm({ initialData, especialidades, onSubmit, isSubmit
 
         <Divider sx={{ my: 4 }} />
 
-                {/* SECCIÓN: DATOS PERSONALES */}
+        {/* SECCIÓN: DATOS DE FACTURACIÓN */}
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B', letterSpacing: 1 }}>
+          DATOS DE FACTURACIÓN <Typography component="span" variant="caption" sx={{ color: '#94A3B8', fontWeight: 400, ml: 1 }}>(opcionales)</Typography>
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="razon_social" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth label="Razón social" />
+            )} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="cuit" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth label="CUIT / CUIL" />
+            )} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="condicion_iva" control={control} render={({ field }) => (
+              <TextField select fullWidth label="Condición IVA" value={field.value} onChange={field.onChange}>
+                <MenuItem value="">Sin especificar</MenuItem>
+                <MenuItem value="monotributista">Monotributista</MenuItem>
+                <MenuItem value="responsable_inscripto">Responsable Inscripto</MenuItem>
+                <MenuItem value="exento">Exento</MenuItem>
+                <MenuItem value="consumidor_final">Consumidor Final</MenuItem>
+              </TextField>
+            )} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="direccion_fiscal" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth label="Dirección fiscal" />
+            )} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="cbu" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth label="CBU" inputProps={{ maxLength: 22 }} />
+            )} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Controller name="alias_cbu" control={control} render={({ field }) => (
+              <TextField {...field} fullWidth label="Alias CBU" />
+            )} />
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 4 }} />
+
+        {/* SECCIÓN: DATOS PERSONALES de acceso al sistema */}
         <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B', letterSpacing: 1 }}>
           DATOS ACCESO AL SISTEMA
         </Typography>
@@ -205,11 +256,11 @@ export function TrabajadorForm({ initialData, especialidades, onSubmit, isSubmit
                     input: {
                       readOnly: isEdit,
                       startAdornment: (
-              <InputAdornment position="start">
-                <User size={18} color={isEdit ? "var(--accent)" : "#64748B"} style={{ opacity: isEdit ? 0.8 : 1 }} />
-              </InputAdornment>
-            ),
-                      
+                        <InputAdornment position="start">
+                          <User size={18} color={isEdit ? "var(--accent)" : "#64748B"} style={{ opacity: isEdit ? 0.8 : 1 }} />
+                        </InputAdornment>
+                      ),
+
                       sx: {
                         borderRadius: 2,
                         // 1. Fondo blanco puro
@@ -276,28 +327,28 @@ export function TrabajadorForm({ initialData, especialidades, onSubmit, isSubmit
                 />
               )}
             />
-            
+
           </Grid>
-          
+
         </Grid>
         {isEdit && (
-  <Box sx={{ 
-    mt: 3, 
-    p: 2, 
-    bgcolor: 'rgba(170, 59, 255, 0.05)', 
-    borderRadius: 2, 
-    border: '1px dashed var(--accent-border)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: 1.5
-  }}>
-    <Lock size={14} color="#aa3bff" />
-    <Typography variant="caption" sx={{ color: 'var(--accent)', fontWeight: 600 }}>
-      Próximamente podrás gestionar credenciales desde el módulo de Usuarios.
-    </Typography>
-  </Box>
-)}
-        
+          <Box sx={{
+            mt: 3,
+            p: 2,
+            bgcolor: 'rgba(170, 59, 255, 0.05)',
+            borderRadius: 2,
+            border: '1px dashed var(--accent-border)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5
+          }}>
+            <Lock size={14} color="#aa3bff" />
+            <Typography variant="caption" sx={{ color: 'var(--accent)', fontWeight: 600 }}>
+              Próximamente podrás gestionar credenciales desde el módulo de Usuarios.
+            </Typography>
+          </Box>
+        )}
+
 
 
 

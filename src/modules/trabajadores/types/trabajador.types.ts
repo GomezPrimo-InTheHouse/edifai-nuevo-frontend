@@ -13,6 +13,16 @@ export interface Trabajador {
   usuario_creador_id: number;
   created_at?: string | null;
   updated_at?: string | null;
+
+  // Agregar en interface Trabajador:
+  razon_social?: string | null;
+  cuit?: string | null;
+  condicion_iva?: string | null;
+  direccion_fiscal?: string | null;
+  cbu?: string | null;
+  alias_cbu?: string | null;
+
+
 }
 
 export interface TrabajadorFormValues {
@@ -27,6 +37,13 @@ export interface TrabajadorFormValues {
   estado_id: number | '';
   jefe_id: number | '' | any;
   usuario_creador_id: number;
+  // Agregar en interface TrabajadorFormValues:
+  razon_social?: string;
+  cuit?: string;
+  condicion_iva?: string;
+  direccion_fiscal?: string;
+  cbu?: string;
+  alias_cbu?: string;
 }
 
 export interface CreateTrabajadorPayload {
