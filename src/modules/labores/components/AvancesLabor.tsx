@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
 import {
   Alert, Box, Button, Card, CardContent, Chip, CircularProgress,
-  Collapse, Divider, IconButton, InputAdornment, Stack,
-  TextField, Tooltip, Typography,
+  Collapse, Divider, IconButton, Stack, TextField, Tooltip, Typography,
 } from '@mui/material';
 import { Camera, CheckCircle, ChevronDown, ChevronUp, ImagePlus, XCircle } from 'lucide-react';
 import { useAprobarAvance, useAvancesByLabor, useCrearAvance, useRechazarAvance } from '../hooks/useAvances';
@@ -12,6 +11,15 @@ import { useAuthStore } from '../../../app/store/auth.store';
 
 const ROLES_ADMIN = [1, 3, 4, 6];
 const ROLES_WORKER = [7, 8];
+
+const PORCENTAJES = [25, 50, 75, 100];
+
+const PROGRESO_COLORS: Record<number, string> = {
+  25:  '#EA580C',
+  50:  '#F59E0B',
+  75:  '#2563EB',
+  100: '#16A34A',
+};
 
 function tiempoRelativo(fecha: string): string {
   const diff = Date.now() - new Date(fecha).getTime();
@@ -38,9 +46,7 @@ function EstadoChip({ estado }: { estado: string }) {
   );
 }
 
-function AvanceItem({
-  avance, esAdmin, obra_id, labor_id,
-}: {
+function AvanceItem({ avance, esAdmin, obra_id, labor_id }: {
   avance: Avance; esAdmin: boolean; obra_id: number; labor_id: number;
 }) {
   const notify = useNotify();
@@ -66,15 +72,11 @@ function AvanceItem({
   };
 
   const handleRechazar = async () => {
-    if (!observacion.trim()) {
-      notify.error('Debés ingresar una observación para rechazar.');
-      return;
-    }
+    if (!observacion.trim()) { notify.error('Debés ingresar una observación para rechazar.'); return; }
     const confirmed = await notify.confirm({
       title: '¿Rechazar este avance?',
       message: 'Se notificará al trabajador con tu observación.',
-      confirmLabel: 'Rechazar',
-      severity: 'error',
+      confirmLabel: 'Rechazar', severity: 'error',
     });
     if (!confirmed) return;
     try {
@@ -86,29 +88,35 @@ function AvanceItem({
     }
   };
 
+  const porcentajeColor = avance.porcentaje_cambio != null
+    ? PROGRESO_COLORS[avance.porcentaje_cambio] ?? '#2563EB'
+    : '#2563EB';
+
   return (
     <Box sx={{ border: '1px solid #E2E8F0', borderRadius: 2, overflow: 'hidden' }}>
-      {/* Header del avance */}
       <Box
         sx={{ p: 2, display: 'flex', alignItems: 'flex-start', gap: 1.5, cursor: 'pointer', '&:hover': { bgcolor: '#F8FAFC' } }}
         onClick={() => setExpandido((p) => !p)}
       >
         {avance.imagen_url && (
-          <Box
-            component="img" src={avance.imagen_url} alt="Avance"
+          <Box component="img" src={avance.imagen_url} alt="Avance"
             sx={{ width: 56, height: 56, borderRadius: 1.5, objectFit: 'cover', flexShrink: 0 }}
           />
         )}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }}>
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.5 }} flexWrap="wrap">
             <EstadoChip estado={avance.estado} />
             {avance.porcentaje_cambio != null && (
-              <Chip label={`+${avance.porcentaje_cambio}%`} size="small" sx={{ bgcolor: '#EFF6FF', color: '#2563EB', fontWeight: 700, fontSize: 11 }} />
+              <Chip
+                label={`+${avance.porcentaje_cambio}%`} size="small"
+                sx={{ bgcolor: `${porcentajeColor}18`, color: porcentajeColor, fontWeight: 700, fontSize: 11 }}
+              />
             )}
             <Typography variant="caption" color="text.secondary">{tiempoRelativo(avance.fecha_registro)}</Typography>
           </Stack>
           {avance.descripcion && (
-            <Typography variant="body2" color="text.secondary" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Typography variant="body2" color="text.secondary"
+              sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {avance.descripcion}
             </Typography>
           )}
@@ -116,13 +124,11 @@ function AvanceItem({
         <IconButton size="small">{expandido ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</IconButton>
       </Box>
 
-      {/* Detalle expandido */}
       <Collapse in={expandido}>
         <Divider />
         <Box sx={{ p: 2 }}>
           {avance.imagen_url && (
-            <Box
-              component="img" src={avance.imagen_url} alt="Avance completo"
+            <Box component="img" src={avance.imagen_url} alt="Avance completo"
               sx={{ width: '100%', maxHeight: 300, objectFit: 'contain', borderRadius: 2, mb: 2, bgcolor: '#F8FAFC' }}
             />
           )}
@@ -134,31 +140,22 @@ function AvanceItem({
               <strong>Observación admin:</strong> {avance.observacion_admin}
             </Alert>
           )}
-
-          {/* Acciones admin — solo para pendientes */}
           {esAdmin && avance.estado === 'pendiente' && (
             <Stack spacing={1.5}>
               <TextField
                 fullWidth size="small" multiline rows={2}
                 label="Observación (obligatoria para rechazar)"
-                value={observacion}
-                onChange={(e) => setObservacion(e.target.value)}
+                value={observacion} onChange={(e) => setObservacion(e.target.value)}
               />
               <Stack direction="row" spacing={1}>
-                <Button
-                  variant="contained" color="success" size="small"
-                  startIcon={<CheckCircle size={16} />}
-                  onClick={handleAprobar}
-                  disabled={aprobarMutation.isPending}
-                >
+                <Button variant="contained" color="success" size="small"
+                  startIcon={<CheckCircle size={16} />} onClick={handleAprobar}
+                  disabled={aprobarMutation.isPending}>
                   Aprobar
                 </Button>
-                <Button
-                  variant="outlined" color="error" size="small"
-                  startIcon={<XCircle size={16} />}
-                  onClick={handleRechazar}
-                  disabled={rechazarMutation.isPending}
-                >
+                <Button variant="outlined" color="error" size="small"
+                  startIcon={<XCircle size={16} />} onClick={handleRechazar}
+                  disabled={rechazarMutation.isPending}>
                   Rechazar
                 </Button>
               </Stack>
@@ -185,7 +182,7 @@ export const AvancesLabor: React.FC<AvancesLaborProps> = ({ obra_id, labor_id })
   const crearMutation = useCrearAvance();
 
   const [descripcion, setDescripcion] = useState('');
-  const [porcentaje, setPorcentaje] = useState<number | ''>('');
+  const [porcentaje, setPorcentaje] = useState<number | null>(null);
   const [imagenUrl, setImagenUrl] = useState('');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -220,13 +217,13 @@ export const AvancesLabor: React.FC<AvancesLaborProps> = ({ obra_id, labor_id })
         obra_id, labor_id,
         descripcion: descripcion.trim() || undefined,
         imagen_url: imagenUrl || undefined,
-        porcentaje_cambio: porcentaje !== '' ? Number(porcentaje) : undefined,
+        porcentaje_cambio: porcentaje ?? undefined,
       });
       setDescripcion('');
-      setPorcentaje('');
+      setPorcentaje(null);
       setImagenUrl('');
       setPreviewUrl(null);
-      notify.success('Avance registrado.');
+      notify.success('Avance registrado correctamente.');
     } catch {
       notify.error('No se pudo registrar el avance.');
     }
@@ -240,74 +237,108 @@ export const AvancesLabor: React.FC<AvancesLaborProps> = ({ obra_id, labor_id })
 
         {/* Formulario — solo workers */}
         {esWorker && (
-          <Box sx={{ mb: 3, p: 2, bgcolor: '#F8FAFC', borderRadius: 2, border: '1px solid #E2E8F0' }}>
-            <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>REGISTRAR NUEVO AVANCE</Typography>
-            <Stack spacing={1.5}>
+          <Box sx={{ mb: 3, p: 2.5, bgcolor: '#F8FAFC', borderRadius: 2, border: '1px solid #E2E8F0' }}>
+            <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B', letterSpacing: '0.05em' }}>
+              REGISTRAR NUEVO AVANCE
+            </Typography>
+            <Stack spacing={2}>
+
+              {/* Descripción */}
               <TextField
-                fullWidth size="small" multiline rows={2}
-                label="Descripción del avance"
+                fullWidth size="small" multiline rows={3}
+                label="Describí el avance realizado"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
-              />
-              <TextField
-                size="small" type="number" label="% de avance"
-                value={porcentaje}
-                onChange={(e) => setPorcentaje(e.target.value === '' ? '' : Number(e.target.value))}
-                inputProps={{ min: 0, max: 100 }}
-                sx={{ width: 150 }}
-                InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
+                placeholder="Ej: Se completó el encofrado del sector norte..."
               />
 
-              {/* Preview imagen */}
-              {previewUrl && (
-                <Box sx={{ position: 'relative', width: 120 }}>
-                  <Box component="img" src={previewUrl} alt="Preview"
-                    sx={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 2, border: '1px solid #E2E8F0' }}
-                  />
-                  <IconButton
-                    size="small"
-                    onClick={() => { setPreviewUrl(null); setImagenUrl(''); }}
-                    sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(0,0,0,0.5)', color: '#fff' }}
-                  >
-                    <XCircle size={14} />
-                  </IconButton>
-                </Box>
-              )}
-
-              {!previewUrl && (
+              {/* Porcentaje — botones fijos */}
+              <Box>
+                <Typography variant="caption" fontWeight={600} sx={{ color: '#64748B', display: 'block', mb: 1 }}>
+                  % DE AVANCE
+                </Typography>
                 <Stack direction="row" spacing={1}>
-                  <Tooltip title="Subir desde galería">
-                    <Button
-                      variant="outlined" size="small"
-                      startIcon={uploading ? <CircularProgress size={14} /> : <ImagePlus size={16} />}
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
-                    >
-                      Galería
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title="Tomar foto">
-                    <Button
-                      variant="outlined" size="small"
-                      startIcon={<Camera size={16} />}
-                      onClick={() => cameraInputRef.current?.click()}
-                      disabled={uploading}
-                      sx={{ display: { xs: 'flex', md: 'none' } }}
-                    >
-                      Cámara
-                    </Button>
-                  </Tooltip>
+                  {PORCENTAJES.map((p) => {
+                    const color = PROGRESO_COLORS[p];
+                    const selected = porcentaje === p;
+                    return (
+                      <Button
+                        key={p}
+                        size="small"
+                        variant={selected ? 'contained' : 'outlined'}
+                        onClick={() => setPorcentaje(selected ? null : p)}
+                        sx={{
+                          minWidth: 56, fontWeight: 700, fontSize: 13,
+                          borderColor: color,
+                          color: selected ? '#fff' : color,
+                          bgcolor: selected ? color : 'transparent',
+                          '&:hover': {
+                            bgcolor: selected ? color : `${color}18`,
+                            borderColor: color,
+                          },
+                        }}
+                      >
+                        {p}%
+                      </Button>
+                    );
+                  })}
                 </Stack>
-              )}
+              </Box>
+
+              {/* Imagen */}
+              <Box>
+                <Typography variant="caption" fontWeight={600} sx={{ color: '#64748B', display: 'block', mb: 1 }}>
+                  FOTO DEL AVANCE
+                </Typography>
+
+                {previewUrl ? (
+                  <Box sx={{ position: 'relative', width: 140 }}>
+                    <Box component="img" src={previewUrl} alt="Preview"
+                      sx={{ width: 140, height: 140, objectFit: 'cover', borderRadius: 2, border: '1px solid #E2E8F0' }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={() => { setPreviewUrl(null); setImagenUrl(''); }}
+                      sx={{ position: 'absolute', top: 4, right: 4, bgcolor: 'rgba(0,0,0,0.55)', color: '#fff', '&:hover': { bgcolor: 'rgba(0,0,0,0.75)' } }}
+                    >
+                      <XCircle size={14} />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  <Stack direction="row" spacing={1}>
+                    <Tooltip title="Subir desde galería">
+                      <Button
+                        variant="outlined" size="small"
+                        startIcon={uploading ? <CircularProgress size={14} /> : <ImagePlus size={16} />}
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                        sx={{ borderStyle: 'dashed' }}
+                      >
+                        {uploading ? 'Subiendo...' : 'Galería'}
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title="Tomar foto">
+                      <Button
+                        variant="outlined" size="small"
+                        startIcon={<Camera size={16} />}
+                        onClick={() => cameraInputRef.current?.click()}
+                        disabled={uploading}
+                        sx={{ borderStyle: 'dashed', display: { xs: 'flex', md: 'none' } }}
+                      >
+                        Cámara
+                      </Button>
+                    </Tooltip>
+                  </Stack>
+                )}
+              </Box>
 
               <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handleFileChange} />
               <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleFileChange} />
 
               <Button
-                variant="contained" size="small"
-                onClick={handleSubmit}
+                variant="contained" onClick={handleSubmit}
                 disabled={crearMutation.isPending || uploading || (!descripcion.trim() && !imagenUrl)}
-                sx={{ alignSelf: 'flex-end' }}
+                sx={{ alignSelf: 'flex-end', px: 3 }}
               >
                 {crearMutation.isPending ? 'Registrando...' : 'Registrar avance'}
               </Button>
@@ -316,10 +347,14 @@ export const AvancesLabor: React.FC<AvancesLaborProps> = ({ obra_id, labor_id })
         )}
 
         {/* Lista de avances */}
-        {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}><CircularProgress size={24} /></Box>}
+        {isLoading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+            <CircularProgress size={24} />
+          </Box>
+        )}
 
         {!isLoading && avances.length === 0 && (
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 3 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
             No hay avances registrados para esta labor.
           </Typography>
         )}

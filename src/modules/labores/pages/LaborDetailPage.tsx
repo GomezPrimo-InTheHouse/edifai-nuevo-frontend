@@ -17,8 +17,10 @@ import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 import { estadoApi } from '../../../services/api/estado.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { AvancesLabor } from '../components/AvancesLabor';
+import { useAuthStore } from '../../../app/store/auth.store';
 
-// Mapa de progreso por nombre de estado
+const ROLES_ADMIN = [1, 3, 4, 6];
+
 const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0,
   'Labor en proceso': 25,
@@ -58,12 +60,14 @@ export const LaborDetailPage: React.FC = () => {
   const laborId = Number(id);
   const notify = useNotify();
 
+  const user = useAuthStore((s) => s.user);
+  const esAdmin = ROLES_ADMIN.includes(user?.rol_id ?? 0);
+
   const { data: labor, isLoading, isError, refetch } = useLaborDetail(laborId);
   const { data: obras = [] } = useObrasList();
   const { data: trabajadores = [] } = useTrabajadoresList();
   const cambiarEstadoMutation = useCambiarEstadoLabor();
 
-  // Estados filtrados por ámbito 'labor'
   const { data: estadosLabor = [] } = useQuery({
     queryKey: ['estados', 'labor'],
     queryFn: () => estadoApi.getByAmbito('labor'),
@@ -96,7 +100,9 @@ export const LaborDetailPage: React.FC = () => {
         actions={
           <Stack direction="row" spacing={1}>
             <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/labores')}>Volver</Button>
-            <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/labores/${labor.id}/editar`)}>Editar</Button>
+            {esAdmin && (
+              <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/labores/${labor.id}/editar`)}>Editar</Button>
+            )}
           </Stack>
         }
       />
@@ -136,10 +142,8 @@ export const LaborDetailPage: React.FC = () => {
               <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>Estado</Typography>
               <Divider sx={{ mb: 3 }} />
 
-              {/* Chip de estado */}
               <LaborEstadoChip estadoNombre={estadoNombre} />
 
-              {/* Barra de progreso */}
               <Box sx={{ mt: 2 }}>
                 <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
                   <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
@@ -153,29 +157,26 @@ export const LaborDetailPage: React.FC = () => {
                   variant="determinate"
                   value={progreso}
                   sx={{
-                    height: 8,
-                    borderRadius: 4,
-                    backgroundColor: '#E2E8F0',
-                    '& .MuiLinearProgress-bar': {
-                      borderRadius: 4,
-                      backgroundColor: progressColor,
-                    },
+                    height: 8, borderRadius: 4, backgroundColor: '#E2E8F0',
+                    '& .MuiLinearProgress-bar': { borderRadius: 4, backgroundColor: progressColor },
                   }}
                 />
               </Box>
 
-              {/* Cambio rápido de estado — solo estados de ámbito labor */}
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#64748B' }}>CAMBIAR ESTADO</Typography>
-                <TextField
-                  select fullWidth size="small"
-                  value={labor.estado_id ?? ''}
-                  onChange={(e) => handleCambiarEstado(Number(e.target.value))}
-                  disabled={cambiarEstadoMutation.isPending}
-                >
-                  {estadosLabor.map((e) => <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>)}
-                </TextField>
-              </Box>
+              {/* CAMBIAR ESTADO — solo admins */}
+              {esAdmin && (
+                <Box sx={{ mt: 3 }}>
+                  <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#64748B' }}>CAMBIAR ESTADO</Typography>
+                  <TextField
+                    select fullWidth size="small"
+                    value={labor.estado_id ?? ''}
+                    onChange={(e) => handleCambiarEstado(Number(e.target.value))}
+                    disabled={cambiarEstadoMutation.isPending}
+                  >
+                    {estadosLabor.map((e) => <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>)}
+                  </TextField>
+                </Box>
+              )}
 
               <Divider sx={{ my: 3 }} />
               <Stack spacing={2}>
@@ -188,8 +189,8 @@ export const LaborDetailPage: React.FC = () => {
       </Grid>
 
       {labor.obra_id && (
-      <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
-)}
+        <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
+      )}
     </AppLayout>
   );
 };
