@@ -284,14 +284,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
             <Menu />
           </IconButton>
 
-          <Box sx={{
+          {/* <Box sx={{
             display: 'flex', alignItems: 'center', gap: 1, px: 1.5, height: 40,
             width: { xs: '100%', sm: 260, md: 320 },
             backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 3,
           }}>
             <Search sx={{ fontSize: 18, color: '#64748B' }} />
             <InputBase placeholder="Buscar obra, trabajador o material..." sx={{ flex: 1, fontSize: 14, color: '#0F172A' }} />
-          </Box>
+          </Box> */}
 
           <Box sx={{ flexGrow: 1 }} />
           <NotificacionesPopover />
