@@ -1,10 +1,13 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Box, Button, Card, CardContent, Divider, Grid, LinearProgress,
-  MenuItem, Stack, TextField, Typography,
+  Avatar, Box, Button, Card, CardContent, Chip, Divider, Grid,
+  LinearProgress, MenuItem, Stack, TextField, Typography,
 } from '@mui/material';
-import { ArrowLeft, Briefcase, Calendar, FileText, Pencil, User } from 'lucide-react';
+import {
+  ArrowLeft, Briefcase, Building2, Calendar,
+  FileText, Pencil, Star, User,
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
@@ -14,6 +17,7 @@ import { LaborEstadoChip } from '../components/LaborEstadoChip';
 import { useCambiarEstadoLabor, useLaborDetail } from '../hooks/useLabores';
 import { useObrasList } from '../../obras/hooks/useObras';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
+import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
 import { estadoApi } from '../../../services/api/estado.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { AvancesLabor } from '../components/AvancesLabor';
@@ -22,11 +26,8 @@ import { useAuthStore } from '../../../app/store/auth.store';
 const ROLES_ADMIN = [1, 3, 4, 6];
 
 const PROGRESO_MAP: Record<string, number> = {
-  'Planificada': 0,
-  'Labor en proceso': 25,
-  'Avanzada': 50,
-  'Muy avanzada': 75,
-  'Finalizada': 100,
+  'Planificada': 0, 'Labor en proceso': 25,
+  'Avanzada': 50, 'Muy avanzada': 75, 'Finalizada': 100,
 };
 
 function getProgressColor(progreso: number): string {
@@ -42,14 +43,15 @@ function formatDate(value?: string | null): string {
   return new Date(value).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function DateCard({ label, value }: { label: string; value: string }) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-      <Box sx={{ color: '#94A3B8', mt: 0.3 }}>{icon}</Box>
-      <Box>
-        <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, display: 'block' }}>{label}</Typography>
-        <Typography variant="body2" sx={{ color: '#0F172A', fontWeight: 500 }}>{value}</Typography>
-      </Box>
+    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+      <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block', mb: 0.25 }}>
+        {label}
+      </Typography>
+      <Typography variant="body2" fontWeight={700} sx={{ color: value === '-' ? '#CBD5E1' : '#0F172A' }}>
+        {value}
+      </Typography>
     </Box>
   );
 }
@@ -66,6 +68,7 @@ export const LaborDetailPage: React.FC = () => {
   const { data: labor, isLoading, isError, refetch } = useLaborDetail(laborId);
   const { data: obras = [] } = useObrasList();
   const { data: trabajadores = [] } = useTrabajadoresList();
+  const { data: especialidades = [] } = useEspecialidadesList();
   const cambiarEstadoMutation = useCambiarEstadoLabor();
 
   const { data: estadosLabor = [] } = useQuery({
@@ -77,11 +80,14 @@ export const LaborDetailPage: React.FC = () => {
   if (isError) return <ErrorState title="Error" message="No se pudo cargar la labor." onRetry={refetch} />;
   if (!labor) return <ErrorState title="No encontrada" message="La labor no existe." />;
 
-  const obraNombre = obras.find((o) => o.id === labor.obra_id)?.nombre ?? '-';
-  const trabajadorNombre = trabajadores.find((t) => t.id === labor.trabajador_id);
+  const obra = obras.find((o) => o.id === labor.obra_id);
+  const trabajador = trabajadores.find((t) => t.id === labor.trabajador_id);
+  const especialidadNombre = especialidades.find((e) => e.id === trabajador?.especialidad_id)?.nombre;
   const estadoNombre = estadosLabor.find((e) => e.id === labor.estado_id)?.nombre;
   const progreso = estadoNombre ? (PROGRESO_MAP[estadoNombre] ?? 0) : 0;
   const progressColor = getProgressColor(progreso);
+  const puntos = trabajador?.puntos ?? 0;
+  const asistenciaPct = Number(trabajador?.porcentaje_asistencia_mes ?? 0);
 
   const handleCambiarEstado = async (estado_id: number) => {
     try {
@@ -99,74 +105,172 @@ export const LaborDetailPage: React.FC = () => {
         subtitle="Vista detallada de la labor."
         actions={
           <Stack direction="row" spacing={1}>
-            <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/labores')}>Volver</Button>
+            <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/labores')}>
+              Volver
+            </Button>
             {esAdmin && (
-              <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/labores/${labor.id}/editar`)}>Editar</Button>
+              <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/labores/${labor.id}/editar`)}>
+                Editar
+              </Button>
             )}
           </Stack>
         }
       />
 
       <Grid container spacing={3}>
+
         {/* Panel principal */}
         <Grid size={{ xs: 12, md: 8 }}>
-          <Card sx={{ borderRadius: 3 }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>Información general</Typography>
-              <Divider sx={{ mb: 3 }} />
-              <Stack spacing={2.5}>
-                <DetailRow icon={<Briefcase size={16} />} label="Obra" value={obraNombre} />
-                <DetailRow icon={<FileText size={16} />} label="Descripción" value={labor.descripcion || '-'} />
-                <DetailRow
-                  icon={<User size={16} />}
-                  label="Trabajador asignado"
-                  value={trabajadorNombre ? `${trabajadorNombre.nombre} ${trabajadorNombre.apellido}` : 'Sin asignar'}
-                />
-              </Stack>
-              <Divider sx={{ my: 3 }} />
-              <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>FECHAS</Typography>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 6 }}><DetailRow icon={<Calendar size={16} />} label="Inicio estimado" value={formatDate(labor.fecha_inicio_estimada)} /></Grid>
-                <Grid size={{ xs: 6 }}><DetailRow icon={<Calendar size={16} />} label="Fin estimado" value={formatDate(labor.fecha_fin_estimada)} /></Grid>
-                <Grid size={{ xs: 6 }}><DetailRow icon={<Calendar size={16} />} label="Inicio real" value={formatDate(labor.fecha_inicio_real)} /></Grid>
-                <Grid size={{ xs: 6 }}><DetailRow icon={<Calendar size={16} />} label="Fin real" value={formatDate(labor.fecha_fin_real)} /></Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          <Stack spacing={3}>
+
+            {/* Información general */}
+            <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #E2E8F0' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Stack direction="row" alignItems="center" gap={1} mb={2}>
+                  <FileText size={16} color="#F59E0B" />
+                  <Typography variant="h6" fontWeight={700}>Información general</Typography>
+                </Stack>
+                <Divider sx={{ mb: 3 }} />
+
+                {/* Obra */}
+                <Box sx={{ p: 2, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', mb: 2 }}>
+                  <Stack direction="row" alignItems="center" gap={1.5}>
+                    <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Building2 size={18} color="#F59E0B" />
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600 }}>Obra</Typography>
+                      <Typography variant="body2" fontWeight={700} color="#0F172A">{obra?.nombre ?? '-'}</Typography>
+                    </Box>
+                  </Stack>
+                </Box>
+
+                {/* Descripción */}
+                {labor.descripcion && (
+                  <Box sx={{ p: 2, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', mb: 2 }}>
+                    <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block', mb: 0.5 }}>
+                      Descripción
+                    </Typography>
+                    <Typography variant="body2" color="#475569" sx={{ lineHeight: 1.6 }}>
+                      {labor.descripcion}
+                    </Typography>
+                  </Box>
+                )}
+
+                {/* Trabajador */}
+                {trabajador ? (
+                  <Box sx={{ p: 2, borderRadius: 2, border: '1px solid #E2E8F0', bgcolor: '#FAFAFA' }}>
+                    <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block', mb: 1.5 }}>
+                      Trabajador asignado
+                    </Typography>
+                    <Stack direction="row" alignItems="center" gap={2}>
+                      <Avatar sx={{ width: 44, height: 44, bgcolor: '#0F172A', fontSize: 15, fontWeight: 800 }}>
+                        {trabajador.nombre[0]}{trabajador.apellido[0]}
+                      </Avatar>
+                      <Box flex={1}>
+                        <Typography variant="body2" fontWeight={700} color="#0F172A">
+                          {trabajador.nombre} {trabajador.apellido}
+                        </Typography>
+                        {especialidadNombre && (
+                          <Typography variant="caption" color="#64748B">{especialidadNombre}</Typography>
+                        )}
+                      </Box>
+                      <Stack direction="row" spacing={1}>
+                        <Chip
+                          icon={<Star size={12} />}
+                          label={`${puntos} pts`}
+                          size="small"
+                          sx={{ bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309', fontWeight: 700, fontSize: 11 }}
+                        />
+                        <Chip
+                          icon={<Calendar size={12} />}
+                          label={`${asistenciaPct}% asist.`}
+                          size="small"
+                          sx={{
+                            fontWeight: 700, fontSize: 11,
+                            bgcolor: asistenciaPct >= 80 ? '#F0FDF4' : asistenciaPct >= 50 ? '#FFFBEB' : '#FEF2F2',
+                            color: asistenciaPct >= 80 ? '#15803D' : asistenciaPct >= 50 ? '#B45309' : '#DC2626',
+                          }}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Box>
+                ) : (
+                  <Box sx={{ p: 2, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                    <Stack direction="row" alignItems="center" gap={1}>
+                      <User size={16} color="#CBD5E1" />
+                      <Typography variant="body2" color="#94A3B8">Sin trabajador asignado</Typography>
+                    </Stack>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Fechas */}
+            <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #E2E8F0' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Stack direction="row" alignItems="center" gap={1} mb={2}>
+                  <Calendar size={16} color="#F59E0B" />
+                  <Typography variant="h6" fontWeight={700}>Fechas</Typography>
+                </Stack>
+                <Divider sx={{ mb: 3 }} />
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 6 }}>
+                    <DateCard label="Inicio estimado" value={formatDate(labor.fecha_inicio_estimada)} />
+                  </Grid>
+                  <Grid size={{ xs: 6 }}>
+                    <DateCard label="Fin estimado" value={formatDate(labor.fecha_fin_estimada)} />
+                  </Grid>
+                  <Grid size={{ xs: 6 }}>
+                    <DateCard label="Inicio real" value={formatDate(labor.fecha_inicio_real)} />
+                  </Grid>
+                  <Grid size={{ xs: 6 }}>
+                    <DateCard label="Fin real" value={formatDate(labor.fecha_fin_real)} />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+
+          </Stack>
         </Grid>
 
         {/* Panel lateral */}
         <Grid size={{ xs: 12, md: 4 }}>
-          <Card sx={{ borderRadius: 3 }}>
+          <Card elevation={0} sx={{ borderRadius: 3, border: '1px solid #E2E8F0', position: 'sticky', top: 80 }}>
             <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>Estado</Typography>
+              <Stack direction="row" alignItems="center" gap={1} mb={2}>
+                <Briefcase size={16} color="#F59E0B" />
+                <Typography variant="h6" fontWeight={700}>Estado</Typography>
+              </Stack>
               <Divider sx={{ mb: 3 }} />
 
               <LaborEstadoChip estadoNombre={estadoNombre} />
 
-              <Box sx={{ mt: 2 }}>
-                <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
+              {/* Barra de progreso */}
+              <Box sx={{ mt: 2.5, p: 2, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                <Stack direction="row" justifyContent="space-between" sx={{ mb: 1 }}>
                   <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600 }}>
-                    Progreso de la labor
+                    Progreso
                   </Typography>
-                  <Typography variant="caption" fontWeight={700} sx={{ color: progressColor }}>
+                  <Typography variant="caption" fontWeight={800} sx={{ color: progressColor }}>
                     {progreso}%
                   </Typography>
                 </Stack>
                 <LinearProgress
-                  variant="determinate"
-                  value={progreso}
+                  variant="determinate" value={progreso}
                   sx={{
-                    height: 8, borderRadius: 4, backgroundColor: '#E2E8F0',
-                    '& .MuiLinearProgress-bar': { borderRadius: 4, backgroundColor: progressColor },
+                    height: 10, borderRadius: 5, backgroundColor: '#E2E8F0',
+                    '& .MuiLinearProgress-bar': { borderRadius: 5, backgroundColor: progressColor },
                   }}
                 />
               </Box>
 
-              {/* CAMBIAR ESTADO — solo admins */}
+              {/* Cambiar estado — solo admins */}
               {esAdmin && (
                 <Box sx={{ mt: 3 }}>
-                  <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#64748B' }}>CAMBIAR ESTADO</Typography>
+                  <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: '#64748B' }}>
+                    CAMBIAR ESTADO
+                  </Typography>
                   <TextField
                     select fullWidth size="small"
                     value={labor.estado_id ?? ''}
@@ -179,9 +283,25 @@ export const LaborDetailPage: React.FC = () => {
               )}
 
               <Divider sx={{ my: 3 }} />
+
+              {/* Metadata */}
               <Stack spacing={2}>
-                <DetailRow icon={<Calendar size={16} />} label="Creada" value={formatDate(labor.created_at)} />
-                <DetailRow icon={<Calendar size={16} />} label="Actualizada" value={formatDate(labor.updated_at)} />
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block', mb: 0.25 }}>
+                    Creada
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} color="#0F172A">
+                    {formatDate(labor.created_at)}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#94A3B8', fontWeight: 600, display: 'block', mb: 0.25 }}>
+                    Actualizada
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} color="#0F172A">
+                    {formatDate(labor.updated_at)}
+                  </Typography>
+                </Box>
               </Stack>
             </CardContent>
           </Card>
