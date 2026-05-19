@@ -43,6 +43,7 @@ export function MaterialForm({ initialData, onSubmit, isSubmitting = false }: Ma
   const { data: tipos = [] } = useTiposMaterialList();
   const { data: todosEstados = [] } = useEstadosGenerales();
   // const estados = todosEstados.filter((e) => e.ambito === 'gastos imprevistos' || e.ambito === 'material' || !e.ambito);
+  const estados = todosEstados.filter((e) => e.ambito === 'material');
 
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.imagen_url ?? null);
@@ -114,7 +115,7 @@ export function MaterialForm({ initialData, onSubmit, isSubmitting = false }: Ma
             <Controller name="estado_id" control={control} render={({ field }) => (
               <TextField select fullWidth label="Estado" value={field.value} onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))} error={!!errors.estado_id} helperText={errors.estado_id?.message ?? ''}>
                 <MenuItem value="">Seleccionar</MenuItem>
-                {todosEstados.map((e) => <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>)}
+                {estados.map((e) => <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>)}
               </TextField>
             )} />
           </Grid>
