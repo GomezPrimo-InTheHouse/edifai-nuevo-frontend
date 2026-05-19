@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import {
-  Box, Button, Card, CardContent, Divider, Grid, LinearProgress,
+  Box, Button, Card, CardContent, Chip, Divider, Grid, LinearProgress,
   MenuItem, Paper, Stack, TextField, Typography,
 } from '@mui/material';
-import { User, CreditCard, Phone, Briefcase } from 'lucide-react';
+import { User, CreditCard, Phone, Briefcase, Star, CalendarCheck } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { laborSchema, type LaborSchemaValues } from '../schemas/labor.schema';
@@ -25,22 +25,23 @@ interface LaborFormProps {
   isSubmitting?: boolean;
 }
 
-// Mapa de progreso por nombre de estado
 const PROGRESO_MAP: Record<string, number> = {
-  'Planificada': 0,
-  'Labor en proceso': 25,
-  'Avanzada': 50,
-  'Muy avanzada': 75,
-  'Finalizada': 100,
+  'Planificada': 0, 'Labor en proceso': 25,
+  'Avanzada': 50, 'Muy avanzada': 75, 'Finalizada': 100,
 };
 
-// Color de la barra según progreso
 function getProgressColor(progreso: number): string {
   if (progreso === 100) return '#16A34A';
   if (progreso >= 75) return '#2563EB';
   if (progreso >= 50) return '#F59E0B';
   if (progreso >= 25) return '#EA580C';
   return '#94A3B8';
+}
+
+function getAsistenciaColor(pct: number): string {
+  if (pct >= 80) return '#16A34A';
+  if (pct >= 50) return '#F59E0B';
+  return '#DC2626';
 }
 
 function toDateInput(value?: string | null): string {
@@ -88,16 +89,13 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
   const { data: labores = [] } = useLaboresList();
   const { data: todosPresupuestos = [] } = usePresupuestosList();
 
-  // Estados específicos de labores
   const { data: estadosLabor = [] } = useQuery({
     queryKey: ['estados', 'labor'],
     queryFn: () => estadoApi.getByAmbito('labor'),
   });
 
-  // Solo jefes
   const trabajadores = todosLosTrabajadores.filter((t) => t.jefe_id === null);
 
-  // Observa trabajador y estado seleccionados
   const trabajadorIdSeleccionado = watch('trabajador_id');
   const estadoIdSeleccionado = watch('estado_id');
 
@@ -107,7 +105,10 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
   const progreso = PROGRESO_MAP[estadoSeleccionado?.nombre ?? ''] ?? 0;
   const progressColor = getProgressColor(progreso);
 
-// Pagos y presupuestos del trabajador
+  const asistenciaPct = Number(trabajadorSeleccionado?.porcentaje_asistencia_mes ?? 0);
+  const asistenciaColor = getAsistenciaColor(asistenciaPct);
+  const puntos = trabajadorSeleccionado?.puntos ?? 0;
+
   const { data: pagosRaw } = usePagosByTrabajador(
     trabajadorSeleccionado ? Number(trabajadorIdSeleccionado) : 0
   );
@@ -128,7 +129,6 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
     .reduce((acc, p) => acc + Number(p.monto), 0);
   const saldoPendiente = Math.max(0, totalPresupuestado - totalPagado);
 
-  // Auto-completa especialidad_id
   useEffect(() => {
     if (trabajadorSeleccionado?.especialidad_id) {
       setValue('especialidad_id', trabajadorSeleccionado.especialidad_id);
@@ -145,14 +145,12 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
     <Paper sx={{ p: 3, borderRadius: 3 }}>
       <Box component="form" onSubmit={handleSubmit((v) => onSubmit(v as LaborFormValues))}>
         <Grid container spacing={2}>
-          {/* Nombre */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="nombre" control={control} render={({ field }) => (
               <TextField {...field} fullWidth label="Nombre de la labor" error={!!errors.nombre} helperText={errors.nombre?.message ?? ''} />
             )} />
           </Grid>
 
-          {/* Obra */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="obra_id" control={control} render={({ field }) => (
               <TextField select fullWidth label="Obra" value={field.value}
@@ -164,27 +162,67 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             )} />
           </Grid>
 
-          {/* Descripción */}
           <Grid size={{ xs: 12 }}>
             <Controller name="descripcion" control={control} render={({ field }) => (
               <TextField {...field} fullWidth multiline minRows={3} label="Descripción" />
             )} />
           </Grid>
 
-          {/* Trabajador jefe */}
+          {/* Selector de trabajador con badges */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="trabajador_id" control={control} render={({ field }) => (
-              <TextField select fullWidth label="Trabajador jefe asignado" value={field.value}
-                onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}>
+              <TextField
+                select fullWidth label="Trabajador jefe asignado"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
+                SelectProps={{ MenuProps: { PaperProps: { sx: { maxHeight: 320 } } } }}
+              >
                 <MenuItem value="">Sin asignar</MenuItem>
-                {trabajadores.map((t) => (
-                  <MenuItem key={t.id} value={t.id}>{t.nombre} {t.apellido}</MenuItem>
-                ))}
+                {trabajadores.map((t) => {
+                  const pct = Number(t.porcentaje_asistencia_mes ?? 0);
+                  const pts = t.puntos ?? 0;
+                  const espNombre = especialidades.find((e) => e.id === t.especialidad_id)?.nombre;
+                  return (
+                    <MenuItem key={t.id} value={t.id}>
+                      <Box sx={{ width: '100%' }}>
+                        <Stack direction="row" alignItems="center" justifyContent="space-between">
+                          <Typography variant="body2" fontWeight={600}>
+                            {t.nombre} {t.apellido}
+                          </Typography>
+                          <Stack direction="row" spacing={0.5}>
+                            <Chip
+                              label={`${pct}%`} size="small"
+                              icon={<CalendarCheck size={10} />}
+                              sx={{
+                                height: 18, fontSize: 10, fontWeight: 700,
+                                bgcolor: `${getAsistenciaColor(pct)}18`,
+                                color: getAsistenciaColor(pct),
+                              }}
+                            />
+                            <Chip
+                              label={`${pts} pts`} size="small"
+                              icon={<Star size={10} />}
+                              sx={{
+                                height: 18, fontSize: 10, fontWeight: 700,
+                                bgcolor: 'rgba(245,158,11,0.1)',
+                                color: '#B45309',
+                              }}
+                            />
+                          </Stack>
+                        </Stack>
+                        {espNombre && (
+                          <Typography variant="caption" color="text.secondary">
+                            {espNombre}
+                          </Typography>
+                        )}
+                      </Box>
+                    </MenuItem>
+                  );
+                })}
               </TextField>
             )} />
           </Grid>
 
-          {/* Estado con barra de progreso */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="estado_id" control={control} render={({ field }) => (
               <TextField select fullWidth label="Estado de la labor" value={field.value}
@@ -194,7 +232,6 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
               </TextField>
             )} />
 
-            {/* Barra de progreso */}
             {estadoIdSeleccionado !== '' && estadoIdSeleccionado !== undefined && (
               <Box sx={{ mt: 1.5 }}>
                 <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
@@ -205,24 +242,14 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                     {progreso}%
                   </Typography>
                 </Stack>
-                <LinearProgress
-                  variant="determinate"
-                  value={progreso}
-                  sx={{
-                    height: 8,
-                    borderRadius: 4,
-                    backgroundColor: '#E2E8F0',
-                    '& .MuiLinearProgress-bar': {
-                      borderRadius: 4,
-                      backgroundColor: progressColor,
-                    },
-                  }}
-                />
+                <LinearProgress variant="determinate" value={progreso} sx={{
+                  height: 8, borderRadius: 4, backgroundColor: '#E2E8F0',
+                  '& .MuiLinearProgress-bar': { borderRadius: 4, backgroundColor: progressColor },
+                }} />
               </Box>
             )}
           </Grid>
 
-          {/* Fechas estimadas */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="fecha_inicio_estimada" control={control} render={({ field }) => (
               <TextField {...field} fullWidth type="date" label="Inicio estimado" InputLabelProps={{ shrink: true }} />
@@ -234,7 +261,6 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             )} />
           </Grid>
 
-          {/* Fechas reales — solo en edición */}
           {initialData && (
             <>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -258,6 +284,31 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>
               INFORMACIÓN DEL TRABAJADOR
             </Typography>
+
+            {/* Badges resumen */}
+            <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+              <Chip
+                icon={<CalendarCheck size={14} />}
+                label={`Asistencia este mes: ${asistenciaPct}%`}
+                sx={{
+                  fontWeight: 700, fontSize: 12,
+                  bgcolor: `${asistenciaColor}18`, color: asistenciaColor,
+                }}
+              />
+              <Chip
+                icon={<Star size={14} />}
+                label={`${puntos} puntos acumulados`}
+                sx={{ fontWeight: 700, fontSize: 12, bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309' }}
+              />
+              {especialidadNombre && (
+                <Chip
+                  icon={<Briefcase size={14} />}
+                  label={especialidadNombre}
+                  sx={{ fontWeight: 700, fontSize: 12, bgcolor: '#EFF6FF', color: '#1D4ED8' }}
+                />
+              )}
+            </Stack>
+
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Card sx={{ borderRadius: 2, border: '1px solid #E2E8F0', boxShadow: 'none' }}>

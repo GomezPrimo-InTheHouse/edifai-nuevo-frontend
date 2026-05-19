@@ -14,7 +14,7 @@ export interface Trabajador {
   created_at?: string | null;
   updated_at?: string | null;
 
-  // Agregar en interface Trabajador:
+  
   razon_social?: string | null;
   cuit?: string | null;
   condicion_iva?: string | null;
@@ -22,6 +22,9 @@ export interface Trabajador {
   cbu?: string | null;
   alias_cbu?: string | null;
 
+  puntos?: number;
+  dias_marcados_mes?: number;
+  porcentaje_asistencia_mes?: number;
 
 }
 
