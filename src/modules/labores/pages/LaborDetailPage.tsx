@@ -16,6 +16,7 @@ import { useObrasList } from '../../obras/hooks/useObras';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 import { estadoApi } from '../../../services/api/estado.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
+import { AvancesLabor } from '../components/AvancesLabor';
 
 // Mapa de progreso por nombre de estado
 const PROGRESO_MAP: Record<string, number> = {
@@ -185,6 +186,10 @@ export const LaborDetailPage: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
+
+      {labor.obra_id && (
+      <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
+)}
     </AppLayout>
   );
 };
