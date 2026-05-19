@@ -1,13 +1,12 @@
 import React from 'react';
 import {
   AppBar, Toolbar, Typography, Box, Drawer, List, ListItem,
-  ListItemButton, ListItemIcon, ListItemText, IconButton,
-  InputBase, Avatar, Collapse,
+  ListItemButton, ListItemIcon, ListItemText, IconButton, Avatar, Collapse,
 } from '@mui/material';
 import {
   Menu, Dashboard, Construction, Group, Inventory2,
   AssignmentTurnedIn, ReceiptLong, Settings,
-  KeyboardArrowDown, KeyboardArrowUp, Search,
+  KeyboardArrowDown, KeyboardArrowUp,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEspecialidadesList } from '../../modules/trabajadores/hooks/useEspecialidades';
