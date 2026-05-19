@@ -26,17 +26,20 @@ export interface PresentismoRegistro {
   obra_nombre: string;
   trabajador_nombre?: string;
   trabajador_apellido?: string;
+  puntos: number;
 }
 
 export interface Trabajador {
   id: number;
   nombre: string;
   apellido: string;
+  puntos: number;
 }
 
 export interface EstadisticasPresentismo {
   periodo: { desde: string; hasta: string };
   dias_periodo: number;
+  puntos: number;
   resumen: {
     total_registros: string;
     trabajadores_activos: string;
@@ -50,6 +53,13 @@ export interface EstadisticasPresentismo {
     total_registros: string;
     dias_distintos: string;
     ultimo_registro: string;
+    puntos: number;        // ← agregar
+  }[];
+  ranking_puntos: {        // ← agregar
+    id: number;
+    nombre: string;
+    apellido: string;
+    puntos: number;
   }[];
   ausentes_hoy: {
     id: number;
@@ -74,6 +84,7 @@ export interface EstadisticasPresentismo {
     nombre: string;
     apellido: string;
     dias_asistidos: string;
+    puntos: number;        // ← agregar
   }[];
 }
 
