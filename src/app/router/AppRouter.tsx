@@ -214,7 +214,7 @@ import { ClienteCreatePage } from '../../modules/clientes/pages/ClienteCreatePag
 import { ClienteEditPage } from '../../modules/clientes/pages/ClienteEditPage';
 
 // CONFIGURACION ← nuevo
-import { OnboardingWizard } from '../../modules/configuracion/pages/OnBoardingWizard';
+import { OnboardWizard } from '../../modules/configuracion/pages/OnboardWizard';
 import { ConfiguracionPage } from '../../modules/configuracion/pages/ConfiguracionPage';
 
 const ROLES_ADMIN  = [1, 3, 4, 6];
@@ -240,7 +240,7 @@ export const AppRouter = () => {
         <Route
           path="/onboarding"
           element={
-            <OnboardingWizard onComplete={() => navigate('/', { replace: true })} />
+            <OnboardWizard onComplete={() => navigate('/', { replace: true })} />
           }
         />
       </Route>

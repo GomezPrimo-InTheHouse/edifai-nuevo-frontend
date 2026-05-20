@@ -44,7 +44,7 @@ interface Props {
   onComplete: () => void;
 }
 
-export const OnboardingWizard: React.FC<Props> = ({ onComplete }) => {
+export const OnboardWizard: React.FC<Props> = ({ onComplete }) => {
   const [step, setStep]               = useState(0);
   const [prefs, setPrefs]             = useState<UserPreferencias>(PREFERENCIAS_DEFAULT);
   const [mapPos, setMapPos]           = useState<{ lat: number; lng: number } | null>(null);
