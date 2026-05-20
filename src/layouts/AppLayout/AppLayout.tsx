@@ -23,6 +23,7 @@ interface AppLayoutProps {
 const drawerWidth = 250;
 const ROLES_ADMIN = [1, 3, 4, 6];
 
+
 // ── Estructura del menú reordenada ────────────────────────────
 const menuSections = [
   {
@@ -137,7 +138,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
   const [trabajadoresOpen, setTrabajadoresOpen] = React.useState(false);
   const [materialesOpen, setMaterialesOpen] = React.useState(false);
   const [userMenuAnchor, setUserMenuAnchor] = React.useState<HTMLElement | null>(null);
-
   const navigate  = useNavigate();
   const location  = useLocation();
   const { data: especialidades = [] } = useEspecialidadesList();
@@ -148,6 +148,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
   const initials    = user?.email ? user.email.slice(0, 2).toUpperCase() : '??';
   const displayEmail = user?.email ?? '—';
   const displayRol  = user?.rol_nombre ?? '—';
+
+  React.useEffect(() => {
+  if (
+    user &&
+    ROLES_ADMIN.includes(user.rol_id) &&
+    !user.onboarding_completado &&
+    location.pathname !== '/onboarding'
+  ) {
+    navigate('/onboarding', { replace: true });
+  }
+}, [user]);
 
   React.useEffect(() => {
     if (location.pathname.startsWith('/trabajadores')) setTrabajadoresOpen(true);
