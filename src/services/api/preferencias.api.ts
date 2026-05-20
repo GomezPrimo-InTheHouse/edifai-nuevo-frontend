@@ -11,7 +11,7 @@ interface PreferenciasResponse {
 
 export const preferenciasApi = {
   obtener: async (): Promise<PreferenciasResponse['data']> => {
-    const res = await httpClient.get<PreferenciasResponse>('/usuarios/preferencias');
+    const res = await httpClient.get<PreferenciasResponse>('/usuario/preferencias');
     return res.data.data;
   },
 
@@ -19,7 +19,7 @@ export const preferenciasApi = {
     preferencias?: Partial<UserPreferencias>;
     onboarding_completado?: boolean;
   }): Promise<PreferenciasResponse['data']> => {
-    const res = await httpClient.put<PreferenciasResponse>('/usuarios/preferencias', payload);
+    const res = await httpClient.put<PreferenciasResponse>('/usuario/preferencias', payload);
     return res.data.data;
   },
 };
