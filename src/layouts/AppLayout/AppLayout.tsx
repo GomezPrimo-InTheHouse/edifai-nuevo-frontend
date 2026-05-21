@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import {
   Menu, Dashboard, Construction, Group, Inventory2,
-  AssignmentTurnedIn, ReceiptLong, Settings,
+  AssignmentTurnedIn, ReceiptLong,
   KeyboardArrowDown, KeyboardArrowUp,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { UserMenuPopover } from '../../components/UserMenuPopover';
 import { useAuthStore } from '../../app/store/auth.store';
 import { NotificacionesPopover } from '../../components/NotificacionesPopover';
 import { AppBreadcrumbs } from '../../shared/components/AppBreadcrumbs/AppBreadcrumbs';
+import { ConfiguracionPopover } from '../../components/ConfiguracionPopover';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -50,7 +51,6 @@ const menuSections = [
     title: 'SISTEMA',
     onlyAdmin: true,
     items: [
-      { label: 'Configuración', icon: <Settings />, path: '/configuracion', allowedRoles: [1, 3, 4, 6] },
       { label: 'Usuarios',      icon: <Group />,    path: '/usuarios',      allowedRoles: [1, 3, 4, 6] },
     ],
   },
@@ -305,6 +305,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
 
           <Box sx={{ flexGrow: 1 }} />
           <NotificacionesPopover />
+          <ConfiguracionPopover />
 
           <Box
             onClick={(e) => setUserMenuAnchor(e.currentTarget)}

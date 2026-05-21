@@ -9,8 +9,15 @@ export function useNotificaciones() {
   const [error, setError] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
+  const notificacionesActivas = useAuthStore((s) => s.preferencias.notificaciones);
+
   // ── Carga inicial ─────────────────────────────────────────
   useEffect(() => {
+    if (!notificacionesActivas) {
+      setNotificaciones([]);
+      setLoading(false);
+      return;
+    }
     const token = useAuthStore.getState().accessToken;
     if (!token) return;
     setLoading(true);
@@ -19,10 +26,15 @@ export function useNotificaciones() {
       .then((data) => setNotificaciones(data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [notificacionesActivas]);
 
   // ── SSE con fetch — sin auto-reconexión del browser ───────
   useEffect(() => {
+    if (!notificacionesActivas) {
+      abortRef.current?.abort();
+      return;
+    }
+
     let activo = true;
 
     const conectar = async () => {
@@ -31,12 +43,12 @@ export function useNotificaciones() {
       abortRef.current = controller;
 
       const token = useAuthStore.getState().accessToken;
-        if (token) {
-    const decoded = JSON.parse(atob(token.split('.')[1]));
-    const expira = new Date(decoded.exp * 1000);
-    const ahora = new Date();
-    console.log('🔑 Token expira:', expira.toISOString(), '| Ahora:', ahora.toISOString(), '| Válido:', expira > ahora);
-  }
+      if (token) {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        const expira = new Date(decoded.exp * 1000);
+        const ahora = new Date();
+        console.log('🔑 Token expira:', expira.toISOString(), '| Ahora:', ahora.toISOString(), '| Válido:', expira > ahora);
+      }
       if (!token) return;
 
       try {
@@ -66,10 +78,8 @@ export function useNotificaciones() {
             if (line.startsWith('event: auth_error')) {
               console.log('🔄 SSE auth_error — token expirado');
               reader.cancel();
-              // Esperar a que Axios renueve el token y reconectar
               setTimeout(async () => {
                 if (!activo) return;
-                // Forzar refresh
                 try {
                   const refreshToken = useAuthStore.getState().refreshToken;
                   const res = await fetch(`${env.authApiUrl}/auth/refresh-token`, {
@@ -115,7 +125,7 @@ export function useNotificaciones() {
       activo = false;
       abortRef.current?.abort();
     };
-  }, []);
+  }, [notificacionesActivas]);
 
   const noLeidas = notificaciones.filter((n) => !n.leida).length;
 

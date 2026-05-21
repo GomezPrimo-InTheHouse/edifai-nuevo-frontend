@@ -1,6 +1,6 @@
-export type Idioma = 'es' | 'en';
+export type Idioma = 'es' | 'en' | 'br';
 export type Tema = 'light' | 'dark';
-export type Moneda = 'ARS' | 'USD' | 'EUR';
+export type Moneda = 'ARS' | 'USD' | 'EUR' | 'BRL';
 export type FormatoDashboard = 'resumen' | 'detallado';
 export type FormatoFecha = 'DD/MM/YYYY' | 'MM/DD/YYYY';
 
