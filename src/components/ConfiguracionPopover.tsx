@@ -117,7 +117,7 @@ export const ConfiguracionPopover: React.FC = () => {
             options={[
               { value: 'es', label: 'ES' },
               { value: 'en', label: 'EN' },
-              { value: 'pt', label: 'PT' },
+              { value: 'br', label: 'BR' },
             ]}
           />
         </Box>

@@ -1,0 +1,210 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle_admin": "System operational summary",
+    "subtitle_worker": "Welcome — here's your summary",
+    "no_dashboard": "No dashboard available for your role.",
+    "loading": "Loading dashboard...",
+    "loading_worker": "Loading your dashboard...",
+    "actualiza": "Updates every 30s",
+    "sin_datos": "No data",
+
+    "periodos": {
+      "hoy": "Today",
+      "semana": "This week",
+      "mes": "This month"
+    },
+    "filtros": {
+      "desde": "From",
+      "hasta": "To"
+    },
+
+    "kpis": {
+      "obras_activas": "Active projects",
+      "obras_total": "{{total}} total",
+      "labores_activas": "Active tasks",
+      "trabajadores": "Workers",
+      "trabajadores_sub": "active in the system",
+      "presupuestos": "Budgets",
+      "presupuestos_sub": "{{confirmados}} confirmed",
+      "pagado_periodo": "Paid in period",
+      "pendiente": "{{monto}} pending",
+      "asistencia_hoy": "Attendance today",
+      "presentes_sub": "{{presentes}} / {{total}} present",
+      "stock_critico": "Critical stock",
+      "stock_sub": "materials below minimum",
+      "ingresos_hoy": "Logins today",
+      "logins_sub": "system logins",
+      "labores_activas_worker": "Active tasks",
+      "cobrado_mes": "Collected this month",
+      "dias_presentes": "Days present",
+      "dias_habiles_sub": "of {{dias}} working days",
+      "pagos_pendientes": "Pending payments",
+      "mis_puntos": "My points",
+      "puntos_sub": "accumulated points"
+    },
+
+    "graficos": {
+      "evolucion_pagos": "Payment evolution",
+      "ultimos_6_meses": "Last 6 months",
+      "pagado": "Paid",
+      "obras_por_estado": "Projects by status",
+      "labores_por_progreso": "Tasks by progress",
+      "labores_count": "{{total}} tasks",
+      "ausentes_hoy": "Absent today",
+      "todos_presentes": "✓ Everyone present today",
+      "stock_critico": "Critical stock",
+      "actividad_reciente": "Recent activity",
+      "ultimas_acciones": "Last 8 actions"
+    },
+
+    "worker": {
+      "hola": "Hello, {{nombre}} {{apellido}}",
+      "asistencia_mes": "attendance {{mes}}",
+      "puntos_acumulados": "accumulated points",
+      "calendario_titulo": "{{mes}} {{anio}}",
+      "dias_semana": {
+        "lu": "Mo", "ma": "Tu", "mi": "We",
+        "ju": "Th", "vi": "Fr", "sa": "Sa", "do": "Su"
+      },
+      "leyenda": {
+        "presente": "Present",
+        "ausente": "Absent",
+        "futuro": "Future"
+      },
+      "mis_labores": "My active tasks",
+      "sin_labores": "You have no active tasks currently",
+      "progreso": "Progress",
+      "ultimos_pagos": "Last payments received",
+      "sin_pagos": "No payments registered yet",
+      "tabla_fecha": "Date",
+      "tabla_monto": "Amount",
+      "tabla_forma_pago": "Payment method",
+      "tabla_estado": "Status",
+      "tabla_motivo": "Reason"
+    },
+
+    "meses": [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ]
+  },
+   
+  "obras": {
+    "title": "Projects",
+    "subtitle": "General management of construction projects.",
+    "nueva": "New Project",
+    "tipos": "Types",
+    "buscar": "Search project or location...",
+    "loading": "Loading projects...",
+    "error": "Projects could not be loaded.",
+    "sin_ubicacion": "No location",
+    "archivada": "Archived",
+    "tabs": {
+      "activas": "Active",
+      "archivadas": "Archived"
+    },
+    "empty": {
+      "activas": "No active projects",
+      "activas_desc": "There are no active projects.",
+      "archivadas": "No archived projects",
+      "archivadas_desc": "There are no archived projects.",
+      "crear": "Create project"
+    },
+    "acciones": {
+      "ver": "View",
+      "editar": "Edit",
+      "archivar": "Archive",
+      "desarchivar": "Unarchive",
+      "volver": "Back to projects"
+    },
+    "tabla": {
+      "nombre": "Name",
+      "ubicacion": "Location",
+      "inicio_estimado": "Est. start",
+      "fin_estimado": "Est. end",
+      "acciones": "Actions"
+    },
+    "confirm": {
+      "eliminar_title": "Delete project?",
+      "eliminar_msg": "This action cannot be undone.",
+      "eliminar_btn": "Delete",
+      "archivar_title": "Archive project?",
+      "archivar_msg": "All associated tasks, budgets, attendance records and payments will also be archived.",
+      "archivar_btn": "Archive",
+      "desarchivar_title": "Unarchive project?",
+      "desarchivar_msg": "The project and all associated data will become active again.",
+      "desarchivar_btn": "Unarchive"
+    },
+    "notify": {
+      "eliminada": "Project deleted.",
+      "error_eliminar": "Could not delete the project.",
+      "archivada": "Project archived successfully.",
+      "desarchivada": "Project unarchived successfully.",
+      "error_archivar": "Could not perform the action.",
+      "creada": "Project registered successfully.",
+      "actualizada": "Project updated successfully.",
+      "error_desconocido": "Unknown error processing the request."
+    },
+    "detail": {
+      "subtitle": "Detailed project view.",
+      "loading": "Loading project...",
+      "error": "Could not load the project.",
+      "no_encontrada": "Project not found",
+      "no_encontrada_msg": "The requested project does not exist.",
+      "ubicacion": "Location",
+      "descripcion": "Description",
+      "fechas_estimadas": "Estimated dates",
+      "fechas_reales": "Actual dates",
+      "inicio_estimado": "Est. start",
+      "fin_estimado": "Est. end",
+      "inicio_real": "Actual start",
+      "fin_real": "Actual end",
+      "labores": "Tasks",
+      "labores_sub": "Tasks associated with this project",
+      "estado_actual": "Current status",
+      "dias_vencida": "{{dias}} days overdue",
+      "dias_restantes": "{{dias}} days remaining",
+      "hasta_fin": "until estimated end",
+      "creada": "Created",
+      "actualizada": "Updated",
+      "datos_obra": "Project data",
+      "tipo": "Type",
+      "sin_estado": "No status",
+      "sin_tipo": "No type"
+    },
+    "create": {
+      "title": "New project",
+      "subtitle": "Register a new project in the system."
+    },
+    "edit": {
+      "title": "Edit project",
+      "subtitle": "Modify project information."
+    },
+    "form": {
+      "nombre": "Project name *",
+      "ubicacion": "Location",
+      "ubicacion_placeholder": "Search on the map or type manually",
+      "ubicacion_helper": "Use the map button for better accuracy",
+      "ubicacion_coords": "📍 {{lat}}, {{lng}}",
+      "limpiar_ubicacion": "Clear location",
+      "seleccionar_mapa": "Select on map",
+      "descripcion": "Description",
+      "tipo_obra": "Project type *",
+      "estado": "Status *",
+      "cliente": "Associated client (optional)",
+      "cliente_helper": "You can associate a client or leave it unassigned.",
+      "sin_cliente": "No client assigned",
+      "seleccionar": "Select",
+      "fechas_estimadas": "Estimated dates",
+      "fechas_reales": "Actual dates",
+      "inicio_estimado": "Estimated start",
+      "fin_estimado": "Estimated end",
+      "inicio_real": "Actual start",
+      "fin_real": "Actual end",
+      "guardando": "Saving...",
+      "guardar": "Save project"
+    }
+  
+}
+}

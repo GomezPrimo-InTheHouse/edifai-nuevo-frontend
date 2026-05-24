@@ -1,0 +1,240 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle_admin": "Resumen operativo del sistema",
+    "subtitle_worker": "Bienvenido — aquí está tu resumen",
+    "no_dashboard": "No hay dashboard disponible para tu rol.",
+    "loading": "Cargando dashboard...",
+    "loading_worker": "Cargando tu dashboard...",
+    "actualiza": "Actualiza cada 30s",
+    "sin_datos": "Sin datos",
+
+    "periodos": {
+      "hoy": "Hoy",
+      "semana": "Esta semana",
+      "mes": "Este mes"
+    },
+    "filtros": {
+      "desde": "Desde",
+      "hasta": "Hasta"
+    },
+
+    "kpis": {
+      "obras_activas": "Obras activas",
+      "obras_total": "{{total}} total",
+      "labores_activas": "Labores activas",
+      "trabajadores": "Trabajadores",
+      "trabajadores_sub": "activos en el sistema",
+      "presupuestos": "Presupuestos",
+      "presupuestos_sub": "{{confirmados}} confirmados",
+      "pagado_periodo": "Pagado en período",
+      "pendiente": "{{monto}} pendiente",
+      "asistencia_hoy": "Asistencia hoy",
+      "presentes_sub": "{{presentes}} / {{total}} presentes",
+      "stock_critico": "Stock crítico",
+      "stock_sub": "materiales bajo mínimo",
+      "ingresos_hoy": "Ingresos hoy",
+      "logins_sub": "logins al sistema",
+      "labores_activas_worker": "Labores activas",
+      "cobrado_mes": "Cobrado este mes",
+      "dias_presentes": "Días presentes",
+      "dias_habiles_sub": "de {{dias}} hábiles",
+      "pagos_pendientes": "Pagos pendientes",
+      "mis_puntos": "Mis puntos",
+      "puntos_sub": "puntos acumulados"
+    },
+
+    "graficos": {
+      "evolucion_pagos": "Evolución de pagos",
+      "ultimos_6_meses": "Últimos 6 meses",
+      "pagado": "Pagado",
+      "obras_por_estado": "Obras por estado",
+      "labores_por_progreso": "Labores por progreso",
+      "labores_count": "{{total}} labores",
+      "ausentes_hoy": "Ausentes hoy",
+      "todos_presentes": "✓ Todos presentes hoy",
+      "stock_critico": "Stock crítico",
+      "actividad_reciente": "Actividad reciente",
+      "ultimas_acciones": "Últimas 8 acciones"
+    },
+
+    "worker": {
+      "hola": "Hola, {{nombre}} {{apellido}}",
+      "asistencia_mes": "asistencia {{mes}}",
+      "puntos_acumulados": "puntos acumulados",
+      "calendario_titulo": "{{mes}} {{anio}}",
+      "dias_semana": {
+        "lu": "Lu", "ma": "Ma", "mi": "Mi",
+        "ju": "Ju", "vi": "Vi", "sa": "Sa", "do": "Do"
+      },
+      "leyenda": {
+        "presente": "Presente",
+        "ausente": "Ausente",
+        "futuro": "Futuro"
+      },
+      "mis_labores": "Mis labores activas",
+      "sin_labores": "No tenés labores activas actualmente",
+      "progreso": "Progreso",
+      "ultimos_pagos": "Últimos pagos recibidos",
+      "sin_pagos": "No hay pagos registrados aún",
+      "tabla_fecha": "Fecha",
+      "tabla_monto": "Monto",
+      "tabla_forma_pago": "Forma de pago",
+      "tabla_estado": "Estado",
+      "tabla_motivo": "Motivo"
+    },
+
+    "meses": [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ]
+  },
+ 
+  "obras": {
+    "title": "Obras",
+    "subtitle": "Gestión general de obras y proyectos.",
+    "nueva": "Nueva Obra",
+    "tipos": "Tipos",
+    "buscar": "Buscar obra o ubicación...",
+    "loading": "Cargando obras...",
+    "error": "No se cargaron las obras.",
+    "sin_ubicacion": "Sin ubicación",
+    "archivada": "Archivada",
+    "tabs": {
+      "activas": "Activas",
+      "archivadas": "Archivadas"
+    },
+    "empty": {
+      "activas": "Sin obras activas",
+      "activas_desc": "No hay obras activas.",
+      "archivadas": "Sin obras archivadas",
+      "archivadas_desc": "No hay obras archivadas.",
+      "crear": "Crear obra"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "archivar": "Archivar",
+      "desarchivar": "Desarchivar",
+      "volver": "Volver a obras"
+    },
+    "tabla": {
+      "nombre": "Nombre",
+      "ubicacion": "Ubicación",
+      "inicio_estimado": "Inicio estimado",
+      "fin_estimado": "Fin estimado",
+      "acciones": "Acciones"
+    },
+    "confirm": {
+      "eliminar_title": "¿Eliminar obra?",
+      "eliminar_msg": "Esta acción no se puede deshacer.",
+      "eliminar_btn": "Eliminar",
+      "archivar_title": "¿Archivar obra?",
+      "archivar_msg": "Se archivarán también todas las labores, presupuestos, presentismos y pagos asociados.",
+      "archivar_btn": "Archivar",
+      "desarchivar_title": "¿Desarchivar obra?",
+      "desarchivar_msg": "La obra y todos sus datos asociados volverán a estar activos.",
+      "desarchivar_btn": "Desarchivar"
+    },
+    "notify": {
+      "eliminada": "Obra eliminada.",
+      "error_eliminar": "No se pudo eliminar la obra.",
+      "archivada": "Obra archivada correctamente.",
+      "desarchivada": "Obra desarchivada correctamente.",
+      "error_archivar": "No se pudo realizar la acción.",
+      "creada": "La obra se ha registrado exitosamente.",
+      "actualizada": "La obra se ha actualizado exitosamente.",
+      "error_desconocido": "Error desconocido al procesar la solicitud."
+    },
+    "detail": {
+      "subtitle": "Vista detallada de la obra.",
+      "loading": "Cargando obra...",
+      "error": "No se pudo cargar la obra.",
+      "no_encontrada": "Obra no encontrada",
+      "no_encontrada_msg": "La obra solicitada no existe.",
+      "ubicacion": "Ubicación",
+      "descripcion": "Descripción",
+      "fechas_estimadas": "Fechas estimadas",
+      "fechas_reales": "Fechas reales",
+      "inicio_estimado": "Inicio estimado",
+      "fin_estimado": "Fin estimado",
+      "inicio_real": "Inicio real",
+      "fin_real": "Fin real",
+      "labores": "Labores",
+      "labores_sub": "Tareas asociadas a esta obra",
+      "estado_actual": "Estado actual",
+      "dias_vencida": "{{dias}} días vencida",
+      "dias_restantes": "{{dias}} días restantes",
+      "hasta_fin": "hasta el fin estimado",
+      "creada": "Creada",
+      "actualizada": "Actualizada",
+      "datos_obra": "Datos de la obra",
+      "tipo": "Tipo",
+      "sin_estado": "Sin estado",
+      "sin_tipo": "Sin tipo"
+    },
+    "create": {
+      "title": "Nueva obra",
+      "subtitle": "Registrar una nueva obra en el sistema."
+    },
+    "edit": {
+      "title": "Editar obra",
+      "subtitle": "Modificar información de la obra."
+    },
+    "form": {
+      "nombre": "Nombre de la obra *",
+      "ubicacion": "Ubicación",
+      "ubicacion_placeholder": "Buscá en el mapa o escribí manualmente",
+      "ubicacion_helper": "Usá el botón del mapa para mayor precisión",
+      "ubicacion_coords": "📍 {{lat}}, {{lng}}",
+      "limpiar_ubicacion": "Limpiar ubicación",
+      "seleccionar_mapa": "Seleccionar en el mapa",
+      "descripcion": "Descripción",
+      "tipo_obra": "Tipo de obra *",
+      "estado": "Estado *",
+      "cliente": "Cliente asociado (opcional)",
+      "cliente_helper": "Podés asociar un cliente o dejarlo sin asignar.",
+      "sin_cliente": "Sin cliente asignado",
+      "seleccionar": "Seleccionar",
+      "fechas_estimadas": "Fechas estimadas",
+      "fechas_reales": "Fechas reales",
+      "inicio_estimado": "Inicio estimado",
+      "fin_estimado": "Fin estimado",
+      "inicio_real": "Inicio real",
+      "fin_real": "Fin real",
+      "guardando": "Guardando...",
+      "guardar": "Guardar obra"
+    }
+  
+},
+  "labores": {
+    "title": "Labores",
+    "subtitle": "Gestión general de labores y tareas.",
+    "nueva": "Nueva Labor",
+    "buscar": "Buscar labor o ubicación...",
+    "loading": "Cargando labores...",
+    "error": "No se cargaron las labores.",
+    "sin_ubicacion": "Sin ubicación",
+    "archivada": "Archivada",
+    "tabs": {
+      "activas": "Activas",
+      "archivadas": "Archivadas"
+    },
+    "empty": {
+      "activas": "Sin labores activas",
+      "activas_desc": "No hay labores activas.",
+      "archivadas": "Sin labores archivadas",
+      "archivadas_desc": "No hay labores archivadas.",
+      "crear": "Crear labor"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "archivar": "Archivar",
+      "desarchivar": "Desarchivar",
+      "volver": "Volver a labores"
+    }
+    
+}
+}
+

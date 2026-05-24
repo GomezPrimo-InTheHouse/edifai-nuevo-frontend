@@ -142,6 +142,8 @@ export const OnboardWizard: React.FC<Props> = ({ onComplete }) => {
                     options={[
                       { value: 'es', label: 'Español' },
                       { value: 'en', label: 'English' },
+                      { value: 'br', label: 'Português' },
+
                     ]}
                   />
                 </StepWrapper>
@@ -185,6 +187,7 @@ export const OnboardWizard: React.FC<Props> = ({ onComplete }) => {
                       { value: 'ARS', label: '🇦🇷 Peso argentino' },
                       { value: 'USD', label: '🇺🇸 Dólar' },
                       { value: 'EUR', label: '🇪🇺 Euro' },
+                      { value: 'BRL', label: '🇧🇷 Real' },
                     ]}
                   />
                 </StepWrapper>
