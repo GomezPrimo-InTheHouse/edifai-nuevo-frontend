@@ -1,4 +1,26 @@
 {
+
+  "nav": {
+    "subtitulo": "Construction management",
+    "dashboard": "Dashboard",
+    "obras": "Projects",
+    "labores": "Tasks",
+    "clientes": "Clients",
+    "presupuestos": "Budgets",
+    "pagos": "Payments",
+    "presentismo": "Attendance",
+    "mi_presentismo": "My Attendance",
+    "usuarios": "Users",
+    "trabajadores": "Workers",
+    "materiales": "Materials",
+    "historial_precios": "Price history",
+    "secciones": {
+      "general": "GENERAL",
+      "operaciones": "OPERATIONS",
+      "sistema": "SYSTEM",
+      "personal": "STAFF"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle_admin": "System operational summary",
@@ -206,5 +228,27 @@
       "guardar": "Save project"
     }
   
+},
+"config": {
+  "titulo": "Settings",
+  "subtitulo": "Your account preferences",
+  "apariencia": "Appearance",
+  "tema": "Theme",
+  "claro": "Light",
+  "oscuro": "Dark",
+  "idioma": "Language",
+  "sistema": "System",
+  "notificaciones": "Notifications",
+  "notificaciones_sub": "Real-time alerts",
+  "dashboard": "Detailed dashboard",
+  "dashboard_sub": "Expanded view by default",
+  "moneda": "Currency",
+  "ver_completa": "View full settings"
+},
+"user_menu": {
+  "info_cuenta": "Account information",
+  "email": "Email",
+  "rol": "Role",
+  "cerrar_sesion": "Sign out"
 }
 }

@@ -1,0 +1,281 @@
+{
+  "nav": {
+    "subtitulo": "Gestão de obras",
+    "dashboard": "Dashboard",
+    "obras": "Obras",
+    "labores": "Tarefas",
+    "clientes": "Clientes",
+    "presupuestos": "Orçamentos",
+    "pagos": "Pagamentos",
+    "presentismo": "Presença",
+    "mi_presentismo": "Minha Presença",
+    "usuarios": "Usuários",
+    "trabajadores": "Trabalhadores",
+    "materiales": "Materiais",
+    "historial_precios": "Histórico de preços",
+    "secciones": {
+      "general": "GERAL",
+      "operaciones": "OPERAÇÕES",
+      "sistema": "SISTEMA",
+      "personal": "PESSOAL"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle_admin": "Resumo operacional do sistema",
+    "subtitle_worker": "Bem-vindo — aqui está o seu resumo",
+    "no_dashboard": "Não há dashboard disponível para o seu perfil.",
+    "loading": "Carregando dashboard...",
+    "loading_worker": "Carregando seu dashboard...",
+    "actualiza": "Atualiza a cada 30s",
+    "sin_datos": "Sem dados",
+
+    "periodos": {
+      "hoy": "Hoje",
+      "semana": "Esta semana",
+      "mes": "Este mês"
+    },
+    "filtros": {
+      "desde": "De",
+      "hasta": "Até"
+    },
+
+    "kpis": {
+      "obras_activas": "Obras ativas",
+      "obras_total": "{{total}} total",
+      "labores_activas": "Tarefas ativas",
+      "trabajadores": "Trabalhadores",
+      "trabajadores_sub": "ativos no sistema",
+      "presupuestos": "Orçamentos",
+      "presupuestos_sub": "{{confirmados}} confirmados",
+      "pagado_periodo": "Pago no período",
+      "pendiente": "{{monto}} pendente",
+      "asistencia_hoy": "Presença hoje",
+      "presentes_sub": "{{presentes}} / {{total}} presentes",
+      "stock_critico": "Estoque crítico",
+      "stock_sub": "materiais abaixo do mínimo",
+      "ingresos_hoy": "Acessos hoje",
+      "logins_sub": "logins no sistema",
+      "labores_activas_worker": "Tarefas ativas",
+      "cobrado_mes": "Recebido neste mês",
+      "dias_presentes": "Dias presentes",
+      "dias_habiles_sub": "de {{dias}} dias úteis",
+      "pagos_pendientes": "Pagamentos pendentes",
+      "mis_puntos": "Meus pontos",
+      "puntos_sub": "pontos acumulados"
+    },
+
+    "graficos": {
+      "evolucion_pagos": "Evolução de pagamentos",
+      "ultimos_6_meses": "Últimos 6 meses",
+      "pagado": "Pago",
+      "obras_por_estado": "Obras por status",
+      "labores_por_progreso": "Tarefas por progresso",
+      "labores_count": "{{total}} tarefas",
+      "ausentes_hoy": "Ausentes hoje",
+      "todos_presentes": "✓ Todos presentes hoje",
+      "stock_critico": "Estoque crítico",
+      "actividad_reciente": "Atividade recente",
+      "ultimas_acciones": "Últimas 8 ações"
+    },
+
+    "worker": {
+      "hola": "Olá, {{nombre}} {{apellido}}",
+      "asistencia_mes": "presença {{mes}}",
+      "puntos_acumulados": "pontos acumulados",
+      "calendario_titulo": "{{mes}} {{anio}}",
+      "dias_semana": {
+        "lu": "Se", "ma": "Te", "mi": "Qu",
+        "ju": "Qu", "vi": "Sx", "sa": "Sá", "do": "Do"
+      },
+      "leyenda": {
+        "presente": "Presente",
+        "ausente": "Ausente",
+        "futuro": "Futuro"
+      },
+      "mis_labores": "Minhas tarefas ativas",
+      "sin_labores": "Você não tem tarefas ativas no momento",
+      "progreso": "Progresso",
+      "ultimos_pagos": "Últimos pagamentos recebidos",
+      "sin_pagos": "Nenhum pagamento registrado ainda",
+      "tabla_fecha": "Data",
+      "tabla_monto": "Valor",
+      "tabla_forma_pago": "Forma de pagamento",
+      "tabla_estado": "Status",
+      "tabla_motivo": "Motivo"
+    },
+
+    "meses": [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ]
+  },
+
+  "obras": {
+    "title": "Obras",
+    "subtitle": "Gestão geral de obras e projetos.",
+    "nueva": "Nova Obra",
+    "tipos": "Tipos",
+    "buscar": "Buscar obra ou localização...",
+    "loading": "Carregando obras...",
+    "error": "Não foi possível carregar as obras.",
+    "sin_ubicacion": "Sem localização",
+    "archivada": "Arquivada",
+    "tabs": {
+      "activas": "Ativas",
+      "archivadas": "Arquivadas"
+    },
+    "empty": {
+      "activas": "Sem obras ativas",
+      "activas_desc": "Não há obras ativas.",
+      "archivadas": "Sem obras arquivadas",
+      "archivadas_desc": "Não há obras arquivadas.",
+      "crear": "Criar obra"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "archivar": "Arquivar",
+      "desarchivar": "Desarquivar",
+      "volver": "Voltar às obras"
+    },
+    "tabla": {
+      "nombre": "Nome",
+      "ubicacion": "Localização",
+      "inicio_estimado": "Início estimado",
+      "fin_estimado": "Fim estimado",
+      "acciones": "Ações"
+    },
+    "confirm": {
+      "eliminar_title": "Excluir obra?",
+      "eliminar_msg": "Esta ação não pode ser desfeita.",
+      "eliminar_btn": "Excluir",
+      "archivar_title": "Arquivar obra?",
+      "archivar_msg": "Todas as tarefas, orçamentos, presenças e pagamentos associados também serão arquivados.",
+      "archivar_btn": "Arquivar",
+      "desarchivar_title": "Desarquivar obra?",
+      "desarchivar_msg": "A obra e todos os dados associados voltarão a ficar ativos.",
+      "desarchivar_btn": "Desarquivar"
+    },
+    "notify": {
+      "eliminada": "Obra excluída.",
+      "error_eliminar": "Não foi possível excluir a obra.",
+      "archivada": "Obra arquivada com sucesso.",
+      "desarchivada": "Obra desarquivada com sucesso.",
+      "error_archivar": "Não foi possível realizar a ação.",
+      "creada": "A obra foi registrada com sucesso.",
+      "actualizada": "A obra foi atualizada com sucesso.",
+      "error_desconocido": "Erro desconhecido ao processar a solicitação."
+    },
+    "detail": {
+      "subtitle": "Visão detalhada da obra.",
+      "loading": "Carregando obra...",
+      "error": "Não foi possível carregar a obra.",
+      "no_encontrada": "Obra não encontrada",
+      "no_encontrada_msg": "A obra solicitada não existe.",
+      "ubicacion": "Localização",
+      "descripcion": "Descrição",
+      "fechas_estimadas": "Datas estimadas",
+      "fechas_reales": "Datas reais",
+      "inicio_estimado": "Início estimado",
+      "fin_estimado": "Fim estimado",
+      "inicio_real": "Início real",
+      "fin_real": "Fim real",
+      "labores": "Tarefas",
+      "labores_sub": "Tarefas associadas a esta obra",
+      "estado_actual": "Status atual",
+      "dias_vencida": "{{dias}} dias vencida",
+      "dias_restantes": "{{dias}} dias restantes",
+      "hasta_fin": "até o fim estimado",
+      "creada": "Criada",
+      "actualizada": "Atualizada",
+      "datos_obra": "Dados da obra",
+      "tipo": "Tipo",
+      "sin_estado": "Sem status",
+      "sin_tipo": "Sem tipo"
+    },
+    "create": {
+      "title": "Nova obra",
+      "subtitle": "Registrar uma nova obra no sistema."
+    },
+    "edit": {
+      "title": "Editar obra",
+      "subtitle": "Modificar informações da obra."
+    },
+    "form": {
+      "nombre": "Nome da obra *",
+      "ubicacion": "Localização",
+      "ubicacion_placeholder": "Busque no mapa ou escreva manualmente",
+      "ubicacion_helper": "Use o botão do mapa para maior precisão",
+      "ubicacion_coords": "📍 {{lat}}, {{lng}}",
+      "limpiar_ubicacion": "Limpar localização",
+      "seleccionar_mapa": "Selecionar no mapa",
+      "descripcion": "Descrição",
+      "tipo_obra": "Tipo de obra *",
+      "estado": "Status *",
+      "cliente": "Cliente associado (opcional)",
+      "cliente_helper": "Você pode associar um cliente ou deixar sem atribuição.",
+      "sin_cliente": "Sem cliente atribuído",
+      "seleccionar": "Selecionar",
+      "fechas_estimadas": "Datas estimadas",
+      "fechas_reales": "Datas reais",
+      "inicio_estimado": "Início estimado",
+      "fin_estimado": "Fim estimado",
+      "inicio_real": "Início real",
+      "fin_real": "Fim real",
+      "guardando": "Salvando...",
+      "guardar": "Salvar obra"
+    }
+  },
+
+  "labores": {
+    "title": "Tarefas",
+    "subtitle": "Gestão geral de tarefas e atividades.",
+    "nueva": "Nova Tarefa",
+    "buscar": "Buscar tarefa ou localização...",
+    "loading": "Carregando tarefas...",
+    "error": "Não foi possível carregar as tarefas.",
+    "sin_ubicacion": "Sem localização",
+    "archivada": "Arquivada",
+    "tabs": {
+      "activas": "Ativas",
+      "archivadas": "Arquivadas"
+    },
+    "empty": {
+      "activas": "Sem tarefas ativas",
+      "activas_desc": "Não há tarefas ativas.",
+      "archivadas": "Sem tarefas arquivadas",
+      "archivadas_desc": "Não há tarefas arquivadas.",
+      "crear": "Criar tarefa"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "archivar": "Arquivar",
+      "desarchivar": "Desarquivar",
+      "volver": "Voltar às tarefas"
+    }
+  },
+  "config": {
+  "titulo": "Configurações",
+  "subtitulo": "Preferências da sua conta",
+  "apariencia": "Aparência",
+  "tema": "Tema",
+  "claro": "Claro",
+  "oscuro": "Escuro",
+  "idioma": "Idioma",
+  "sistema": "Sistema",
+  "notificaciones": "Notificações",
+  "notificaciones_sub": "Alertas em tempo real",
+  "dashboard": "Dashboard detalhado",
+  "dashboard_sub": "Visão expandida por padrão",
+  "moneda": "Moeda",
+  "ver_completa": "Ver configurações completas"
+},
+"user_menu": {
+  "info_cuenta": "Informações da conta",
+  "email": "E-mail",
+  "rol": "Perfil",
+  "cerrar_sesion": "Sair"
+}
+}

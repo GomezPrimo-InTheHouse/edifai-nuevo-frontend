@@ -1,4 +1,25 @@
 {
+  "nav": {
+    "subtitulo": "Gestión de obras",
+    "dashboard": "Dashboard",
+    "obras": "Obras",
+    "labores": "Labores",
+    "clientes": "Clientes",
+    "presupuestos": "Presupuestos",
+    "pagos": "Pagos",
+    "presentismo": "Presentismo",
+    "mi_presentismo": "Mi Presentismo",
+    "usuarios": "Usuarios",
+    "trabajadores": "Trabajadores",
+    "materiales": "Materiales",
+    "historial_precios": "Historial de precios",
+    "secciones": {
+      "general": "GENERAL",
+      "operaciones": "OPERACIONES",
+      "sistema": "SISTEMA",
+      "personal": "PERSONAL"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "subtitle_admin": "Resumen operativo del sistema",
@@ -235,6 +256,28 @@
       "volver": "Volver a labores"
     }
     
+},
+"config": {
+  "titulo": "Configuración",
+  "subtitulo": "Preferencias de tu cuenta",
+  "apariencia": "Apariencia",
+  "tema": "Tema",
+  "claro": "Claro",
+  "oscuro": "Oscuro",
+  "idioma": "Idioma",
+  "sistema": "Sistema",
+  "notificaciones": "Notificaciones",
+  "notificaciones_sub": "Alertas en tiempo real",
+  "dashboard": "Dashboard detallado",
+  "dashboard_sub": "Vista expandida por defecto",
+  "moneda": "Moneda",
+  "ver_completa": "Ver configuración completa"
+},
+"user_menu": {
+  "info_cuenta": "Información de cuenta",
+  "email": "Email",
+  "rol": "Rol",
+  "cerrar_sesion": "Cerrar sesión"
 }
 }
 
