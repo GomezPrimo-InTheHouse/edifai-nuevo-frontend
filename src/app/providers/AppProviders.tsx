@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { getTheme } from '../theme/theme';
 import { useAuthStore } from '../store/auth.store';
 import { NotifyProvider } from '../../shared/context/NotifyContext';
-import '../traduction/i18n'; 
+import '../traduction/i18n';
 import { useTranslation } from 'react-i18next';
 
 const queryClient = new QueryClient({
@@ -18,15 +18,13 @@ function ThemedApp({ children }: { children: React.ReactNode }) {
   const theme = React.useMemo(() => getTheme(tema), [tema]);
   const { i18n } = useTranslation();
 
+  // Sincronizar tema con atributo HTML para que las CSS variables respondan
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-mui-color-scheme', tema);
+  }, [tema]);
+
   // Sincronizar idioma del store con i18next
   React.useEffect(() => {
-    if (i18n.language !== idioma) {
-      i18n.changeLanguage(idioma);
-    }
-  }, [idioma, i18n]);
-
-  React.useEffect(() => {
-    console.log('🌐 Idioma store:', idioma, '| i18n.language:', i18n.language);
     if (i18n.language !== idioma) {
       i18n.changeLanguage(idioma);
     }

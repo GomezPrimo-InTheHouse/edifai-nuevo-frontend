@@ -10,53 +10,51 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   letter-spacing: -0.025em;
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px,
-    rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --text: #64748B;
+  --text-h: #0F172A;
+  --bg: #F8FAFC;
+  --border: #E2E8F0;
+  --code-bg: #F1F5F9;
+  --accent: #F59E0B;
+  --accent-bg: rgba(245, 158, 11, 0.1);
+  --accent-border: rgba(245, 158, 11, 0.5);
+  --social-bg: rgba(248, 250, 252, 0.8);
+  --shadow: rgba(0,0,0,0.06) 0 10px 15px -3px, rgba(0,0,0,0.03) 0 4px 6px -2px;
+}
+
+/* ── Dark mode — se activa cuando MUI aplica data-mui-color-scheme="dark" ── */
+[data-mui-color-scheme="dark"] {
+  --text: #94A3B8;
+  --text-h: #F8FAFC;
+  --bg: #0F172A;
+  --border: #1E293B;
+  --code-bg: #1E293B;
+  --accent: #F59E0B;
+  --accent-bg: rgba(245, 158, 11, 0.15);
+  --accent-border: rgba(245, 158, 11, 0.4);
+  --social-bg: rgba(30, 41, 59, 0.8);
+  --shadow: rgba(0,0,0,0.4) 0 10px 15px -3px, rgba(0,0,0,0.25) 0 4px 6px -2px;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px,
-      rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
-  max-width: 1440px; /* Un poco más de ancho para aprovechar monitores */
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 1rem; 
+  padding: 1rem;
   min-height: 100vh;
+  background-color: var(--bg);
 }
 
 @media (min-width: 768px) {
   #root {
-    padding: 1.5rem 2rem; /* Más espacio lateral solo en tablets/PC */
+    padding: 1.5rem 2rem;
   }
 }
