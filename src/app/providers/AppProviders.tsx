@@ -25,6 +25,13 @@ function ThemedApp({ children }: { children: React.ReactNode }) {
     }
   }, [idioma, i18n]);
 
+  React.useEffect(() => {
+    console.log('🌐 Idioma store:', idioma, '| i18n.language:', i18n.language);
+    if (i18n.language !== idioma) {
+      i18n.changeLanguage(idioma);
+    }
+  }, [idioma, i18n]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

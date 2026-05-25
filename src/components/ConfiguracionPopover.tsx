@@ -18,7 +18,10 @@ export const ConfiguracionPopover: React.FC = () => {
   const open = Boolean(anchor);
 
   const update = (patch: Partial<UserPreferencias>) => {
+    console.log('🔧 Actualizando preferencias:', patch); 
+
     const updated = { ...preferencias, ...patch };
+    
     setPreferencias(patch);
     guardar({ preferencias: updated });
   };
