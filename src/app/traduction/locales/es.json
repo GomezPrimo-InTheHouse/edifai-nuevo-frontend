@@ -327,5 +327,64 @@
     "email": "Email",
     "rol": "Rol",
     "cerrar_sesion": "Cerrar sesión"
+  },
+  
+"clientes": {
+  "title": "Clientes",
+  "subtitle": "{{count}} cliente registrado",
+  "subtitle_plural": "{{count}} clientes registrados",
+  "nuevo": "Nuevo cliente",
+  "loading": "Cargando clientes...",
+  "loading_detail": "Cargando cliente...",
+  "error": "No se pudo cargar la lista de clientes.",
+  "error_detail": "No se pudo cargar el cliente.",
+  "no_encontrado": "No encontrado",
+  "no_encontrado_msg": "El cliente no existe.",
+  "cliente": "Cliente",
+  "empty": {
+    "title": "No hay clientes registrados",
+    "crear": "Crear el primero"
+  },
+  "acciones": {
+    "volver": "Volver",
+    "editar": "Editar"
+  },
+  "detail": {
+    "info": "Información del cliente",
+    "telefono": "Teléfono",
+    "email": "Email",
+    "direccion": "Dirección",
+    "razon_social": "Razón social",
+    "dni_cuit": "DNI / CUIT",
+    "obras": "Obras asociadas",
+    "sin_obras": "Sin obras asociadas"
+  },
+  "create": {
+    "title": "Nuevo cliente",
+    "subtitle": "Registrar un nuevo cliente en el sistema."
+  },
+  "edit": {
+    "title": "Editar cliente",
+    "subtitle": "Modificar información del cliente."
+  },
+  "form": {
+    "seccion": "DATOS DEL CLIENTE",
+    "nombre": "Nombre *",
+    "apellido": "Apellido",
+    "razon_social": "Razón social",
+    "dni_cuit": "DNI / CUIT",
+    "telefono": "Teléfono *",
+    "email": "Email",
+    "direccion": "Dirección",
+    "guardando": "Guardando...",
+    "actualizar": "Actualizar cliente",
+    "crear": "Crear cliente"
+  },
+  "notify": {
+    "creado": "Cliente creado correctamente.",
+    "error_crear": "No se pudo crear el cliente.",
+    "actualizado": "Cliente actualizado correctamente.",
+    "error_actualizar": "No se pudo actualizar el cliente."
   }
+}
 }

@@ -327,5 +327,64 @@
     "email": "E-mail",
     "rol": "Perfil",
     "cerrar_sesion": "Sair"
+  },
+  
+"clientes": {
+  "title": "Clientes",
+  "subtitle": "{{count}} cliente registrado",
+  "subtitle_plural": "{{count}} clientes registrados",
+  "nuevo": "Novo cliente",
+  "loading": "Carregando clientes...",
+  "loading_detail": "Carregando cliente...",
+  "error": "Não foi possível carregar a lista de clientes.",
+  "error_detail": "Não foi possível carregar o cliente.",
+  "no_encontrado": "Não encontrado",
+  "no_encontrado_msg": "O cliente não existe.",
+  "cliente": "Cliente",
+  "empty": {
+    "title": "Nenhum cliente registrado",
+    "crear": "Criar o primeiro"
+  },
+  "acciones": {
+    "volver": "Voltar",
+    "editar": "Editar"
+  },
+  "detail": {
+    "info": "Informações do cliente",
+    "telefono": "Telefone",
+    "email": "E-mail",
+    "direccion": "Endereço",
+    "razon_social": "Razão social",
+    "dni_cuit": "CPF / CNPJ",
+    "obras": "Obras associadas",
+    "sin_obras": "Sem obras associadas"
+  },
+  "create": {
+    "title": "Novo cliente",
+    "subtitle": "Registrar um novo cliente no sistema."
+  },
+  "edit": {
+    "title": "Editar cliente",
+    "subtitle": "Modificar informações do cliente."
+  },
+  "form": {
+    "seccion": "DADOS DO CLIENTE",
+    "nombre": "Nome *",
+    "apellido": "Sobrenome",
+    "razon_social": "Razão social",
+    "dni_cuit": "CPF / CNPJ",
+    "telefono": "Telefone *",
+    "email": "E-mail",
+    "direccion": "Endereço",
+    "guardando": "Salvando...",
+    "actualizar": "Atualizar cliente",
+    "crear": "Criar cliente"
+  },
+  "notify": {
+    "creado": "Cliente criado com sucesso.",
+    "error_crear": "Não foi possível criar o cliente.",
+    "actualizado": "Cliente atualizado com sucesso.",
+    "error_actualizar": "Não foi possível atualizar o cliente."
   }
+}
 }

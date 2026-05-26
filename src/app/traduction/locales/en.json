@@ -327,5 +327,64 @@
     "email": "Email",
     "rol": "Role",
     "cerrar_sesion": "Sign out"
+  },
+  
+"clientes": {
+  "title": "Clients",
+  "subtitle": "{{count}} client registered",
+  "subtitle_plural": "{{count}} clients registered",
+  "nuevo": "New client",
+  "loading": "Loading clients...",
+  "loading_detail": "Loading client...",
+  "error": "Could not load the client list.",
+  "error_detail": "Could not load the client.",
+  "no_encontrado": "Not found",
+  "no_encontrado_msg": "The client does not exist.",
+  "cliente": "Client",
+  "empty": {
+    "title": "No clients registered",
+    "crear": "Create the first one"
+  },
+  "acciones": {
+    "volver": "Back",
+    "editar": "Edit"
+  },
+  "detail": {
+    "info": "Client information",
+    "telefono": "Phone",
+    "email": "Email",
+    "direccion": "Address",
+    "razon_social": "Company name",
+    "dni_cuit": "ID / Tax number",
+    "obras": "Associated projects",
+    "sin_obras": "No associated projects"
+  },
+  "create": {
+    "title": "New client",
+    "subtitle": "Register a new client in the system."
+  },
+  "edit": {
+    "title": "Edit client",
+    "subtitle": "Modify client information."
+  },
+  "form": {
+    "seccion": "CLIENT DATA",
+    "nombre": "Name *",
+    "apellido": "Last name",
+    "razon_social": "Company name",
+    "dni_cuit": "ID / Tax number",
+    "telefono": "Phone *",
+    "email": "Email",
+    "direccion": "Address",
+    "guardando": "Saving...",
+    "actualizar": "Update client",
+    "crear": "Create client"
+  },
+  "notify": {
+    "creado": "Client created successfully.",
+    "error_crear": "Could not create the client.",
+    "actualizado": "Client updated successfully.",
+    "error_actualizar": "Could not update the client."
   }
+}
 }
