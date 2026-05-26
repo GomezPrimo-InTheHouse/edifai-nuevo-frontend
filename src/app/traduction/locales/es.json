@@ -277,7 +277,38 @@
   "info_cuenta": "Información de cuenta",
   "email": "Email",
   "rol": "Rol",
-  "cerrar_sesion": "Cerrar sesión"
+  "cerrar_sesion": "Cerrar sesión",
+  "labor_form": {
+    "nombre": "Nombre de la labor",
+    "obra": "Obra",
+    "descripcion": "Descripción",
+    "trabajador": "Trabajador jefe asignado",
+    "sin_asignar": "Sin asignar",
+    "estado": "Estado de la labor",
+    "seleccionar": "Seleccionar",
+    "progreso": "Progreso de la labor",
+    "inicio_estimado": "Inicio estimado",
+    "fin_estimado": "Fin estimado",
+    "inicio_real": "Inicio real",
+    "fin_real": "Fin real",
+    "info_trabajador": "INFORMACIÓN DEL TRABAJADOR",
+    "asistencia_mes": "Asistencia este mes: {{pct}}%",
+    "puntos_acumulados": "{{puntos}} puntos acumulados",
+    "datos_personales": "DATOS PERSONALES",
+    "nombre_completo": "Nombre completo",
+    "dni": "DNI",
+    "telefono": "Teléfono",
+    "especialidad": "Especialidad",
+    "estado_admin": "ESTADO ADMINISTRATIVO",
+    "total_presupuestado": "Total presupuestado",
+    "total_pagado": "Total pagado",
+    "saldo_pendiente": "Saldo pendiente",
+    "pagos_registrados": "Pagos registrados",
+    "ultimos_pagos": "ÚLTIMOS PAGOS",
+    "sin_pagos": "Sin pagos registrados.",
+    "guardando": "Guardando...",
+    "guardar": "Guardar labor"
+}
 }
 }
 

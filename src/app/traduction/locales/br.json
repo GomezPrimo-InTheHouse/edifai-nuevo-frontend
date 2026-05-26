@@ -276,6 +276,37 @@
   "info_cuenta": "Informações da conta",
   "email": "E-mail",
   "rol": "Perfil",
-  "cerrar_sesion": "Sair"
+  "cerrar_sesion": "Sair",
+  "labor_form": {
+    "nombre": "Nome da tarefa",
+    "obra": "Obra",
+    "descripcion": "Descrição",
+    "trabajador": "Trabalhador líder atribuído",
+    "sin_asignar": "Sem atribuição",
+    "estado": "Status da tarefa",
+    "seleccionar": "Selecionar",
+    "progreso": "Progresso da tarefa",
+    "inicio_estimado": "Início estimado",
+    "fin_estimado": "Fim estimado",
+    "inicio_real": "Início real",
+    "fin_real": "Fim real",
+    "info_trabajador": "INFORMAÇÕES DO TRABALHADOR",
+    "asistencia_mes": "Presença neste mês: {{pct}}%",
+    "puntos_acumulados": "{{puntos}} pontos acumulados",
+    "datos_personales": "DADOS PESSOAIS",
+    "nombre_completo": "Nome completo",
+    "dni": "CPF/RG",
+    "telefono": "Telefone",
+    "especialidad": "Especialidade",
+    "estado_admin": "STATUS ADMINISTRATIVO",
+    "total_presupuestado": "Total orçado",
+    "total_pagado": "Total pago",
+    "saldo_pendiente": "Saldo pendente",
+    "pagos_registrados": "Pagamentos registrados",
+    "ultimos_pagos": "ÚLTIMOS PAGAMENTOS",
+    "sin_pagos": "Sem pagamentos registrados.",
+    "guardando": "Salvando...",
+    "guardar": "Salvar tarefa"
+}
 }
 }

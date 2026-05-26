@@ -249,6 +249,37 @@
   "info_cuenta": "Account information",
   "email": "Email",
   "rol": "Role",
-  "cerrar_sesion": "Sign out"
+  "cerrar_sesion": "Sign out",
+  "labor_form": {
+    "nombre": "Task name",
+    "obra": "Project",
+    "descripcion": "Description",
+    "trabajador": "Assigned lead worker",
+    "sin_asignar": "Unassigned",
+    "estado": "Task status",
+    "seleccionar": "Select",
+    "progreso": "Task progress",
+    "inicio_estimado": "Est. start",
+    "fin_estimado": "Est. end",
+    "inicio_real": "Actual start",
+    "fin_real": "Actual end",
+    "info_trabajador": "WORKER INFORMATION",
+    "asistencia_mes": "Attendance this month: {{pct}}%",
+    "puntos_acumulados": "{{puntos}} accumulated points",
+    "datos_personales": "PERSONAL DATA",
+    "nombre_completo": "Full name",
+    "dni": "ID number",
+    "telefono": "Phone",
+    "especialidad": "Specialty",
+    "estado_admin": "ADMINISTRATIVE STATUS",
+    "total_presupuestado": "Total budgeted",
+    "total_pagado": "Total paid",
+    "saldo_pendiente": "Pending balance",
+    "pagos_registrados": "Registered payments",
+    "ultimos_pagos": "LAST PAYMENTS",
+    "sin_pagos": "No payments registered.",
+    "guardando": "Saving...",
+    "guardar": "Save task"
+}
 }
 }
