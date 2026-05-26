@@ -462,7 +462,6 @@ function toFormDefaults(initialData?: Labor | null, obraIdFijo?: number): LaborF
 }
 
 function InfoCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  const theme = useTheme();
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
       <Box sx={{ color: '#F59E0B', mt: 0.3 }}>{icon}</Box>
