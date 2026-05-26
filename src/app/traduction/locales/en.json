@@ -386,5 +386,122 @@
     "actualizado": "Client updated successfully.",
     "error_actualizar": "Could not update the client."
   }
+},
+"materiales": {
+  "title": "Materials",
+  "subtitle": "Material and stock management.",
+  "nuevo": "New material",
+  "tipos": "Types",
+  "precios": "Prices",
+  "buscar": "Search by name or description",
+  "loading": "Loading materials...",
+  "error": "Could not load materials.",
+  "empty": {
+    "title": "No materials",
+    "desc": "No materials registered.",
+    "crear": "Create first"
+  },
+  "tabla": {
+    "nombre": "Name",
+    "tipo": "Type",
+    "unidad": "Unit",
+    "precio_unit": "Unit price",
+    "stock": "Stock",
+    "acciones": "Actions"
+  },
+  "acciones": {
+    "ver": "View",
+    "editar": "Edit",
+    "volver": "Back"
+  },
+  "confirm": {
+    "eliminar_title": "Delete material?",
+    "eliminar_msg": "Can only be deleted if not in active budgets.",
+    "eliminar_btn": "Delete"
+  },
+  "notify": {
+    "eliminado": "Material deleted.",
+    "error_eliminar": "Could not delete."
+  },
+  "stats": {
+    "titulo": "MATERIAL STATISTICS",
+    "mas_utilizados": "MOST USED MATERIALS IN BUDGETS",
+    "mayor_aumento": "TOP 5 — HIGHEST PRICE INCREASE",
+    "mayor_stock": "TOP 5 — HIGHEST STOCK AVAILABLE",
+    "menor_stock": "TOP 5 — LOWEST STOCK AVAILABLE",
+    "sin_datos": "No data yet.",
+    "sin_historial": "No price history yet.",
+    "veces": "times",
+    "usos": "Uses"
+  },
+  "detail": {
+    "loading": "Loading material...",
+    "error": "Could not load the material.",
+    "no_encontrado": "Not found",
+    "no_encontrado_msg": "The material does not exist.",
+    "subtitle": "Detailed material view.",
+    "info": "General information",
+    "tipo": "Material type",
+    "descripcion": "Description",
+    "unidad": "Unit of measure",
+    "imagen": "Image",
+    "stock_precios": "STOCK & PRICES",
+    "stock_actual": "Current stock",
+    "precio_unit": "Unit price",
+    "aumento_mensual": "Est. monthly increase %",
+    "historial": "Price history",
+    "estado": "Status",
+    "creado": "Created",
+    "actualizado": "Updated"
+  },
+  "historial": {
+    "fecha": "Date",
+    "precio_anterior": "Previous price",
+    "precio_nuevo": "New price",
+    "porcentaje": "% applied",
+    "motivo": "Reason"
+  }
+},
+"material_form": {
+  "info_general": "GENERAL INFORMATION",
+  "nombre": "Name",
+  "tipo": "Material type",
+  "sin_tipo": "No type",
+  "descripcion": "Description",
+  "estado": "Status",
+  "seleccionar": "Select",
+  "imagen_titulo": "MATERIAL IMAGE",
+  "galeria": "Gallery",
+  "camara": "Camera",
+  "subiendo": "Uploading image...",
+  "stock_precios": "STOCK & PRICES",
+  "unidad": "Unit of measure",
+  "stock_actual": "Current stock",
+  "precio_unit": "Unit price ($)",
+  "aumento_mensual": "Est. monthly increase %",
+  "guardando": "Saving...",
+  "guardar": "Save material"
+},
+"ajuste_precios": {
+  "titulo": "Bulk price adjustment",
+  "descripcion": "This action will modify the unit price of the selected materials. Changes will be immediately reflected in statistics and pending budgets.",
+  "porcentaje": "Increase percentage (%)",
+  "porcentaje_placeholder": "E.g: 12.5",
+  "tipo": "Material type",
+  "tipo_helper": "If none is selected, it will apply to the ENTIRE catalog.",
+  "todos_materiales": "All materials",
+  "motivo": "Reason or reference",
+  "motivo_placeholder": "E.g: Monthly supplier update",
+  "cancelar": "Cancel",
+  "confirmar": "Confirm increase",
+  "aplicando": "Applying adjustment...",
+  "confirm_title": "Apply price adjustment?",
+  "confirm_msg": "A {{porcentaje}}% increase will be applied {{contexto}}. Unconfirmed budgets will be recalculated automatically.",
+  "tipo_seleccionado": "to the selected type",
+  "todos": "to all materials",
+  "confirm_btn": "Apply adjustment",
+  "success": "Prices adjusted and statistics updated successfully.",
+  "error_porcentaje": "Enter a valid percentage.",
+  "error_ajuste": "Could not apply the price adjustment."
 }
 }

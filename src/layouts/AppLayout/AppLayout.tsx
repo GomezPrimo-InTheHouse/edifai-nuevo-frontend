@@ -776,32 +776,32 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
   const location = useLocation();
   const { data: especialidades = [] } = useEspecialidadesList();
 
-  const user         = useAuthStore((s) => s.user);
-  const rolId        = user?.rol_id ?? -1;
-  const isAdmin      = ROLES_ADMIN.includes(rolId);
-  const initials     = user?.email ? user.email.slice(0, 2).toUpperCase() : '??';
+  const user = useAuthStore((s) => s.user);
+  const rolId = user?.rol_id ?? -1;
+  const isAdmin = ROLES_ADMIN.includes(rolId);
+  const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : '??';
   const displayEmail = user?.email ?? '—';
-  const displayRol   = user?.rol_nombre ?? '—';
+  const displayRol = user?.rol_nombre ?? '—';
 
   const menuSections = [
     {
       title: t('nav.secciones.general'),
       onlyAdmin: false,
       items: [
-        { label: t('nav.dashboard'),   icon: <Dashboard />,         path: '/',                allowedRoles: [1, 3, 4, 6, 7, 8] },
-        { label: t('nav.obras'),        icon: <Construction />,       path: '/obras',           allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.labores'),      icon: <AssignmentTurnedIn />, path: '/labores',         allowedRoles: [1, 3, 4, 6, 7, 8] },
-        { label: t('nav.clientes'),     icon: <Group />,              path: '/clientes',        allowedRoles: [1, 3, 4, 6] },
+        { label: t('nav.dashboard'), icon: <Dashboard />, path: '/', allowedRoles: [1, 3, 4, 6, 7, 8] },
+        { label: t('nav.obras'), icon: <Construction />, path: '/obras', allowedRoles: [1, 3, 4, 6] },
+        { label: t('nav.labores'), icon: <AssignmentTurnedIn />, path: '/labores', allowedRoles: [1, 3, 4, 6, 7, 8] },
+        { label: t('nav.clientes'), icon: <Group />, path: '/clientes', allowedRoles: [1, 3, 4, 6] },
       ],
     },
     {
       title: t('nav.secciones.operaciones'),
       onlyAdmin: false,
       items: [
-        { label: t('nav.presupuestos'),    icon: <ReceiptLong />,        path: '/presupuestos',      allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.pagos'),           icon: <ReceiptLong />,        path: '/pagos',             allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.presentismo'),     icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.mi_presentismo'),  icon: <AssignmentTurnedIn />, path: '/presentismo',       allowedRoles: [7, 8] },
+        { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6] },
+        { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6] },
+        { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6] },
+        { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
       ],
     },
     {
@@ -936,7 +936,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
               '&:hover': { backgroundColor: theme.palette.action.hover },
             }}
           >
-            <Avatar sx={{ width: 36, height: 36, bgcolor: '#0F172A', fontSize: 13, fontWeight: 700 }}>
+            <Avatar sx={{ width: 36, height: 36, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 13, fontWeight: 700 }}>
               {initials}
             </Avatar>
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>

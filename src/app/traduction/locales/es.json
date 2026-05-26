@@ -386,5 +386,130 @@
     "actualizado": "Cliente actualizado correctamente.",
     "error_actualizar": "No se pudo actualizar el cliente."
   }
+},
+"materiales": {
+  "title": "Materiales",
+  "subtitle": "Gestión de materiales y stock.",
+  "nuevo": "Nuevo material",
+  "tipos": "Tipos",
+  "precios": "Precios",
+  "buscar": "Buscar por nombre o descripción",
+  "loading": "Cargando materiales...",
+  "error": "No se pudieron cargar los materiales.",
+  "empty": {
+    "title": "Sin materiales",
+    "desc": "No hay materiales registrados.",
+    "crear": "Crear primero"
+  },
+  "tabla": {
+    "nombre": "Nombre",
+    "tipo": "Tipo",
+    "unidad": "Unidad",
+    "precio_unit": "Precio unitario",
+    "stock": "Stock",
+    "acciones": "Acciones"
+  },
+  "acciones": {
+    "ver": "Ver",
+    "editar": "Editar",
+    "volver": "Volver"
+  },
+  "confirm": {
+    "eliminar_title": "¿Eliminar material?",
+    "eliminar_msg": "Solo se puede eliminar si no está en presupuestos activos.",
+    "eliminar_btn": "Eliminar"
+  },
+  "notify": {
+    "eliminado": "Material eliminado.",
+    "error_eliminar": "No se pudo eliminar."
+  },
+  "stats": {
+    "titulo": "ESTADÍSTICAS DE MATERIALES",
+    "mas_utilizados": "MATERIALES MÁS UTILIZADOS EN PRESUPUESTOS",
+    "mayor_aumento": "TOP 5 — MAYOR AUMENTO DE PRECIO",
+    "mayor_stock": "TOP 5 — MAYOR STOCK DISPONIBLE",
+    "menor_stock": "TOP 5 — MENOR STOCK DISPONIBLE",
+    "sin_datos": "Sin datos aún.",
+    "sin_historial": "Sin historial de incrementos aún.",
+    "veces": "veces",
+    "usos": "Usos"
+  },
+  "detail": {
+    "loading": "Cargando material...",
+    "error": "No se pudo cargar el material.",
+    "no_encontrado": "No encontrado",
+    "no_encontrado_msg": "El material no existe.",
+    "subtitle": "Vista detallada del material.",
+    "info": "Información general",
+    "tipo": "Tipo de material",
+    "descripcion": "Descripción",
+    "unidad": "Unidad de medida",
+    "imagen": "Imagen",
+    "stock_precios": "STOCK Y PRECIOS",
+    "stock_actual": "Stock actual",
+    "precio_unit": "Precio unitario",
+    "aumento_mensual": "% aumento mensual estimado",
+    "historial": "Historial de precios",
+    "estado": "Estado",
+    "creado": "Creado",
+    "actualizado": "Actualizado"
+  },
+  "historial": {
+    "fecha": "Fecha",
+    "precio_anterior": "Precio anterior",
+    "precio_nuevo": "Precio nuevo",
+    "porcentaje": "% aplicado",
+    "motivo": "Motivo"
+  }
+},
+"material_form": {
+  "info_general": "INFORMACIÓN GENERAL",
+  "nombre": "Nombre",
+  "tipo": "Tipo de material",
+  "sin_tipo": "Sin tipo",
+  "descripcion": "Descripción",
+  "estado": "Estado",
+  "seleccionar": "Seleccionar",
+  "imagen_titulo": "IMAGEN DEL MATERIAL",
+  "galeria": "Galería",
+  "camara": "Cámara",
+  "subiendo": "Subiendo imagen...",
+  "stock_precios": "STOCK Y PRECIOS",
+  "unidad": "Unidad de medida",
+  "stock_actual": "Stock actual",
+  "precio_unit": "Precio unitario ($)",
+  "aumento_mensual": "% aumento mensual estimado",
+  "guardando": "Guardando...",
+  "guardar": "Guardar material"
+},
+"ajuste_precios": {
+  "titulo": "Ajuste masivo de precios",
+  "descripcion": "Esta acción modificará el precio unitario de los materiales seleccionados. Los cambios se verán reflejados inmediatamente en las estadísticas y presupuestos pendientes.",
+  "porcentaje": "Porcentaje de aumento (%)",
+  "porcentaje_placeholder": "Ej: 12.5",
+  "tipo": "Tipo de material",
+  "tipo_helper": "Si no seleccionás uno, se aplicará a TODO el catálogo.",
+  "todos_materiales": "Todos los materiales",
+  "motivo": "Motivo o referencia",
+  "motivo_placeholder": "Ej: Actualización mensual de proveedores",
+  "cancelar": "Cancelar",
+  "confirmar": "Confirmar aumento",
+  "aplicando": "Aplicando ajuste...",
+  "confirm_title": "¿Aplicar ajuste de precios?",
+  "confirm_msg": "Se aplicará un {{porcentaje}}% {{contexto}}. Los presupuestos no confirmados serán recalculados automáticamente.",
+  "tipo_seleccionado": "al tipo seleccionado",
+  "todos": "a todos los materiales",
+  "confirm_btn": "Aplicar ajuste",
+  "success": "Precios ajustados y estadísticas actualizadas correctamente.",
+  "error_porcentaje": "Ingresá un porcentaje válido.",
+  "error_ajuste": "No se pudo aplicar el ajuste de precios."
 }
 }
+
+
+
+
+
+
+
+

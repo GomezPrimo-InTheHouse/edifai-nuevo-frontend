@@ -202,12 +202,12 @@ export const UserMenuPopover: React.FC<UserMenuPopoverProps> = ({ anchorEl, onCl
         },
       }}
     >
-      {/* Header — siempre oscuro, intencional */}
+      {/* Header  */}
       <Box sx={{ px: 2.5, pt: 2.5, pb: 2, background: '#0F172A' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-<Avatar sx={{ width: 36, height: 36, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 13, fontWeight: 700 }}>
-  {initials}
-</Avatar>
+        <Avatar sx={{ width: 36, height: 36, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 13, fontWeight: 700 }}>
+          {initials}
+        </Avatar>
           <Box>
             <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#F8FAFC' }}>
               {user?.email ?? '—'}
