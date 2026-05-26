@@ -93,7 +93,7 @@
 //   );
 // }
 
-import { Box, Button, Grid, Paper, Stack, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, Grid, Paper, Stack, TextField, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -120,7 +120,6 @@ function toFormDefaults(initialData?: Cliente | null): ClienteFormValues {
 }
 
 export function ClienteForm({ initialData, onSubmit, isSubmitting = false, isEdit = false }: Props) {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   const { control, handleSubmit, formState: { errors } } = useForm<ClienteSchemaValues>({
