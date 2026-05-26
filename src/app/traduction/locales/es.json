@@ -29,7 +29,6 @@
     "loading_worker": "Cargando tu dashboard...",
     "actualiza": "Actualiza cada 30s",
     "sin_datos": "Sin datos",
-
     "periodos": {
       "hoy": "Hoy",
       "semana": "Esta semana",
@@ -39,7 +38,6 @@
       "desde": "Desde",
       "hasta": "Hasta"
     },
-
     "kpis": {
       "obras_activas": "Obras activas",
       "obras_total": "{{total}} total",
@@ -64,7 +62,6 @@
       "mis_puntos": "Mis puntos",
       "puntos_sub": "puntos acumulados"
     },
-
     "graficos": {
       "evolucion_pagos": "Evolución de pagos",
       "ultimos_6_meses": "Últimos 6 meses",
@@ -78,7 +75,6 @@
       "actividad_reciente": "Actividad reciente",
       "ultimas_acciones": "Últimas 8 acciones"
     },
-
     "worker": {
       "hola": "Hola, {{nombre}} {{apellido}}",
       "asistencia_mes": "asistencia {{mes}}",
@@ -104,13 +100,11 @@
       "tabla_estado": "Estado",
       "tabla_motivo": "Motivo"
     },
-
     "meses": [
       "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
       "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
     ]
   },
- 
   "obras": {
     "title": "Obras",
     "subtitle": "Gestión general de obras y proyectos.",
@@ -226,26 +220,34 @@
       "guardando": "Guardando...",
       "guardar": "Guardar obra"
     }
-  
-},
+  },
   "labores": {
     "title": "Labores",
     "subtitle": "Gestión general de labores y tareas.",
+    "subtitle_worker": "Tus labores asignadas.",
     "nueva": "Nueva Labor",
-    "buscar": "Buscar labor o ubicación...",
+    "buscar": "Buscar por nombre o descripción",
     "loading": "Cargando labores...",
     "error": "No se cargaron las labores.",
+    "error_title": "Error al cargar labores",
     "sin_ubicacion": "Sin ubicación",
     "archivada": "Archivada",
+    "filtro_obra": "Filtrar por obra",
+    "filtro_especialidad": "Filtrar por especialidad",
+    "todas_obras": "Todas las obras",
+    "todas": "Todas",
+    "header_archivadas": "LABORES ARCHIVADAS",
+    "header_registradas": "LABORES REGISTRADAS",
     "tabs": {
       "activas": "Activas",
       "archivadas": "Archivadas"
     },
     "empty": {
       "activas": "Sin labores activas",
-      "activas_desc": "No hay labores activas.",
+      "activas_desc": "No existen labores o la búsqueda no devolvió resultados.",
       "archivadas": "Sin labores archivadas",
       "archivadas_desc": "No hay labores archivadas.",
+      "worker": "No tenés labores asignadas.",
       "crear": "Crear labor"
     },
     "acciones": {
@@ -254,30 +256,25 @@
       "archivar": "Archivar",
       "desarchivar": "Desarchivar",
       "volver": "Volver a labores"
+    },
+    "tabla": {
+      "nombre": "Nombre",
+      "obra": "Obra",
+      "inicio_estimado": "Inicio estimado",
+      "fin_estimado": "Fin estimado",
+      "progreso": "Progreso",
+      "acciones": "Acciones"
+    },
+    "confirm": {
+      "eliminar_title": "¿Dar de baja esta labor?",
+      "eliminar_msg": "Esta acción no se puede deshacer.",
+      "eliminar_btn": "Eliminar"
+    },
+    "notify": {
+      "eliminada": "Labor eliminada.",
+      "error_eliminar": "No se pudo eliminar la labor."
     }
-    
-},
-"config": {
-  "titulo": "Configuración",
-  "subtitulo": "Preferencias de tu cuenta",
-  "apariencia": "Apariencia",
-  "tema": "Tema",
-  "claro": "Claro",
-  "oscuro": "Oscuro",
-  "idioma": "Idioma",
-  "sistema": "Sistema",
-  "notificaciones": "Notificaciones",
-  "notificaciones_sub": "Alertas en tiempo real",
-  "dashboard": "Dashboard detallado",
-  "dashboard_sub": "Vista expandida por defecto",
-  "moneda": "Moneda",
-  "ver_completa": "Ver configuración completa"
-},
-"user_menu": {
-  "info_cuenta": "Información de cuenta",
-  "email": "Email",
-  "rol": "Rol",
-  "cerrar_sesion": "Cerrar sesión",
+  },
   "labor_form": {
     "nombre": "Nombre de la labor",
     "obra": "Obra",
@@ -308,7 +305,27 @@
     "sin_pagos": "Sin pagos registrados.",
     "guardando": "Guardando...",
     "guardar": "Guardar labor"
+  },
+  "config": {
+    "titulo": "Configuración",
+    "subtitulo": "Preferencias de tu cuenta",
+    "apariencia": "Apariencia",
+    "tema": "Tema",
+    "claro": "Claro",
+    "oscuro": "Oscuro",
+    "idioma": "Idioma",
+    "sistema": "Sistema",
+    "notificaciones": "Notificaciones",
+    "notificaciones_sub": "Alertas en tiempo real",
+    "dashboard": "Dashboard detallado",
+    "dashboard_sub": "Vista expandida por defecto",
+    "moneda": "Moneda",
+    "ver_completa": "Ver configuración completa"
+  },
+  "user_menu": {
+    "info_cuenta": "Información de cuenta",
+    "email": "Email",
+    "rol": "Rol",
+    "cerrar_sesion": "Cerrar sesión"
+  }
 }
-}
-}
-
