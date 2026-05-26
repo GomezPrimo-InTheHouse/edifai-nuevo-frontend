@@ -1,5 +1,4 @@
 {
-
   "nav": {
     "subtitulo": "Construction management",
     "dashboard": "Dashboard",
@@ -30,7 +29,6 @@
     "loading_worker": "Loading your dashboard...",
     "actualiza": "Updates every 30s",
     "sin_datos": "No data",
-
     "periodos": {
       "hoy": "Today",
       "semana": "This week",
@@ -40,7 +38,6 @@
       "desde": "From",
       "hasta": "To"
     },
-
     "kpis": {
       "obras_activas": "Active projects",
       "obras_total": "{{total}} total",
@@ -65,7 +62,6 @@
       "mis_puntos": "My points",
       "puntos_sub": "accumulated points"
     },
-
     "graficos": {
       "evolucion_pagos": "Payment evolution",
       "ultimos_6_meses": "Last 6 months",
@@ -79,7 +75,6 @@
       "actividad_reciente": "Recent activity",
       "ultimas_acciones": "Last 8 actions"
     },
-
     "worker": {
       "hola": "Hello, {{nombre}} {{apellido}}",
       "asistencia_mes": "attendance {{mes}}",
@@ -105,13 +100,11 @@
       "tabla_estado": "Status",
       "tabla_motivo": "Reason"
     },
-
     "meses": [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ]
   },
-   
   "obras": {
     "title": "Projects",
     "subtitle": "General management of construction projects.",
@@ -227,29 +220,61 @@
       "guardando": "Saving...",
       "guardar": "Save project"
     }
-  
-},
-"config": {
-  "titulo": "Settings",
-  "subtitulo": "Your account preferences",
-  "apariencia": "Appearance",
-  "tema": "Theme",
-  "claro": "Light",
-  "oscuro": "Dark",
-  "idioma": "Language",
-  "sistema": "System",
-  "notificaciones": "Notifications",
-  "notificaciones_sub": "Real-time alerts",
-  "dashboard": "Detailed dashboard",
-  "dashboard_sub": "Expanded view by default",
-  "moneda": "Currency",
-  "ver_completa": "View full settings"
-},
-"user_menu": {
-  "info_cuenta": "Account information",
-  "email": "Email",
-  "rol": "Role",
-  "cerrar_sesion": "Sign out",
+  },
+  "labores": {
+    "title": "Tasks",
+    "subtitle": "Task and labor management by project.",
+    "subtitle_worker": "Your assigned tasks.",
+    "nueva": "New Task",
+    "buscar": "Search by name or description",
+    "loading": "Loading tasks...",
+    "error": "Tasks could not be loaded.",
+    "error_title": "Error loading tasks",
+    "sin_ubicacion": "No location",
+    "archivada": "Archived",
+    "filtro_obra": "Filter by project",
+    "filtro_especialidad": "Filter by specialty",
+    "todas_obras": "All projects",
+    "todas": "All",
+    "header_archivadas": "ARCHIVED TASKS",
+    "header_registradas": "REGISTERED TASKS",
+    "tabs": {
+      "activas": "Active",
+      "archivadas": "Archived"
+    },
+    "empty": {
+      "activas": "No active tasks",
+      "activas_desc": "No tasks found or search returned no results.",
+      "archivadas": "No archived tasks",
+      "archivadas_desc": "There are no archived tasks.",
+      "worker": "You have no assigned tasks.",
+      "crear": "Create task"
+    },
+    "acciones": {
+      "ver": "View",
+      "editar": "Edit",
+      "archivar": "Archive",
+      "desarchivar": "Unarchive",
+      "volver": "Back to tasks"
+    },
+    "tabla": {
+      "nombre": "Name",
+      "obra": "Project",
+      "inicio_estimado": "Est. start",
+      "fin_estimado": "Est. end",
+      "progreso": "Progress",
+      "acciones": "Actions"
+    },
+    "confirm": {
+      "eliminar_title": "Remove this task?",
+      "eliminar_msg": "This action cannot be undone.",
+      "eliminar_btn": "Delete"
+    },
+    "notify": {
+      "eliminada": "Task deleted.",
+      "error_eliminar": "Could not delete the task."
+    }
+  },
   "labor_form": {
     "nombre": "Task name",
     "obra": "Project",
@@ -280,6 +305,27 @@
     "sin_pagos": "No payments registered.",
     "guardando": "Saving...",
     "guardar": "Save task"
-}
-}
+  },
+  "config": {
+    "titulo": "Settings",
+    "subtitulo": "Your account preferences",
+    "apariencia": "Appearance",
+    "tema": "Theme",
+    "claro": "Light",
+    "oscuro": "Dark",
+    "idioma": "Language",
+    "sistema": "System",
+    "notificaciones": "Notifications",
+    "notificaciones_sub": "Real-time alerts",
+    "dashboard": "Detailed dashboard",
+    "dashboard_sub": "Expanded view by default",
+    "moneda": "Currency",
+    "ver_completa": "View full settings"
+  },
+  "user_menu": {
+    "info_cuenta": "Account information",
+    "email": "Email",
+    "rol": "Role",
+    "cerrar_sesion": "Sign out"
+  }
 }

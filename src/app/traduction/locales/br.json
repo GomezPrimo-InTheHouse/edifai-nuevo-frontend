@@ -29,7 +29,6 @@
     "loading_worker": "Carregando seu dashboard...",
     "actualiza": "Atualiza a cada 30s",
     "sin_datos": "Sem dados",
-
     "periodos": {
       "hoy": "Hoje",
       "semana": "Esta semana",
@@ -39,7 +38,6 @@
       "desde": "De",
       "hasta": "Até"
     },
-
     "kpis": {
       "obras_activas": "Obras ativas",
       "obras_total": "{{total}} total",
@@ -64,7 +62,6 @@
       "mis_puntos": "Meus pontos",
       "puntos_sub": "pontos acumulados"
     },
-
     "graficos": {
       "evolucion_pagos": "Evolução de pagamentos",
       "ultimos_6_meses": "Últimos 6 meses",
@@ -78,7 +75,6 @@
       "actividad_reciente": "Atividade recente",
       "ultimas_acciones": "Últimas 8 ações"
     },
-
     "worker": {
       "hola": "Olá, {{nombre}} {{apellido}}",
       "asistencia_mes": "presença {{mes}}",
@@ -104,13 +100,11 @@
       "tabla_estado": "Status",
       "tabla_motivo": "Motivo"
     },
-
     "meses": [
       "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
       "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ]
   },
-
   "obras": {
     "title": "Obras",
     "subtitle": "Gestão geral de obras e projetos.",
@@ -227,25 +221,33 @@
       "guardar": "Salvar obra"
     }
   },
-
   "labores": {
     "title": "Tarefas",
-    "subtitle": "Gestão geral de tarefas e atividades.",
+    "subtitle": "Gestão de tarefas por obra.",
+    "subtitle_worker": "Suas tarefas atribuídas.",
     "nueva": "Nova Tarefa",
-    "buscar": "Buscar tarefa ou localização...",
+    "buscar": "Buscar por nome ou descrição",
     "loading": "Carregando tarefas...",
     "error": "Não foi possível carregar as tarefas.",
+    "error_title": "Erro ao carregar tarefas",
     "sin_ubicacion": "Sem localização",
     "archivada": "Arquivada",
+    "filtro_obra": "Filtrar por obra",
+    "filtro_especialidad": "Filtrar por especialidade",
+    "todas_obras": "Todas as obras",
+    "todas": "Todas",
+    "header_archivadas": "TAREFAS ARQUIVADAS",
+    "header_registradas": "TAREFAS REGISTRADAS",
     "tabs": {
       "activas": "Ativas",
       "archivadas": "Arquivadas"
     },
     "empty": {
       "activas": "Sem tarefas ativas",
-      "activas_desc": "Não há tarefas ativas.",
+      "activas_desc": "Nenhuma tarefa encontrada ou a busca não retornou resultados.",
       "archivadas": "Sem tarefas arquivadas",
       "archivadas_desc": "Não há tarefas arquivadas.",
+      "worker": "Você não tem tarefas atribuídas.",
       "crear": "Criar tarefa"
     },
     "acciones": {
@@ -254,29 +256,25 @@
       "archivar": "Arquivar",
       "desarchivar": "Desarquivar",
       "volver": "Voltar às tarefas"
+    },
+    "tabla": {
+      "nombre": "Nome",
+      "obra": "Obra",
+      "inicio_estimado": "Início estimado",
+      "fin_estimado": "Fim estimado",
+      "progreso": "Progresso",
+      "acciones": "Ações"
+    },
+    "confirm": {
+      "eliminar_title": "Remover esta tarefa?",
+      "eliminar_msg": "Esta ação não pode ser desfeita.",
+      "eliminar_btn": "Excluir"
+    },
+    "notify": {
+      "eliminada": "Tarefa excluída.",
+      "error_eliminar": "Não foi possível excluir a tarefa."
     }
   },
-  "config": {
-  "titulo": "Configurações",
-  "subtitulo": "Preferências da sua conta",
-  "apariencia": "Aparência",
-  "tema": "Tema",
-  "claro": "Claro",
-  "oscuro": "Escuro",
-  "idioma": "Idioma",
-  "sistema": "Sistema",
-  "notificaciones": "Notificações",
-  "notificaciones_sub": "Alertas em tempo real",
-  "dashboard": "Dashboard detalhado",
-  "dashboard_sub": "Visão expandida por padrão",
-  "moneda": "Moeda",
-  "ver_completa": "Ver configurações completas"
-},
-"user_menu": {
-  "info_cuenta": "Informações da conta",
-  "email": "E-mail",
-  "rol": "Perfil",
-  "cerrar_sesion": "Sair",
   "labor_form": {
     "nombre": "Nome da tarefa",
     "obra": "Obra",
@@ -307,6 +305,27 @@
     "sin_pagos": "Sem pagamentos registrados.",
     "guardando": "Salvando...",
     "guardar": "Salvar tarefa"
-}
-}
+  },
+  "config": {
+    "titulo": "Configurações",
+    "subtitulo": "Preferências da sua conta",
+    "apariencia": "Aparência",
+    "tema": "Tema",
+    "claro": "Claro",
+    "oscuro": "Escuro",
+    "idioma": "Idioma",
+    "sistema": "Sistema",
+    "notificaciones": "Notificações",
+    "notificaciones_sub": "Alertas em tempo real",
+    "dashboard": "Dashboard detalhado",
+    "dashboard_sub": "Visão expandida por padrão",
+    "moneda": "Moeda",
+    "ver_completa": "Ver configurações completas"
+  },
+  "user_menu": {
+    "info_cuenta": "Informações da conta",
+    "email": "E-mail",
+    "rol": "Perfil",
+    "cerrar_sesion": "Sair"
+  }
 }
