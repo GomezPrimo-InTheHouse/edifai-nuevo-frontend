@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
-import { MaterialForm } from '../components/MaterialForm';
+import  {MaterialForm}  from '../components/MaterialForm';
 import { useCreateMaterial } from '../hooks/useMateriales';
 import { useNotify } from '../../../shared/hooks/useNotify';
 
