@@ -623,6 +623,18 @@
   "success": "Información actualizada correctamente.",
   "error": "Error al intentar actualizar el trabajador.",
   "email_duplicado": "El email \"{{email}}\" ya pertenece a otro trabajador ({{nombre}} {{apellido}})."
+},
+"notificaciones": {
+  "titulo": "Notificaciones",
+  "marcar_todas": "Marcar todas",
+  "sin_leer": "Sin leer",
+  "todas": "Todas",
+  "empty_sin_leer": "No tenés notificaciones sin leer",
+  "empty_todas": "No hay notificaciones",
+  "ahora": "ahora",
+  "hace_min": "hace {{min}} min",
+  "hace_h": "hace {{hs}}h",
+  "hace_d": "hace {{dias}}d"
 }
 
 }

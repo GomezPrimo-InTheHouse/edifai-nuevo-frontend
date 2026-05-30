@@ -623,5 +623,17 @@
   "success": "Information updated successfully.",
   "error": "Error trying to update the worker.",
   "email_duplicado": "The email \"{{email}}\" already belongs to another worker ({{nombre}} {{apellido}})."
+},
+"notificaciones": {
+  "titulo": "Notifications",
+  "marcar_todas": "Mark all",
+  "sin_leer": "Unread",
+  "todas": "All",
+  "empty_sin_leer": "No unread notifications",
+  "empty_todas": "No notifications",
+  "ahora": "now",
+  "hace_min": "{{min}} min ago",
+  "hace_h": "{{hs}}h ago",
+  "hace_d": "{{dias}}d ago"
 }
 }
