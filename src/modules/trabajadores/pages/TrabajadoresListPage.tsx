@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import {
   Avatar, Box, Button, Card, CardContent, Chip, Divider, Grid,
   IconButton, Paper, Stack, Table, TableBody, TableCell,
-  TableHead, TableRow, TextField, Typography,
+  TableHead, TableRow, TextField, Typography, useTheme,
 } from '@mui/material';
 import { Eye, Pencil, Plus, Settings, Trash2, Clock, TrendingUp } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
@@ -20,7 +21,6 @@ import { usePagosList } from '../../pagos/hooks/usePagos';
 import { PagoEstadoChip } from '../../pagos/components/PagoEstadoChip';
 import { useNotify } from '../../../shared/hooks/useNotify';
 
-// Colores para el gráfico de torta
 const PIE_COLORS = ['#F59E0B', '#0F172A', '#2563EB', '#16A34A', '#EA580C', '#7C3AED', '#DB2777'];
 
 function formatDate(value?: string | null): string {
@@ -31,6 +31,9 @@ function formatDate(value?: string | null): string {
 export const TrabajadoresListPage = () => {
   const navigate = useNavigate();
   const notify = useNotify();
+  const theme = useTheme();
+  const { t } = useTranslation();
+
   const { data, isLoading, isError, refetch } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const { data: labores = [] } = useLaboresList();
@@ -41,18 +44,18 @@ export const TrabajadoresListPage = () => {
 
   const handleDelete = async (id: number) => {
     const confirmed = await notify.confirm({
-      title: '¿Eliminar trabajador?',
-      message: 'Esta acción no se puede deshacer. ¿Seguro que querés continuar?',
-      confirmLabel: 'Sí, eliminar',
-      cancelLabel: 'Cancelar',
+      title: t('trabajadores.confirm.eliminar_title'),
+      message: t('trabajadores.confirm.eliminar_msg'),
+      confirmLabel: t('trabajadores.confirm.eliminar_btn'),
+      cancelLabel: t('trabajadores.confirm.cancelar'),
       severity: 'error',
     });
     if (!confirmed) return;
     try {
       await deleteMutation.mutateAsync(id);
-      notify.success('Trabajador eliminado correctamente.');
+      notify.success(t('trabajadores.notify.eliminado'));
     } catch (error: any) {
-      const mensaje = error?.response?.data?.message || error?.response?.data?.error || 'No se pudo eliminar el trabajador.';
+      const mensaje = error?.response?.data?.message || error?.response?.data?.error || t('trabajadores.notify.error_eliminar');
       notify.error(mensaje);
     }
   };
@@ -71,7 +74,6 @@ export const TrabajadoresListPage = () => {
   const getEspecialidadNombre = (id?: number | null) =>
     especialidades.find((e) => e.id === id)?.nombre ?? '-';
 
-  // Último trabajador añadido
   const ultimoAgregado = useMemo(() => {
     if (!data || data.length === 0) return null;
     return [...data].sort((a, b) =>
@@ -79,7 +81,6 @@ export const TrabajadoresListPage = () => {
     )[0];
   }, [data]);
 
-  // Último trabajador modificado
   const ultimoModificado = useMemo(() => {
     if (!data || data.length === 0) return null;
     return [...data].sort((a, b) =>
@@ -87,7 +88,6 @@ export const TrabajadoresListPage = () => {
     )[0];
   }, [data]);
 
-  // Datos para el gráfico de torta por especialidad
   const dataTorta = useMemo(() => {
     if (!data || !especialidades.length) return [];
     const conteo: Record<string, number> = {};
@@ -98,7 +98,6 @@ export const TrabajadoresListPage = () => {
     return Object.entries(conteo).map(([nombre, value]) => ({ nombre, value }));
   }, [data, especialidades]);
 
-  // Trabajadores con más labores asignadas
   const trabajadoresConMasLabores = useMemo(() => {
     if (!data || !labores.length) return [];
     const conteo: Record<number, number> = {};
@@ -112,7 +111,6 @@ export const TrabajadoresListPage = () => {
       .map((t) => ({ ...t, totalLabores: conteo[t.id] ?? 0 }));
   }, [data, labores]);
 
-  // Últimos pagos por trabajador
   const ultimosPagos = useMemo(() => {
     return [...pagos]
       .sort((a, b) => new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime())
@@ -121,150 +119,75 @@ export const TrabajadoresListPage = () => {
 
   return (
     <AppLayout>
-      {/* <PageHeader
-        title="Trabajadores"
-        subtitle="Gestión del personal registrado en el sistema."
-        actions={
-          <Stack direction="row" spacing={1}>
-            <Button variant="outlined" startIcon={<Settings size={10} />} onClick={() => setEspecialidadModalOpen(true)}>
-              Especialidades
-            </Button>
-            <Button variant="contained" startIcon={<Plus size={8} />} onClick={() => navigate('/trabajadores/nuevo')}>
-              Nuevo trabajador
-            </Button>
-          </Stack>
-        }
-      /> */}
       <PageHeader
-        // 1. Título responsivo: más pequeño en móvil para que no empuje las acciones
         title={
-          <Typography
-            variant="inherit"
-            sx={{ fontSize: { xs: '1.25rem', md: '1.75rem' }, fontWeight: 700 }}
-          >
-            Trabajadores
+          <Typography variant="inherit" sx={{ fontSize: { xs: '1.25rem', md: '1.75rem' }, fontWeight: 700 }}>
+            {t('trabajadores.title')}
           </Typography>
         }
-        // 2. Subtítulo: lo acortamos en móvil o reducimos su tamaño
-        subtitle="Gestión de personal."
+        subtitle={t('trabajadores.subtitle')}
         actions={
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }} // Se apilan en vertical si el móvil es muy angosto
-            spacing={1}
-            sx={{ width: { xs: '100%', sm: 'auto' } }}
-          >
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ width: { xs: '100%', sm: 'auto' } }}>
             <Button
-              variant="outlined"
-              size="small"
-              // Icono tamaño estándar (16) es mejor para el dedo que 10
+              variant="outlined" size="small"
               startIcon={<Settings size={16} />}
               onClick={() => setEspecialidadModalOpen(true)}
-              sx={{
-                fontSize: { xs: '0.7rem', md: '0.8125rem' },
-                px: { xs: 1, md: 2 }
-              }}
+              sx={{ fontSize: { xs: '0.7rem', md: '0.8125rem' }, px: { xs: 1, md: 2 } }}
             >
-              Especialidades
+              {t('trabajadores.especialidades')}
             </Button>
-
             <Button
-              variant="contained"
-              size="small"
+              variant="contained" size="small"
               startIcon={<Plus size={16} />}
               onClick={() => navigate('/trabajadores/nuevo')}
-              sx={{
-                fontSize: { xs: '0.7rem', md: '0.8125rem' },
-                px: { xs: 1, md: 2 },
-                whiteSpace: 'nowrap'
-              }}
+              sx={{ fontSize: { xs: '0.7rem', md: '0.8125rem' }, px: { xs: 1, md: 2 }, whiteSpace: 'nowrap' }}
             >
-              {/* En móvil quitamos "trabajador" para que el botón no sea gigante */}
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                Nuevo trabajador
-              </Box>
-              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
-                Nuevo
-              </Box>
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{t('trabajadores.nuevo')}</Box>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>{t('trabajadores.nuevo_corto')}</Box>
             </Button>
           </Stack>
         }
       />
 
-      {/* Buscador */}
-      <Paper sx={{ p: 2, borderRadius: 3, mb: 2 }}>
-        <TextField fullWidth label="Buscar por nombre, apellido o DNI" value={search} onChange={(e) => setSearch(e.target.value)} />
+      <Paper sx={{ p: 2, borderRadius: 3, mb: 2, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
+        <TextField fullWidth label={t('trabajadores.buscar')} value={search} onChange={(e) => setSearch(e.target.value)} />
       </Paper>
 
-      {isLoading && <LoadingState message="Cargando trabajadores..." />}
-      {isError && <ErrorState title="Error al cargar trabajadores" message="Revisa la conexión con el microservicio." onRetry={refetch} />}
+      {isLoading && <LoadingState message={t('trabajadores.loading')} />}
+      {isError && <ErrorState title={t('trabajadores.error_title')} message={t('trabajadores.error')} onRetry={refetch} />}
 
       {!isLoading && !isError && filteredData.length === 0 && (
         <EmptyState
-          title="No hay trabajadores"
-          description="Aún no existen trabajadores o la búsqueda no devolvió resultados."
-          action={<Button variant="contained" onClick={() => navigate('/trabajadores/nuevo')}>Crear primero</Button>}
+          title={t('trabajadores.empty.title')}
+          description={t('trabajadores.empty.desc')}
+          action={<Button variant="contained" onClick={() => navigate('/trabajadores/nuevo')}>{t('trabajadores.empty.crear')}</Button>}
         />
       )}
 
-      {/* Tabla principal */}
-      {/* {!isLoading && !isError && filteredData.length > 0 && (
-        <Paper sx={{ borderRadius: 3, overflow: 'hidden', mb: 3 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>DNI</TableCell>
-                <TableCell>Especialidad</TableCell>
-                <TableCell>Teléfono</TableCell>
-                <TableCell align="right">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredData.map((t) => (
-                <TableRow key={t.id} hover>
-                  <TableCell><Typography fontWeight={600}>{t.nombre} {t.apellido}</Typography></TableCell>
-                  <TableCell>{t.dni}</TableCell>
-                  <TableCell>{getEspecialidadNombre(t.especialidad_id)}</TableCell>
-                  <TableCell>{t.telefono || '-'}</TableCell>
-                  <TableCell align="right">
-                    <Stack direction="row" justifyContent="flex-end" spacing={1}>
-                      <IconButton onClick={() => navigate(`/trabajadores/${t.id}`)}><Eye size={18} /></IconButton>
-                      <IconButton onClick={() => navigate(`/trabajadores/${t.id}/editar`)}><Pencil size={18} /></IconButton>
-                      <IconButton color="error" onClick={() => handleDelete(t.id)} disabled={deleteMutation.isPending}><Trash2 size={18} /></IconButton>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      )} */}
-
-      {/* Contenedor principal de los datos */}
       {!isLoading && !isError && filteredData.length > 0 && (
         <>
-          {/* VISTA PARA TABLET/ESCRITORIO (Tabla normal) */}
-          <Paper sx={{ display: { xs: 'none', md: 'block' }, borderRadius: 3, overflow: 'hidden', mb: 3 }}>
+          {/* ESCRITORIO */}
+          <Paper sx={{
+            display: { xs: 'none', md: 'block' }, borderRadius: 3, overflow: 'hidden', mb: 3,
+            bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none',
+          }}>
             <Table size="small">
-              <TableHead sx={{ bgcolor: 'var(--social-bg)' }}>
+              <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
                 <TableRow>
-                  <TableCell>Nombre</TableCell>
-                  <TableCell>DNI</TableCell>
-                  <TableCell>Especialidad</TableCell>
-                  <TableCell>Teléfono</TableCell>
-                  <TableCell align="right">Acciones</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t('trabajadores.tabla.nombre')}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t('trabajadores.tabla.dni')}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t('trabajadores.tabla.especialidad')}</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>{t('trabajadores.tabla.telefono')}</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 700 }}>{t('trabajadores.tabla.acciones')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredData.map((t) => (
                   <TableRow key={t.id} hover>
-                    <TableCell >
-                      <Typography
-                        className="text-[#0000F] font-bold capitalize"
-                        fontWeight={600}>{t.nombre} {t.apellido}</Typography></TableCell>
-                    <TableCell variant="body">{t.dni}</TableCell>
-                    <TableCell variant="body">{getEspecialidadNombre(t.especialidad_id)}</TableCell>
-                    <TableCell variant="body">{t.telefono || '-'}</TableCell>
+                    <TableCell><Typography fontWeight={600}>{t.nombre} {t.apellido}</Typography></TableCell>
+                    <TableCell>{t.dni}</TableCell>
+                    <TableCell>{getEspecialidadNombre(t.especialidad_id)}</TableCell>
+                    <TableCell>{t.telefono || '-'}</TableCell>
                     <TableCell align="right">
                       <Stack direction="row" justifyContent="flex-end" spacing={1}>
                         <IconButton size="small" onClick={() => navigate(`/trabajadores/${t.id}`)}><Eye size={18} /></IconButton>
@@ -278,65 +201,44 @@ export const TrabajadoresListPage = () => {
             </Table>
           </Paper>
 
-          {/* VISTA PARA MÓVILES (Cards verticales) */}
+          {/* MÓVIL */}
           <Stack spacing={2} sx={{ display: { xs: 'flex', md: 'none' }, mb: 3 }}>
-            {filteredData.map((t) => (
-              <Paper key={t.id} sx={{ p: 2, borderRadius: 3, border: '1px solid var(--border)' }} elevation={0}>
+            {filteredData.map((trabajador) => (
+              <Paper key={trabajador.id} sx={{
+                p: 2, borderRadius: 3,
+                border: `1px solid ${theme.palette.divider}`,
+                bgcolor: 'background.paper',
+                boxShadow: 'none',
+              }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                   <Box>
-                    <Typography
-                      sx={{
-                        fontWeight: 800, // Subimos a 800 para que la fuente Inter se vea más "gruesa"
-                        color: '#000000 !important',
-                        fontSize: '1rem',
-                        textTransform: 'capitalize'
-                      }}
-                    >
-                      {t.nombre} {t.apellido}
+                    <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1rem', textTransform: 'capitalize' }}>
+                      {trabajador.nombre} {trabajador.apellido}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      DNI: {t.dni}
-                    </Typography>
+                    <Typography variant="caption" color="text.secondary">DNI: {trabajador.dni}</Typography>
                   </Box>
                   <Chip
-                    label={getEspecialidadNombre(t.especialidad_id)}
+                    label={getEspecialidadNombre(trabajador.especialidad_id)}
                     size="small"
-                    sx={{ bgcolor: 'var(--accent-bg)', color: 'var(--accent)', fontWeight: 600 }}
+                    sx={{ bgcolor: theme.palette.action.hover, color: 'text.secondary', fontWeight: 600 }}
                   />
                 </Box>
 
-                <Typography variant="body2" sx={{ mb: 2, color: 'var(--text)' }}>
-                  <strong>Tel:</strong> {t.telefono || '-'}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <strong>{t('trabajadores.tabla.telefono')}:</strong> {trabajador.telefono || '-'}
                 </Typography>
 
                 <Divider sx={{ my: 1.5, borderStyle: 'dashed' }} />
 
                 <Stack direction="row" spacing={2} justifyContent="space-around">
-                  <Button
-                    fullWidth
-                    size="small"
-                    startIcon={<Eye size={16} />}
-                    onClick={() => navigate(`/trabajadores/${t.id}`)}
-                    sx={{ color: 'var(--text)' }}
-                  >
-                    Ver
+                  <Button fullWidth size="small" startIcon={<Eye size={16} />} onClick={() => navigate(`/trabajadores/${trabajador.id}`)}>
+                    {t('trabajadores.acciones.ver')}
                   </Button>
-                  <Button
-                    fullWidth
-                    size="small"
-                    startIcon={<Pencil size={16} />}
-                    onClick={() => navigate(`/trabajadores/${t.id}/editar`)}
-                  >
-                    Editar
+                  <Button fullWidth size="small" startIcon={<Pencil size={16} />} onClick={() => navigate(`/trabajadores/${trabajador.id}/editar`)}>
+                    {t('trabajadores.acciones.editar')}
                   </Button>
-                  <Button
-                    fullWidth
-                    size="small"
-                    color="error"
-                    startIcon={<Trash2 size={16} />}
-                    onClick={() => handleDelete(t.id)}
-                  >
-                    Borrar
+                  <Button fullWidth size="small" color="error" startIcon={<Trash2 size={16} />} onClick={() => handleDelete(trabajador.id)}>
+                    {t('trabajadores.acciones.eliminar')}
                   </Button>
                 </Stack>
               </Paper>
@@ -345,38 +247,34 @@ export const TrabajadoresListPage = () => {
         </>
       )}
 
-      {/* Sección de estadísticas */}
       {!isLoading && !isError && data && data.length > 0 && (
         <>
           <Divider sx={{ my: 3 }}>
-            <Typography variant="caption" fontWeight={700} sx={{ color: '#64748B', letterSpacing: '0.08em' }}>
-              ESTADÍSTICAS Y ACTIVIDAD
+            <Typography variant="caption" fontWeight={700} sx={{ color: 'text.secondary', letterSpacing: '0.08em' }}>
+              {t('trabajadores.stats.titulo')}
             </Typography>
           </Divider>
 
           <Grid container spacing={3}>
-            {/* Último agregado y último modificado */}
+            {/* Actividad reciente */}
             <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ borderRadius: 3, height: '100%' }}>
+              <Card sx={{ borderRadius: 3, height: '100%', bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>
-                    ACTIVIDAD RECIENTE
+                  <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: 'text.secondary' }}>
+                    {t('trabajadores.stats.actividad')}
                   </Typography>
                   <Stack spacing={2}>
-                    {/* Último agregado */}
                     {ultimoAgregado && (
-                      <Box sx={{ p: 2, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                      <Box sx={{ p: 2, borderRadius: 2, bgcolor: theme.palette.action.hover, border: `1px solid ${theme.palette.divider}` }}>
                         <Stack direction="row" spacing={1.5} alignItems="center">
                           <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'rgba(245,158,11,0.1)' }}>
                             <Plus size={16} color="#F59E0B" />
                           </Box>
                           <Box sx={{ flex: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, display: 'block' }}>
-                              ÚLTIMO AGREGADO
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>
+                              {t('trabajadores.stats.ultimo_agregado')}
                             </Typography>
-                            <Typography variant="body2" fontWeight={700}>
-                              {ultimoAgregado.nombre} {ultimoAgregado.apellido}
-                            </Typography>
+                            <Typography variant="body2" fontWeight={700}>{ultimoAgregado.nombre} {ultimoAgregado.apellido}</Typography>
                             <Typography variant="caption" color="text.secondary">
                               {formatDate(ultimoAgregado.created_at)} — {getEspecialidadNombre(ultimoAgregado.especialidad_id)}
                             </Typography>
@@ -388,20 +286,17 @@ export const TrabajadoresListPage = () => {
                       </Box>
                     )}
 
-                    {/* Último modificado */}
                     {ultimoModificado && (
-                      <Box sx={{ p: 2, borderRadius: 2, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                      <Box sx={{ p: 2, borderRadius: 2, bgcolor: theme.palette.action.hover, border: `1px solid ${theme.palette.divider}` }}>
                         <Stack direction="row" spacing={1.5} alignItems="center">
                           <Box sx={{ p: 1, borderRadius: 2, bgcolor: 'rgba(37,99,235,0.1)' }}>
                             <Clock size={16} color="#2563EB" />
                           </Box>
                           <Box sx={{ flex: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 600, display: 'block' }}>
-                              ÚLTIMO MODIFICADO
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>
+                              {t('trabajadores.stats.ultimo_modificado')}
                             </Typography>
-                            <Typography variant="body2" fontWeight={700}>
-                              {ultimoModificado.nombre} {ultimoModificado.apellido}
-                            </Typography>
+                            <Typography variant="body2" fontWeight={700}>{ultimoModificado.nombre} {ultimoModificado.apellido}</Typography>
                             <Typography variant="caption" color="text.secondary">
                               {formatDate(ultimoModificado.updated_at)} — {getEspecialidadNombre(ultimoModificado.especialidad_id)}
                             </Typography>
@@ -417,15 +312,15 @@ export const TrabajadoresListPage = () => {
               </Card>
             </Grid>
 
-            {/* Gráfico de torta por especialidad */}
+            {/* Gráfico donut por especialidad */}
             <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ borderRadius: 3, height: '100%' }}>
+              <Card sx={{ borderRadius: 3, height: '100%', bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
                 <CardContent sx={{ p: 3 }}>
-                  <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>
-                    TRABAJADORES POR ESPECIALIDAD
+                  <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: 'text.secondary' }}>
+                    {t('trabajadores.stats.por_especialidad')}
                   </Typography>
                   {dataTorta.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">Sin datos disponibles.</Typography>
+                    <Typography variant="body2" color="text.secondary">{t('trabajadores.stats.sin_datos')}</Typography>
                   ) : (
                     <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
@@ -435,6 +330,7 @@ export const TrabajadoresListPage = () => {
                           nameKey="nombre"
                           cx="50%"
                           cy="50%"
+                          innerRadius={50}
                           outerRadius={80}
                           label={({ name, value }) => `${name}: ${value}`}
                           labelLine={false}
@@ -443,7 +339,10 @@ export const TrabajadoresListPage = () => {
                             <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => [`${value} trabajadores`, '']} />
+                        <Tooltip
+                          formatter={(value) => [`${value} ${t('trabajadores.stats.trabajadores_label')}`, '']}
+                          contentStyle={{ borderRadius: 8, fontSize: 12, backgroundColor: theme.palette.background.paper, borderColor: theme.palette.divider }}
+                        />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -454,34 +353,39 @@ export const TrabajadoresListPage = () => {
 
             {/* Trabajadores con más labores */}
             <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ borderRadius: 3 }}>
+              <Card sx={{ borderRadius: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
                 <CardContent sx={{ p: 3 }}>
                   <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
                     <TrendingUp size={16} color="#F59E0B" />
-                    <Typography variant="body2" fontWeight={700} sx={{ color: '#64748B' }}>
-                      TRABAJADORES CON MÁS LABORES
+                    <Typography variant="body2" fontWeight={700} sx={{ color: 'text.secondary' }}>
+                      {t('trabajadores.stats.mas_labores')}
                     </Typography>
                   </Stack>
                   {trabajadoresConMasLabores.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">Sin datos disponibles.</Typography>
+                    <Typography variant="body2" color="text.secondary">{t('trabajadores.stats.sin_datos')}</Typography>
                   ) : (
                     <Stack spacing={1.5}>
-                      {trabajadoresConMasLabores.map((t, index) => (
-                        <Stack key={t.id} direction="row" spacing={1.5} alignItems="center"
-                          sx={{ p: 1.5, borderRadius: 2, bgcolor: '#F8FAFC', cursor: 'pointer', '&:hover': { bgcolor: '#F1F5F9' } }}
-                          onClick={() => navigate(`/trabajadores/${t.id}`)}>
+                      {trabajadoresConMasLabores.map((trabajador, index) => (
+                        <Stack key={trabajador.id} direction="row" spacing={1.5} alignItems="center"
+                          sx={{
+                            p: 1.5, borderRadius: 2,
+                            bgcolor: theme.palette.action.hover,
+                            cursor: 'pointer',
+                            '&:hover': { bgcolor: theme.palette.action.selected },
+                          }}
+                          onClick={() => navigate(`/trabajadores/${trabajador.id}`)}>
                           <Typography variant="body2" fontWeight={800} sx={{ color: '#F59E0B', minWidth: 20 }}>
                             #{index + 1}
                           </Typography>
-                          <Avatar sx={{ width: 32, height: 32, bgcolor: '#0F172A', fontSize: 12, fontWeight: 700 }}>
-                            {t.nombre[0]}{t.apellido[0]}
+                          <Avatar sx={{ width: 32, height: 32, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 12, fontWeight: 700 }}>
+                            {trabajador.nombre[0]}{trabajador.apellido[0]}
                           </Avatar>
                           <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" fontWeight={600}>{t.nombre} {t.apellido}</Typography>
-                            <Typography variant="caption" color="text.secondary">{getEspecialidadNombre(t.especialidad_id)}</Typography>
+                            <Typography variant="body2" fontWeight={600}>{trabajador.nombre} {trabajador.apellido}</Typography>
+                            <Typography variant="caption" color="text.secondary">{getEspecialidadNombre(trabajador.especialidad_id)}</Typography>
                           </Box>
                           <Chip
-                            label={`${t.totalLabores} labor${t.totalLabores !== 1 ? 'es' : ''}`}
+                            label={`${trabajador.totalLabores} ${trabajador.totalLabores !== 1 ? t('trabajadores.stats.labores') : t('trabajadores.stats.labor')}`}
                             size="small"
                             sx={{ bgcolor: 'rgba(245,158,11,0.12)', color: '#B45309', fontWeight: 700, fontSize: 11 }}
                           />
@@ -493,36 +397,41 @@ export const TrabajadoresListPage = () => {
               </Card>
             </Grid>
 
-            {/* Historial de pagos recientes */}
+            {/* Últimos pagos */}
             <Grid size={{ xs: 12, md: 6 }}>
-              <Card sx={{ borderRadius: 3 }}>
+              <Card sx={{ borderRadius: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
                 <CardContent sx={{ p: 3 }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Typography variant="body2" fontWeight={700} sx={{ color: '#64748B' }}>
-                      ÚLTIMOS PAGOS REGISTRADOS
+                    <Typography variant="body2" fontWeight={700} sx={{ color: 'text.secondary' }}>
+                      {t('trabajadores.stats.ultimos_pagos')}
                     </Typography>
                     <Button size="small" onClick={() => navigate('/pagos')} sx={{ fontSize: 11 }}>
-                      Ver todos
+                      {t('trabajadores.stats.ver_todos')}
                     </Button>
                   </Stack>
                   {ultimosPagos.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">Sin pagos registrados.</Typography>
+                    <Typography variant="body2" color="text.secondary">{t('trabajadores.stats.sin_pagos')}</Typography>
                   ) : (
                     <Stack spacing={1.5}>
                       {ultimosPagos.map((p) => (
                         <Stack key={p.id} direction="row" spacing={1.5} alignItems="center"
-                          sx={{ p: 1.5, borderRadius: 2, bgcolor: '#F8FAFC', cursor: 'pointer', '&:hover': { bgcolor: '#F1F5F9' } }}
+                          sx={{
+                            p: 1.5, borderRadius: 2,
+                            bgcolor: theme.palette.action.hover,
+                            cursor: 'pointer',
+                            '&:hover': { bgcolor: theme.palette.action.selected },
+                          }}
                           onClick={() => navigate(`/pagos/${p.id}`)}>
                           <Box sx={{ flex: 1 }}>
                             <Typography variant="body2" fontWeight={600}>
                               {p.trabajador_nombre} {p.trabajador_apellido}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              {formatDate(p.fecha)} — {p.motivo || 'Sin motivo'}
+                              {formatDate(p.fecha)} — {p.motivo || t('trabajadores.stats.sin_motivo')}
                             </Typography>
                           </Box>
                           <Stack direction="row" spacing={1} alignItems="center">
-                            <Typography variant="body2" fontWeight={700} sx={{ color: '#0F172A' }}>
+                            <Typography variant="body2" fontWeight={700} color="text.primary">
                               ${Number(p.monto).toLocaleString('es-AR')}
                             </Typography>
                             <PagoEstadoChip estado={p.estado} />

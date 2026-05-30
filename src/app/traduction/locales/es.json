@@ -503,7 +503,128 @@
   "success": "Precios ajustados y estadísticas actualizadas correctamente.",
   "error_porcentaje": "Ingresá un porcentaje válido.",
   "error_ajuste": "No se pudo aplicar el ajuste de precios."
+},
+"trabajadores": {
+  "title": "Trabajadores",
+  "subtitle": "Gestión de personal.",
+  "nuevo": "Nuevo trabajador",
+  "nuevo_corto": "Nuevo",
+  "especialidades": "Especialidades",
+  "buscar": "Buscar por nombre, apellido o DNI",
+  "loading": "Cargando trabajadores...",
+  "error_title": "Error al cargar trabajadores",
+  "error": "Revisa la conexión con el microservicio.",
+  
+"detail": {
+  "loading": "Cargando trabajador...",
+  "error": "No se pudo cargar el trabajador.",
+  "no_encontrado": "No encontrado",
+  "no_encontrado_msg": "El trabajador no existe.",
+  "subtitle": "Vista detallada del trabajador.",
+  "sin_especialidad": "Sin especialidad",
+  "info": "Información personal",
+  "nombre_completo": "Nombre completo",
+  "dni": "DNI",
+  "telefono": "Teléfono",
+  "especialidad": "Especialidad",
+  "fecha_ingreso": "Fecha de ingreso",
+  "estado": "Estado",
+  "activo": "Activo",
+  "inactivo": "Inactivo",
+  "fecha_registro": "Fecha de registro",
+  "ultima_actualizacion": "Última actualización"
+},
+  "empty": {
+    "title": "No hay trabajadores",
+    "desc": "Aún no existen trabajadores o la búsqueda no devolvió resultados.",
+    "crear": "Crear primero"
+  },
+  "tabla": {
+    "nombre": "Nombre",
+    "dni": "DNI",
+    "especialidad": "Especialidad",
+    "telefono": "Teléfono",
+    "acciones": "Acciones"
+  },
+  "acciones": {
+    "ver": "Ver",
+    "editar": "Editar",
+    "eliminar": "Borrar",
+    "volver": "Volver"
+  },
+  "confirm": {
+    "eliminar_title": "¿Eliminar trabajador?",
+    "eliminar_msg": "Esta acción no se puede deshacer. ¿Seguro que querés continuar?",
+    "eliminar_btn": "Sí, eliminar",
+    "cancelar": "Cancelar"
+  },
+  "notify": {
+    "eliminado": "Trabajador eliminado correctamente.",
+    "error_eliminar": "No se pudo eliminar el trabajador."
+  },
+  "stats": {
+    "titulo": "ESTADÍSTICAS Y ACTIVIDAD",
+    "actividad": "ACTIVIDAD RECIENTE",
+    "ultimo_agregado": "ÚLTIMO AGREGADO",
+    "ultimo_modificado": "ÚLTIMO MODIFICADO",
+    "por_especialidad": "TRABAJADORES POR ESPECIALIDAD",
+    "mas_labores": "TRABAJADORES CON MÁS LABORES",
+    "ultimos_pagos": "ÚLTIMOS PAGOS REGISTRADOS",
+    "ver_todos": "Ver todos",
+    "sin_datos": "Sin datos disponibles.",
+    "sin_pagos": "Sin pagos registrados.",
+    "sin_motivo": "Sin motivo",
+    "trabajadores_label": "trabajadores",
+    "labor": "labor",
+    "labores": "labores"
+  }
+},
+"trabajador_form": {
+  "datos_personales": "DATOS PERSONALES",
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "dni": "DNI",
+  "telefono": "Teléfono",
+  "fecha_ingreso": "Fecha de ingreso",
+  "especialidad": "Especialidad",
+  "estado": "Estado",
+  "jefe": "Jefe asignado",
+  "buscar": "Buscar...",
+  "buscar_trabajador": "Buscar trabajador...",
+  "sin_especificar": "Sin especificar",
+  "seleccionar": "Seleccionar",
+  "sin_jefe": "Sin jefe asignado",
+  "datos_facturacion": "DATOS DE FACTURACIÓN",
+  "opcionales": "(opcionales)",
+  "razon_social": "Razón social",
+  "cuit": "CUIT / CUIL",
+  "condicion_iva": "Condición IVA",
+  "iva": {
+    "monotributista": "Monotributista",
+    "responsable_inscripto": "Responsable Inscripto",
+    "exento": "Exento",
+    "consumidor_final": "Consumidor Final"
+  },
+  "direccion_fiscal": "Dirección fiscal",
+  "cbu": "CBU",
+  "alias_cbu": "Alias CBU",
+  "datos_acceso": "DATOS ACCESO AL SISTEMA",
+  "email": "Correo Electrónico",
+  "password": "Contraseña",
+  "credenciales_aviso": "Próximamente podrás gestionar credenciales desde el módulo de Usuarios.",
+  "guardando": "Guardando...",
+  "actualizar": "Actualizar Trabajador",
+  "registrar": "Registrar Trabajador"
+},
+"edit": {
+  "title": "Editar trabajador",
+  "subtitle": "Modificar información del trabajador y sus permisos.",
+  "loading": "Cargando información del trabajador...",
+  "success": "Información actualizada correctamente.",
+  "error": "Error al intentar actualizar el trabajador.",
+  "email_duplicado": "El email \"{{email}}\" ya pertenece a otro trabajador ({{nombre}} {{apellido}})."
 }
+
 }
 
 

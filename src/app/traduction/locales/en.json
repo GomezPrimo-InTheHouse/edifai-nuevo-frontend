@@ -503,5 +503,125 @@
   "success": "Prices adjusted and statistics updated successfully.",
   "error_porcentaje": "Enter a valid percentage.",
   "error_ajuste": "Could not apply the price adjustment."
+},
+"trabajadores": {
+  "title": "Workers",
+  "subtitle": "Staff management.",
+  "nuevo": "New worker",
+  "nuevo_corto": "New",
+  "especialidades": "Specialties",
+  "buscar": "Search by name, last name or ID",
+  "loading": "Loading workers...",
+  "error_title": "Error loading workers",
+  "error": "Check the microservice connection.",
+  
+"detail": {
+  "loading": "Loading worker...",
+  "error": "Could not load the worker.",
+  "no_encontrado": "Not found",
+  "no_encontrado_msg": "The worker does not exist.",
+  "subtitle": "Detailed worker view.",
+  "sin_especialidad": "No specialty",
+  "info": "Personal information",
+  "nombre_completo": "Full name",
+  "dni": "ID number",
+  "telefono": "Phone",
+  "especialidad": "Specialty",
+  "fecha_ingreso": "Start date",
+  "estado": "Status",
+  "activo": "Active",
+  "inactivo": "Inactive",
+  "fecha_registro": "Registration date",
+  "ultima_actualizacion": "Last update"
+},
+  "empty": {
+    "title": "No workers",
+    "desc": "No workers found or search returned no results.",
+    "crear": "Create first"
+  },
+  "tabla": {
+    "nombre": "Name",
+    "dni": "ID",
+    "especialidad": "Specialty",
+    "telefono": "Phone",
+    "acciones": "Actions"
+  },
+  "acciones": {
+    "ver": "View",
+    "editar": "Edit",
+    "eliminar": "Delete",
+    "volver": "Back"
+  },
+  "confirm": {
+    "eliminar_title": "Delete worker?",
+    "eliminar_msg": "This action cannot be undone. Are you sure?",
+    "eliminar_btn": "Yes, delete",
+    "cancelar": "Cancel"
+  },
+  "notify": {
+    "eliminado": "Worker deleted successfully.",
+    "error_eliminar": "Could not delete the worker."
+  },
+  "stats": {
+    "titulo": "STATISTICS & ACTIVITY",
+    "actividad": "RECENT ACTIVITY",
+    "ultimo_agregado": "LAST ADDED",
+    "ultimo_modificado": "LAST MODIFIED",
+    "por_especialidad": "WORKERS BY SPECIALTY",
+    "mas_labores": "WORKERS WITH MOST TASKS",
+    "ultimos_pagos": "LATEST REGISTERED PAYMENTS",
+    "ver_todos": "View all",
+    "sin_datos": "No data available.",
+    "sin_pagos": "No payments registered.",
+    "sin_motivo": "No reason",
+    "trabajadores_label": "workers",
+    "labor": "task",
+    "labores": "tasks"
+  }
+},
+"trabajador_form": {
+  "datos_personales": "PERSONAL DATA",
+  "nombre": "Name",
+  "apellido": "Last name",
+  "dni": "ID number",
+  "telefono": "Phone",
+  "fecha_ingreso": "Start date",
+  "especialidad": "Specialty",
+  "estado": "Status",
+  "jefe": "Assigned supervisor",
+  "buscar": "Search...",
+  "buscar_trabajador": "Search worker...",
+  "sin_especificar": "Not specified",
+  "seleccionar": "Select",
+  "sin_jefe": "No supervisor assigned",
+  "datos_facturacion": "BILLING DATA",
+  "opcionales": "(optional)",
+  "razon_social": "Company name",
+  "cuit": "Tax ID",
+  "condicion_iva": "VAT status",
+  "iva": {
+    "monotributista": "Small taxpayer",
+    "responsable_inscripto": "Registered taxpayer",
+    "exento": "Exempt",
+    "consumidor_final": "End consumer"
+  },
+  "direccion_fiscal": "Fiscal address",
+  "cbu": "Bank account number",
+  "alias_cbu": "Account alias",
+  "datos_acceso": "SYSTEM ACCESS DATA",
+  "email": "Email address",
+  "password": "Password",
+  "credenciales_aviso": "You will soon be able to manage credentials from the Users module.",
+  "guardando": "Saving...",
+  "actualizar": "Update Worker",
+  "registrar": "Register Worker"
+},
+"edit": {
+  "title": "Edit worker",
+  "subtitle": "Modify worker information and permissions.",
+  "loading": "Loading worker information...",
+  "success": "Information updated successfully.",
+  "error": "Error trying to update the worker.",
+  "email_duplicado": "The email \"{{email}}\" already belongs to another worker ({{nombre}} {{apellido}})."
 }
 }

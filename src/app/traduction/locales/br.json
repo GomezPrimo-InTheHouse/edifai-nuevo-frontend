@@ -504,5 +504,125 @@
   "success": "Preços ajustados e estatísticas atualizadas com sucesso.",
   "error_porcentaje": "Insira um percentual válido.",
   "error_ajuste": "Não foi possível aplicar o ajuste de preços."
+},
+"trabajadores": {
+  "title": "Trabalhadores",
+  "subtitle": "Gestão de pessoal.",
+  "nuevo": "Novo trabalhador",
+  "nuevo_corto": "Novo",
+  "especialidades": "Especialidades",
+  "buscar": "Buscar por nome, sobrenome ou CPF",
+  "loading": "Carregando trabalhadores...",
+  "error_title": "Erro ao carregar trabalhadores",
+  "error": "Verifique a conexão com o microsserviço.",
+  
+"detail": {
+  "loading": "Carregando trabalhador...",
+  "error": "Não foi possível carregar o trabalhador.",
+  "no_encontrado": "Não encontrado",
+  "no_encontrado_msg": "O trabalhador não existe.",
+  "subtitle": "Visão detalhada do trabalhador.",
+  "sin_especialidad": "Sem especialidade",
+  "info": "Informações pessoais",
+  "nombre_completo": "Nome completo",
+  "dni": "CPF",
+  "telefono": "Telefone",
+  "especialidad": "Especialidade",
+  "fecha_ingreso": "Data de admissão",
+  "estado": "Status",
+  "activo": "Ativo",
+  "inactivo": "Inativo",
+  "fecha_registro": "Data de registro",
+  "ultima_actualizacion": "Última atualização"
+},
+  "empty": {
+    "title": "Sem trabalhadores",
+    "desc": "Nenhum trabalhador encontrado ou a busca não retornou resultados.",
+    "crear": "Criar primeiro"
+  },
+  "tabla": {
+    "nombre": "Nome",
+    "dni": "CPF",
+    "especialidad": "Especialidade",
+    "telefono": "Telefone",
+    "acciones": "Ações"
+  },
+  "acciones": {
+    "ver": "Ver",
+    "editar": "Editar",
+    "eliminar": "Excluir",
+    "volver": "Voltar"
+  },
+  "confirm": {
+    "eliminar_title": "Excluir trabalhador?",
+    "eliminar_msg": "Esta ação não pode ser desfeita. Tem certeza?",
+    "eliminar_btn": "Sim, excluir",
+    "cancelar": "Cancelar"
+  },
+  "notify": {
+    "eliminado": "Trabalhador excluído com sucesso.",
+    "error_eliminar": "Não foi possível excluir o trabalhador."
+  },
+  "stats": {
+    "titulo": "ESTATÍSTICAS E ATIVIDADE",
+    "actividad": "ATIVIDADE RECENTE",
+    "ultimo_agregado": "ÚLTIMO ADICIONADO",
+    "ultimo_modificado": "ÚLTIMO MODIFICADO",
+    "por_especialidad": "TRABALHADORES POR ESPECIALIDADE",
+    "mas_labores": "TRABALHADORES COM MAIS TAREFAS",
+    "ultimos_pagos": "ÚLTIMOS PAGAMENTOS REGISTRADOS",
+    "ver_todos": "Ver todos",
+    "sin_datos": "Sem dados disponíveis.",
+    "sin_pagos": "Sem pagamentos registrados.",
+    "sin_motivo": "Sem motivo",
+    "trabajadores_label": "trabalhadores",
+    "labor": "tarefa",
+    "labores": "tarefas"
+  }
+},
+"trabajador_form": {
+  "datos_personales": "DADOS PESSOAIS",
+  "nombre": "Nome",
+  "apellido": "Sobrenome",
+  "dni": "CPF",
+  "telefono": "Telefone",
+  "fecha_ingreso": "Data de admissão",
+  "especialidad": "Especialidade",
+  "estado": "Status",
+  "jefe": "Supervisor atribuído",
+  "buscar": "Buscar...",
+  "buscar_trabajador": "Buscar trabalhador...",
+  "sin_especificar": "Sem especificar",
+  "seleccionar": "Selecionar",
+  "sin_jefe": "Sem supervisor atribuído",
+  "datos_facturacion": "DADOS DE FATURAMENTO",
+  "opcionales": "(opcionais)",
+  "razon_social": "Razão social",
+  "cuit": "CNPJ / CPF",
+  "condicion_iva": "Regime tributário",
+  "iva": {
+    "monotributista": "Simples Nacional",
+    "responsable_inscripto": "Lucro Presumido",
+    "exento": "Isento",
+    "consumidor_final": "Consumidor Final"
+  },
+  "direccion_fiscal": "Endereço fiscal",
+  "cbu": "Conta bancária",
+  "alias_cbu": "Chave Pix",
+  "datos_acceso": "DADOS DE ACESSO AO SISTEMA",
+  "email": "Endereço de e-mail",
+  "password": "Senha",
+  "credenciales_aviso": "Em breve você poderá gerenciar credenciais pelo módulo de Usuários.",
+  "guardando": "Salvando...",
+  "actualizar": "Atualizar Trabalhador",
+  "registrar": "Registrar Trabalhador"
+},
+"edit": {
+  "title": "Editar trabalhador",
+  "subtitle": "Modificar informações do trabalhador e suas permissões.",
+  "loading": "Carregando informações do trabalhador...",
+  "success": "Informações atualizadas com sucesso.",
+  "error": "Erro ao tentar atualizar o trabalhador.",
+  "email_duplicado": "O e-mail \"{{email}}\" já pertence a outro trabalhador ({{nombre}} {{apellido}})."
 }
 }
