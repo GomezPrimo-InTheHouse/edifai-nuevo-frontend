@@ -991,5 +991,115 @@
     "coordenadas": "Coordenadas",
     "observaciones": "Observações"
   }
+},
+"usuarios": {
+  "title": "Usuários",
+  "subtitle": "Gestão de usuários administradores do sistema.",
+  "nuevo": "Novo usuário",
+  "buscar": "Buscar por nome ou e-mail",
+  "filtro_rol": "Filtrar por perfil",
+  "todos_roles": "Todos os perfis",
+  "limpiar": "Limpar",
+  "loading": "Carregando usuários...",
+  "error": "Não foi possível carregar os usuários.",
+  "empty": {
+    "title": "Sem usuários",
+    "desc": "Nenhum usuário registrado.",
+    "sin_resultados": "Nenhum resultado para os filtros aplicados.",
+    "crear": "Criar primeiro"
+  },
+"edit": {
+  "title": "Editar usuário",
+  "subtitle": "Modificar informações do usuário.",
+  "subtitle_trabajador": "Você só pode modificar o acesso ao sistema deste trabalhador.",
+  "loading": "Carregando usuário...",
+  "success": "Usuário atualizado.",
+  "error": "Não foi possível atualizar."
+},
+"detail": {
+  "loading": "Carregando usuário...",
+  "error": "Não foi possível carregar o usuário.",
+  "no_encontrado": "Não encontrado",
+  "no_encontrado_msg": "O usuário não existe.",
+  "subtitle": "Visão detalhada do usuário.",
+  "info": "Informações do usuário",
+  "nombre": "Nome",
+  "email": "E-mail",
+  "rol": "Perfil",
+  "estado": "Status",
+  "creado": "Criado",
+  "actualizado": "Atualizado"
+},
+  "tabla": {
+    "usuario": "Usuário",
+    "email": "E-mail",
+    "rol": "Perfil",
+    "estado": "Status",
+    "acciones": "Ações"
+  },
+  "acciones": {
+    "ver": "Ver detalhe",
+    "totp": "Regenerar TOTP",
+    "baja": "Desativar",
+    "volver": "Voltar",
+    "editar": "Editar",
+    "cambiar_password": "Alterar senha"
+  },
+  "confirm": {
+    "baja_title": "Desativar este usuário?",
+    "baja_msg": "O usuário perderá acesso ao sistema.",
+    "baja_btn": "Desativar",
+    "totp_title": "Regenerar TOTP?",
+    "totp_msg": "Um novo código será gerado para {{email}}. O anterior deixará de funcionar.",
+    "totp_btn": "Regenerar"
+  },
+  "notify": {
+    "baja_ok": "Usuário desativado.",
+    "error_baja": "Não foi possível desativar.",
+    "error_totp": "Não foi possível regenerar o TOTP."
+  }
+},
+"usuario_form": {
+  "seccion": "DADOS DO USUÁRIO",
+  "aviso_trabajador_pre": "Este usuário é um",
+  "trabajador": "trabalhador",
+  "aviso_trabajador_post": "Você só pode modificar o e-mail e a senha de acesso. Para editar nome, sobrenome e especialidade, faça isso no módulo de",
+  "modulo_trabajadores": "Trabalhadores",
+  "nombre": "Nome",
+  "email": "E-mail",
+  "password": "Senha",
+  "password_opcional": "Nova senha (deixar em branco para não alterar)",
+  "rol": "Perfil",
+  "rol_bloqueado": "O perfil de um trabalhador não pode ser modificado",
+  "seleccionar": "Selecionar",
+  "aviso_totp": "⚠️ Ao criar o usuário, um QR code será gerado automaticamente para configurar a autenticação TOTP. Certifique-se de que o usuário o escaneie antes de fechar a janela.",
+  "guardando": "Salvando...",
+  "actualizar": "Atualizar usuário",
+  "crear": "Criar usuário"
+},
+"qr_modal": {
+  "titulo": "Configurar autenticador",
+  "descripcion": "Escaneie este QR code com o Google Authenticator ou outro app TOTP para configurar o acesso de {{email}}.",
+  "aviso_unico": "Este código é exibido apenas uma vez. Salve-o antes de fechar.",
+  "no_escanear": "Não consegue escanear o QR? Use o código manual",
+  "clave_secreta": "CHAVE SECRETA (BASE32)",
+  "copiar_tooltip": "Copiar para a área de transferência",
+  "copiar_btn": "Copiar código",
+  "copiado": "Copiado!",
+  "instruccion_manual": "Insira este código manualmente no seu app de autenticação (Google Authenticator, Authy, etc.) em vez de escanear o QR.",
+  "listo": "Pronto, já salvei"
+},
+"cambiar_password": {
+  "titulo": "Alterar senha",
+  "nueva": "Nova senha",
+  "confirmar": "Confirmar senha",
+  "cancelar": "Cancelar",
+  "cambiar": "Alterar",
+  "guardando": "Salvando...",
+  "obligatorio": "Obrigatório",
+  "min_length": "Mínimo 6 caracteres",
+  "no_coinciden": "As senhas não coincidem.",
+  "success": "Senha atualizada com sucesso.",
+  "error": "Não foi possível alterar a senha."
 }
 }

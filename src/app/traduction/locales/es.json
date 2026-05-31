@@ -990,7 +990,118 @@
     "coordenadas": "Coordenadas",
     "observaciones": "Observaciones"
   }
+},
+"usuarios": {
+  "title": "Usuarios",
+  "subtitle": "Gestión de usuarios administradores del sistema.",
+  "nuevo": "Nuevo usuario",
+  "buscar": "Buscar por nombre o email",
+  "filtro_rol": "Filtrar por rol",
+  "todos_roles": "Todos los roles",
+  "limpiar": "Limpiar",
+  "loading": "Cargando usuarios...",
+  "error": "No se pudieron cargar los usuarios.",
+  "empty": {
+    "title": "Sin usuarios",
+    "desc": "No hay usuarios registrados.",
+    "sin_resultados": "No hay resultados para los filtros aplicados.",
+    "crear": "Crear primero"
+  },
+"edit": {
+  "title": "Editar usuario",
+  "subtitle": "Modificar información del usuario.",
+  "subtitle_trabajador": "Solo podés modificar el acceso al sistema de este trabajador.",
+  "loading": "Cargando usuario...",
+  "success": "Usuario actualizado.",
+  "error": "No se pudo actualizar."
+},
+  "detail": {
+  "loading": "Cargando usuario...",
+  "error": "No se pudo cargar el usuario.",
+  "no_encontrado": "No encontrado",
+  "no_encontrado_msg": "El usuario no existe.",
+  "subtitle": "Vista detallada del usuario.",
+  "info": "Información del usuario",
+  "nombre": "Nombre",
+  "email": "Email",
+  "rol": "Rol",
+  "estado": "Estado",
+  "creado": "Creado",
+  "actualizado": "Actualizado"
+},
+  "tabla": {
+    "usuario": "Usuario",
+    "email": "Email",
+    "rol": "Rol",
+    "estado": "Estado",
+    "acciones": "Acciones"
+  },
+  "acciones": {
+    "ver": "Ver detalle",
+    "totp": "Regenerar TOTP",
+    "baja": "Dar de baja",
+    "volver": "Volver",
+    "editar": "Editar",
+    "cambiar_password": "Cambiar contraseña"
+  },
+  "confirm": {
+    "baja_title": "¿Dar de baja este usuario?",
+    "baja_msg": "El usuario perderá acceso al sistema.",
+    "baja_btn": "Dar de baja",
+    "totp_title": "¿Regenerar TOTP?",
+    "totp_msg": "Se generará un nuevo código para {{email}}. El anterior dejará de funcionar.",
+    "totp_btn": "Regenerar"
+  },
+  "notify": {
+    "baja_ok": "Usuario dado de baja.",
+    "error_baja": "No se pudo dar de baja.",
+    "error_totp": "No se pudo regenerar el TOTP."
+  }
+},
+"usuario_form": {
+  "seccion": "DATOS DEL USUARIO",
+  "aviso_trabajador_pre": "Este usuario es un",
+  "trabajador": "trabajador",
+  "aviso_trabajador_post": "Solo podés modificar su email y contraseña de acceso. Para editar nombre, apellido y especialidad, hacelo desde el módulo de",
+  "modulo_trabajadores": "Trabajadores",
+  "nombre": "Nombre",
+  "email": "Email",
+  "password": "Contraseña",
+  "password_opcional": "Nueva contraseña (dejar vacío para no cambiar)",
+  "rol": "Rol",
+  "rol_bloqueado": "El rol de un trabajador no puede modificarse",
+  "seleccionar": "Seleccionar",
+  "aviso_totp": "⚠️ Al crear el usuario se generará automáticamente un código QR para configurar la autenticación TOTP. Asegurate de que el usuario lo escanee antes de cerrar la ventana.",
+  "guardando": "Guardando...",
+  "actualizar": "Actualizar usuario",
+  "crear": "Crear usuario"
+},
+"qr_modal": {
+  "titulo": "Configurar autenticador",
+  "descripcion": "Escaneá este código QR con Google Authenticator u otra app TOTP para configurar el acceso de {{email}}.",
+  "aviso_unico": "Este código solo se muestra una vez. Guardalo antes de cerrar.",
+  "no_escanear": "¿No podés escanear el QR? Usá el código manual",
+  "clave_secreta": "CLAVE SECRETA (BASE32)",
+  "copiar_tooltip": "Copiar al portapapeles",
+  "copiar_btn": "Copiar código",
+  "copiado": "¡Copiado!",
+  "instruccion_manual": "Ingresá este código manualmente en tu app de autenticación (Google Authenticator, Authy, etc.) en lugar de escanear el QR.",
+  "listo": "Listo, ya lo guardé"
+},
+"cambiar_password": {
+  "titulo": "Cambiar contraseña",
+  "nueva": "Nueva contraseña",
+  "confirmar": "Confirmar contraseña",
+  "cancelar": "Cancelar",
+  "cambiar": "Cambiar",
+  "guardando": "Guardando...",
+  "obligatorio": "Obligatorio",
+  "min_length": "Mínimo 6 caracteres",
+  "no_coinciden": "Las contraseñas no coinciden.",
+  "success": "Contraseña actualizada correctamente.",
+  "error": "No se pudo cambiar la contraseña."
 }
+
 
 }
 

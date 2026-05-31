@@ -990,5 +990,115 @@
     "coordenadas": "Coordinates",
     "observaciones": "Observations"
   }
+},
+"usuarios": {
+  "title": "Users",
+  "subtitle": "System administrator user management.",
+  "nuevo": "New user",
+  "buscar": "Search by name or email",
+  "filtro_rol": "Filter by role",
+  "todos_roles": "All roles",
+  "limpiar": "Clear",
+  "loading": "Loading users...",
+  "error": "Could not load users.",
+  "empty": {
+    "title": "No users",
+    "desc": "No users registered.",
+    "sin_resultados": "No results for the applied filters.",
+    "crear": "Create first"
+  },
+"edit": {
+  "title": "Edit user",
+  "subtitle": "Modify user information.",
+  "subtitle_trabajador": "You can only modify this worker's system access.",
+  "loading": "Loading user...",
+  "success": "User updated.",
+  "error": "Could not update."
+},
+  "tabla": {
+    "usuario": "User",
+    "email": "Email",
+    "rol": "Role",
+    "estado": "Status",
+    "acciones": "Actions"
+  },
+"detail": {
+  "loading": "Loading user...",
+  "error": "Could not load the user.",
+  "no_encontrado": "Not found",
+  "no_encontrado_msg": "The user does not exist.",
+  "subtitle": "Detailed user view.",
+  "info": "User information",
+  "nombre": "Name",
+  "email": "Email",
+  "rol": "Role",
+  "estado": "Status",
+  "creado": "Created",
+  "actualizado": "Updated"
+},
+  "acciones": {
+    "ver": "View detail",
+    "totp": "Regenerate TOTP",
+    "baja": "Deactivate",
+    "volver": "Back",
+    "editar": "Edit",
+    "cambiar_password": "Change password"
+  },
+  "confirm": {
+    "baja_title": "Deactivate this user?",
+    "baja_msg": "The user will lose access to the system.",
+    "baja_btn": "Deactivate",
+    "totp_title": "Regenerate TOTP?",
+    "totp_msg": "A new code will be generated for {{email}}. The previous one will stop working.",
+    "totp_btn": "Regenerate"
+  },
+  "notify": {
+    "baja_ok": "User deactivated.",
+    "error_baja": "Could not deactivate.",
+    "error_totp": "Could not regenerate TOTP."
+  }
+},
+"usuario_form": {
+  "seccion": "USER DATA",
+  "aviso_trabajador_pre": "This user is a",
+  "trabajador": "worker",
+  "aviso_trabajador_post": "You can only modify their email and access password. To edit name, last name and specialty, do it from the",
+  "modulo_trabajadores": "Workers module",
+  "nombre": "Name",
+  "email": "Email",
+  "password": "Password",
+  "password_opcional": "New password (leave empty to keep current)",
+  "rol": "Role",
+  "rol_bloqueado": "A worker's role cannot be modified",
+  "seleccionar": "Select",
+  "aviso_totp": "⚠️ When creating the user, a QR code will be automatically generated to configure TOTP authentication. Make sure the user scans it before closing the window.",
+  "guardando": "Saving...",
+  "actualizar": "Update user",
+  "crear": "Create user"
+},
+"qr_modal": {
+  "titulo": "Set up authenticator",
+  "descripcion": "Scan this QR code with Google Authenticator or another TOTP app to configure access for {{email}}.",
+  "aviso_unico": "This code is only shown once. Save it before closing.",
+  "no_escanear": "Can't scan the QR? Use the manual code",
+  "clave_secreta": "SECRET KEY (BASE32)",
+  "copiar_tooltip": "Copy to clipboard",
+  "copiar_btn": "Copy code",
+  "copiado": "Copied!",
+  "instruccion_manual": "Enter this code manually in your authenticator app (Google Authenticator, Authy, etc.) instead of scanning the QR.",
+  "listo": "Done, I saved it"
+},
+"cambiar_password": {
+  "titulo": "Change password",
+  "nueva": "New password",
+  "confirmar": "Confirm password",
+  "cancelar": "Cancel",
+  "cambiar": "Change",
+  "guardando": "Saving...",
+  "obligatorio": "Required",
+  "min_length": "Minimum 6 characters",
+  "no_coinciden": "Passwords do not match.",
+  "success": "Password updated successfully.",
+  "error": "Could not change the password."
 }
 }
