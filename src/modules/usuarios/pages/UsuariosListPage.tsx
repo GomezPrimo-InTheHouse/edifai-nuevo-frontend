@@ -424,9 +424,9 @@ export const UsuariosListPage: React.FC = () => {
           {filteredData.map((u) => (
             <Paper key={u.id} sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-                <Avatar sx={{ width: 40, height: 40, bgcolor: '#0F172A', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
-                  {getInitials(u.nombre, u.email)}
-                </Avatar>
+  <Avatar sx={{ width: 40, height: 40, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+  {getInitials(u.nombre, u.email)}
+</Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography variant="subtitle2" fontWeight={700} noWrap color="text.primary">{u.nombre}</Typography>
                   <Typography variant="caption" color="text.secondary" noWrap>{u.email}</Typography>
@@ -483,9 +483,9 @@ export const UsuariosListPage: React.FC = () => {
                 <TableRow key={u.id} hover>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Avatar sx={{ width: 32, height: 32, bgcolor: '#0F172A', fontSize: 11, fontWeight: 700 }}>
-                        {getInitials(u.nombre, u.email)}
-                      </Avatar>
+<Avatar sx={{ width: 32, height: 32, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 11, fontWeight: 700 }}>
+  {getInitials(u.nombre, u.email)}
+</Avatar>
                       <Typography variant="body2" fontWeight={600}>{u.nombre}</Typography>
                     </Box>
                   </TableCell>
