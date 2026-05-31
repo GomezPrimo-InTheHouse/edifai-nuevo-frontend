@@ -444,25 +444,13 @@ export const PresupuestosListPage = () => {
       <PageHeader
         title={t('presupuestos.title')}
         subtitle={t('presupuestos.subtitle')}
+
         actions={
-          // ── Botones reposicionados ──────────────────────────────
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction="column"
             spacing={1}
             sx={{ width: { xs: '100%', sm: 'auto' } }}
           >
-            {filteredData.length > 0 && (
-              <Button
-                variant="outlined"
-                size={isMobile ? 'small' : 'medium'}
-                fullWidth={isMobile}
-                startIcon={exportando ? <CircularProgress size={14} /> : <Download size={16} />}
-                onClick={handleExportarPdf}
-                disabled={exportando}
-              >
-                {exportando ? t('presupuestos.exportando') : t('presupuestos.exportar_pdf')}
-              </Button>
-            )}
             {!isArchivado && (
               <Button
                 variant="contained"
@@ -473,6 +461,18 @@ export const PresupuestosListPage = () => {
                 sx={{ whiteSpace: 'nowrap' }}
               >
                 {t('presupuestos.nuevo')}
+              </Button>
+            )}
+            {filteredData.length > 0 && (
+              <Button
+                variant="outlined"
+                size={isMobile ? 'small' : 'medium'}
+                fullWidth={isMobile}
+                startIcon={exportando ? <CircularProgress size={14} /> : <Download size={16} />}
+                onClick={handleExportarPdf}
+                disabled={exportando}
+              >
+                {exportando ? t('presupuestos.exportando') : t('presupuestos.exportar_pdf')}
               </Button>
             )}
           </Stack>
@@ -530,7 +530,7 @@ export const PresupuestosListPage = () => {
           title={isArchivado ? t('presupuestos.empty.archivados') : t('presupuestos.empty.title')}
           description={
             isArchivado ? t('presupuestos.empty.archivados_desc') :
-            hayFiltros ? t('presupuestos.empty.sin_resultados') : t('presupuestos.empty.desc')
+              hayFiltros ? t('presupuestos.empty.sin_resultados') : t('presupuestos.empty.desc')
           }
           action={!isArchivado && !hayFiltros
             ? <Button variant="contained" onClick={() => navigate('/presupuestos/nuevo')}>{t('presupuestos.empty.crear')}</Button>

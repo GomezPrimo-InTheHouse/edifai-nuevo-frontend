@@ -779,5 +779,120 @@
     "precio_unit": "Unit price",
     "subtotal": "Subtotal"
   }
+},
+"pagos": {
+  "title": "Payments",
+  "subtitle": "Payment history and advances to workers.",
+  "nuevo": "Register payment",
+  "nuevo_corto": "New",
+  "buscar": "Search by worker, budget or reason",
+  "loading": "Loading payments...",
+  "error": "Could not load payments.",
+  "presupuesto": "Budget",
+  "empty": {
+    "title": "No payments",
+    "desc": "No payments registered.",
+    "crear": "Register first"
+  },
+"detail": {
+  "loading": "Loading payment...",
+  "error": "Could not load the payment.",
+  "no_encontrado": "Not found",
+  "no_encontrado_msg": "The payment does not exist.",
+  "subtitle": "Registered payment detail.",
+  "comprobante_titulo": "Payment receipt",
+  "volver": "Back",
+  "exportar_pdf": "Export PDF",
+  "trabajador": "Worker",
+  "presupuesto": "Budget",
+  "forma_pago": "Payment method",
+  "motivo": "Reason",
+  "fecha": "Date",
+  "estado": "Status",
+  "total": "TOTAL",
+  "estado_pago": "Payment status",
+  "cambiar_estado": "CHANGE STATUS",
+  "monto": "AMOUNT",
+  "estado_actualizado": "Status updated.",
+  "error_estado": "Could not change the status."
+},
+  "tabla": {
+    "trabajador": "Worker",
+    "presupuesto": "Budget",
+    "monto": "Amount",
+    "fecha": "Date",
+    "forma_pago": "Payment method",
+    "estado": "Status",
+    "acciones": "Actions"
+  },
+  "confirm": {
+    "eliminar_title": "Delete payment?",
+    "eliminar_msg": "This action cannot be undone.",
+    "eliminar_btn": "Delete"
+  },
+  "notify": {
+    "eliminado": "Payment deleted.",
+    "error_eliminar": "Could not delete the payment."
+  }
+},
+"pagos_trabajador": {
+  "subtitle": "Worker payment history.",
+  "volver": "Back",
+  "nuevo": "New payment",
+  "total_pagado": "Total paid",
+  "saldo_pendiente": "Pending balance",
+  "total_pagos": "Total payments",
+  "sin_pagos": "No payments registered for this worker.",
+  "motivo": "Reason"
+},
+"pagos_stats": {
+  "total_general": "TOTAL AMOUNT",
+  "total_pagado": "TOTAL PAID",
+  "total_parcial": "TOTAL PARTIAL",
+  "cantidad_pagos": "PAYMENT COUNT",
+  "evolucion_mensual": "MONTHLY EVOLUTION",
+  "forma_pago": "PAYMENT METHOD",
+  "por_trabajador": "PAYMENTS BY WORKER"
+},
+"pago_form": {
+  "paso1_titulo": "1 · SELECT THE BUDGET",
+  "paso1_desc": "Only Confirmed budgets are shown. The system will automatically fill in the worker, task, team and client.",
+  "presupuesto": "Budget *",
+  "sin_presupuestos": "No confirmed budgets available",
+  "seleccionar_presupuesto": "Select budget",
+  "labor": "TASK",
+  "obra": "Project",
+  "cliente": "CLIENT",
+  "responsable": "RESPONSIBLE",
+  "sin_especialidad": "No specialty",
+  "sin_estado": "No status",
+  "equipo": "TEAM",
+  "materiales": "MATERIALS",
+  "situacion_financiera": "FINANCIAL SITUATION",
+  "cancelado_total": "Budget fully settled — no pending balances.",
+  "pagado": "PAID",
+  "parcial": "PARTIAL",
+  "saldo_pendiente": "PENDING BALANCE",
+  "cobrado": "COLLECTED",
+  "ultimos_pagos": "LAST PAYMENTS",
+  "sin_pagos_registrados": "No payments registered",
+  "sin_forma_pago": "No payment method",
+  "paso2_titulo": "2 · PAYMENT DATA",
+  "saldo_disponible": "Available balance:",
+  "monto": "Amount *",
+  "maximo": "Maximum: ${{saldo}}",
+  "monto_supera": "Amount exceeds pending balance (${{saldo}})",
+  "fecha": "Date *",
+  "estado": "Status",
+  "forma_pago": "Payment method",
+  "sin_especificar": "Not specified",
+  "motivo": "Reason",
+  "guardando": "Saving...",
+  "guardar": "Save payment"
+},
+"pago_modal": {
+  "titulo": "Register payment",
+  "success": "Payment registered.",
+  "error": "Could not register the payment."
 }
 }

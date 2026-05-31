@@ -779,6 +779,121 @@
     "precio_unit": "Precio unit.",
     "subtotal": "Subtotal"
   }
+},
+"pagos": {
+  "title": "Pagos",
+  "subtitle": "Historial de pagos y adelantos a trabajadores.",
+  "nuevo": "Registrar pago",
+  "nuevo_corto": "Nuevo",
+  "buscar": "Buscar por trabajador, presupuesto o motivo",
+  "loading": "Cargando pagos...",
+  "error": "No se pudieron cargar los pagos.",
+  "presupuesto": "Presupuesto",
+  "empty": {
+    "title": "Sin pagos",
+    "desc": "No hay pagos registrados.",
+    "crear": "Registrar primero"
+  },
+"detail": {
+  "loading": "Cargando pago...",
+  "error": "No se pudo cargar el pago.",
+  "no_encontrado": "No encontrado",
+  "no_encontrado_msg": "El pago no existe.",
+  "subtitle": "Detalle del pago registrado.",
+  "comprobante_titulo": "Comprobante de pago",
+  "volver": "Volver",
+  "exportar_pdf": "Exportar PDF",
+  "trabajador": "Trabajador",
+  "presupuesto": "Presupuesto",
+  "forma_pago": "Forma de pago",
+  "motivo": "Motivo",
+  "fecha": "Fecha",
+  "estado": "Estado",
+  "total": "TOTAL",
+  "estado_pago": "Estado del pago",
+  "cambiar_estado": "CAMBIAR ESTADO",
+  "monto": "MONTO",
+  "estado_actualizado": "Estado actualizado.",
+  "error_estado": "No se pudo cambiar el estado."
+},
+  "tabla": {
+    "trabajador": "Trabajador",
+    "presupuesto": "Presupuesto",
+    "monto": "Monto",
+    "fecha": "Fecha",
+    "forma_pago": "Forma de pago",
+    "estado": "Estado",
+    "acciones": "Acciones"
+  },
+  "confirm": {
+    "eliminar_title": "¿Eliminar pago?",
+    "eliminar_msg": "Esta acción no se puede deshacer.",
+    "eliminar_btn": "Eliminar"
+  },
+  "notify": {
+    "eliminado": "Pago eliminado.",
+    "error_eliminar": "No se pudo eliminar el pago."
+  }
+},
+"pagos_trabajador": {
+  "subtitle": "Historial de pagos del trabajador.",
+  "volver": "Volver",
+  "nuevo": "Nuevo pago",
+  "total_pagado": "Total pagado",
+  "saldo_pendiente": "Saldo pendiente",
+  "total_pagos": "Total pagos",
+  "sin_pagos": "No hay pagos registrados para este trabajador.",
+  "motivo": "Motivo"
+},
+"pagos_stats": {
+  "total_general": "TOTAL GENERAL",
+  "total_pagado": "TOTAL PAGADO",
+  "total_parcial": "TOTAL PARCIAL",
+  "cantidad_pagos": "CANTIDAD DE PAGOS",
+  "evolucion_mensual": "EVOLUCIÓN MENSUAL",
+  "forma_pago": "FORMA DE PAGO",
+  "por_trabajador": "PAGOS POR TRABAJADOR"
+},
+"pago_form": {
+  "paso1_titulo": "1 · SELECCIONÁ EL PRESUPUESTO",
+  "paso1_desc": "Solo se muestran presupuestos Confirmados. El sistema completará automáticamente el trabajador, labor, equipo y cliente asociados.",
+  "presupuesto": "Presupuesto *",
+  "sin_presupuestos": "No hay presupuestos confirmados disponibles",
+  "seleccionar_presupuesto": "Seleccionar presupuesto",
+  "labor": "LABOR",
+  "obra": "Obra",
+  "cliente": "CLIENTE",
+  "responsable": "RESPONSABLE",
+  "sin_especialidad": "Sin especialidad",
+  "sin_estado": "Sin estado",
+  "equipo": "EQUIPO",
+  "materiales": "MATERIALES",
+  "situacion_financiera": "SITUACIÓN FINANCIERA",
+  "cancelado_total": "Presupuesto cancelado en su totalidad — no quedan saldos pendientes.",
+  "pagado": "PAGADO",
+  "parcial": "PARCIAL",
+  "saldo_pendiente": "SALDO PENDIENTE",
+  "cobrado": "COBRADO",
+  "ultimos_pagos": "ÚLTIMOS PAGOS",
+  "sin_pagos_registrados": "Sin pagos registrados",
+  "sin_forma_pago": "Sin forma de pago",
+  "paso2_titulo": "2 · DATOS DEL PAGO",
+  "saldo_disponible": "Saldo disponible:",
+  "monto": "Monto *",
+  "maximo": "Máximo: ${{saldo}}",
+  "monto_supera": "El monto supera el saldo pendiente (${{saldo}})",
+  "fecha": "Fecha *",
+  "estado": "Estado",
+  "forma_pago": "Forma de pago",
+  "sin_especificar": "Sin especificar",
+  "motivo": "Motivo",
+  "guardando": "Guardando...",
+  "guardar": "Guardar pago"
+},
+"pago_modal": {
+  "titulo": "Registrar pago",
+  "success": "Pago registrado.",
+  "error": "No se pudo registrar el pago."
 }
 
 }
