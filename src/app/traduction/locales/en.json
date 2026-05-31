@@ -462,6 +462,28 @@
     "motivo": "Reason"
   }
 },
+"historial_precios": {
+  "title": "Price history",
+  "subtitle": "Price evolution and adjustments applied to materials.",
+  "loading": "Loading history...",
+  "filtro": "Filter by material",
+  "todos": "All materials",
+  "grafico_titulo": "Price evolution",
+  "precio_label": "Price",
+  "precio_unitario": "Unit price",
+  "empty": {
+    "title": "No history",
+    "desc": "No price adjustments have been applied yet."
+  },
+  "tabla": {
+    "fecha": "Date",
+    "material": "Material",
+    "precio_anterior": "Previous price",
+    "precio_nuevo": "New price",
+    "porcentaje": "% applied",
+    "motivo": "Reason"
+  }
+},
 "material_form": {
   "info_general": "GENERAL INFORMATION",
   "nombre": "Name",

@@ -463,6 +463,28 @@
     "motivo": "Motivo"
   }
 },
+"historial_precios": {
+  "title": "Histórico de preços",
+  "subtitle": "Evolução de preços e ajustes aplicados aos materiais.",
+  "loading": "Carregando histórico...",
+  "filtro": "Filtrar por material",
+  "todos": "Todos os materiais",
+  "grafico_titulo": "Evolução de preços",
+  "precio_label": "Preço",
+  "precio_unitario": "Preço unitário",
+  "empty": {
+    "title": "Sem histórico",
+    "desc": "Nenhum ajuste de preço foi aplicado ainda."
+  },
+  "tabla": {
+    "fecha": "Data",
+    "material": "Material",
+    "precio_anterior": "Preço anterior",
+    "precio_nuevo": "Novo preço",
+    "porcentaje": "% aplicado",
+    "motivo": "Motivo"
+  }
+},
 "material_form": {
   "info_general": "INFORMAÇÕES GERAIS",
   "nombre": "Nome",
