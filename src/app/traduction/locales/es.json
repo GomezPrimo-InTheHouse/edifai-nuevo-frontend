@@ -81,8 +81,13 @@
       "puntos_acumulados": "puntos acumulados",
       "calendario_titulo": "{{mes}} {{anio}}",
       "dias_semana": {
-        "lu": "Lu", "ma": "Ma", "mi": "Mi",
-        "ju": "Ju", "vi": "Vi", "sa": "Sa", "do": "Do"
+        "lu": "Lu",
+        "ma": "Ma",
+        "mi": "Mi",
+        "ju": "Ju",
+        "vi": "Vi",
+        "sa": "Sa",
+        "do": "Do"
       },
       "leyenda": {
         "presente": "Presente",
@@ -101,8 +106,18 @@
       "tabla_motivo": "Motivo"
     },
     "meses": [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
     ]
   },
   "obras": {
@@ -328,809 +343,880 @@
     "rol": "Rol",
     "cerrar_sesion": "Cerrar sesión"
   },
-  
-"clientes": {
-  "title": "Clientes",
-  "subtitle": "{{count}} cliente registrado",
-  "subtitle_plural": "{{count}} clientes registrados",
-  "nuevo": "Nuevo cliente",
-  "loading": "Cargando clientes...",
-  "loading_detail": "Cargando cliente...",
-  "error": "No se pudo cargar la lista de clientes.",
-  "error_detail": "No se pudo cargar el cliente.",
-  "no_encontrado": "No encontrado",
-  "no_encontrado_msg": "El cliente no existe.",
-  "cliente": "Cliente",
-  "empty": {
-    "title": "No hay clientes registrados",
-    "crear": "Crear el primero"
+  "clientes": {
+    "title": "Clientes",
+    "subtitle": "{{count}} cliente registrado",
+    "subtitle_plural": "{{count}} clientes registrados",
+    "nuevo": "Nuevo cliente",
+    "loading": "Cargando clientes...",
+    "loading_detail": "Cargando cliente...",
+    "error": "No se pudo cargar la lista de clientes.",
+    "error_detail": "No se pudo cargar el cliente.",
+    "no_encontrado": "No encontrado",
+    "no_encontrado_msg": "El cliente no existe.",
+    "cliente": "Cliente",
+    "empty": {
+      "title": "No hay clientes registrados",
+      "crear": "Crear el primero"
+    },
+    "acciones": {
+      "volver": "Volver",
+      "editar": "Editar"
+    },
+    "detail": {
+      "info": "Información del cliente",
+      "telefono": "Teléfono",
+      "email": "Email",
+      "direccion": "Dirección",
+      "razon_social": "Razón social",
+      "dni_cuit": "DNI / CUIT",
+      "obras": "Obras asociadas",
+      "sin_obras": "Sin obras asociadas"
+    },
+    "create": {
+      "title": "Nuevo cliente",
+      "subtitle": "Registrar un nuevo cliente en el sistema."
+    },
+    "edit": {
+      "title": "Editar cliente",
+      "subtitle": "Modificar información del cliente."
+    },
+    "form": {
+      "seccion": "DATOS DEL CLIENTE",
+      "nombre": "Nombre *",
+      "apellido": "Apellido",
+      "razon_social": "Razón social",
+      "dni_cuit": "DNI / CUIT",
+      "telefono": "Teléfono *",
+      "email": "Email",
+      "direccion": "Dirección",
+      "guardando": "Guardando...",
+      "actualizar": "Actualizar cliente",
+      "crear": "Crear cliente"
+    },
+    "notify": {
+      "creado": "Cliente creado correctamente.",
+      "error_crear": "No se pudo crear el cliente.",
+      "actualizado": "Cliente actualizado correctamente.",
+      "error_actualizar": "No se pudo actualizar el cliente."
+    }
   },
-  "acciones": {
-    "volver": "Volver",
-    "editar": "Editar"
+  "materiales": {
+    "title": "Materiales",
+    "subtitle": "Gestión de materiales y stock.",
+    "nuevo": "Nuevo material",
+    "tipos": "Tipos",
+    "precios": "Precios",
+    "buscar": "Buscar por nombre o descripción",
+    "loading": "Cargando materiales...",
+    "error": "No se pudieron cargar los materiales.",
+    "empty": {
+      "title": "Sin materiales",
+      "desc": "No hay materiales registrados.",
+      "crear": "Crear primero"
+    },
+    "tabla": {
+      "nombre": "Nombre",
+      "tipo": "Tipo",
+      "unidad": "Unidad",
+      "precio_unit": "Precio unitario",
+      "stock": "Stock",
+      "acciones": "Acciones"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "volver": "Volver"
+    },
+    "confirm": {
+      "eliminar_title": "¿Eliminar material?",
+      "eliminar_msg": "Solo se puede eliminar si no está en presupuestos activos.",
+      "eliminar_btn": "Eliminar"
+    },
+    "notify": {
+      "eliminado": "Material eliminado.",
+      "error_eliminar": "No se pudo eliminar."
+    },
+    "stats": {
+      "titulo": "ESTADÍSTICAS DE MATERIALES",
+      "mas_utilizados": "MATERIALES MÁS UTILIZADOS EN PRESUPUESTOS",
+      "mayor_aumento": "TOP 5 — MAYOR AUMENTO DE PRECIO",
+      "mayor_stock": "TOP 5 — MAYOR STOCK DISPONIBLE",
+      "menor_stock": "TOP 5 — MENOR STOCK DISPONIBLE",
+      "sin_datos": "Sin datos aún.",
+      "sin_historial": "Sin historial de incrementos aún.",
+      "veces": "veces",
+      "usos": "Usos"
+    },
+    "detail": {
+      "loading": "Cargando material...",
+      "error": "No se pudo cargar el material.",
+      "no_encontrado": "No encontrado",
+      "no_encontrado_msg": "El material no existe.",
+      "subtitle": "Vista detallada del material.",
+      "info": "Información general",
+      "tipo": "Tipo de material",
+      "descripcion": "Descripción",
+      "unidad": "Unidad de medida",
+      "imagen": "Imagen",
+      "stock_precios": "STOCK Y PRECIOS",
+      "stock_actual": "Stock actual",
+      "precio_unit": "Precio unitario",
+      "aumento_mensual": "% aumento mensual estimado",
+      "historial": "Historial de precios",
+      "estado": "Estado",
+      "creado": "Creado",
+      "actualizado": "Actualizado"
+    },
+    "historial": {
+      "fecha": "Fecha",
+      "precio_anterior": "Precio anterior",
+      "precio_nuevo": "Precio nuevo",
+      "porcentaje": "% aplicado",
+      "motivo": "Motivo"
+    }
   },
-  "detail": {
-    "info": "Información del cliente",
+  "historial_precios": {
+    "title": "Historial de precios",
+    "subtitle": "Evolución de precios y ajustes aplicados a los materiales.",
+    "loading": "Cargando historial...",
+    "filtro": "Filtrar por material",
+    "todos": "Todos los materiales",
+    "grafico_titulo": "Evolución de precios",
+    "precio_label": "Precio",
+    "precio_unitario": "Precio unitario",
+    "empty": {
+      "title": "Sin historial",
+      "desc": "Aún no se han aplicado ajustes de precios."
+    },
+    "tabla": {
+      "fecha": "Fecha",
+      "material": "Material",
+      "precio_anterior": "Precio anterior",
+      "precio_nuevo": "Precio nuevo",
+      "porcentaje": "% aplicado",
+      "motivo": "Motivo"
+    }
+  },
+  "material_form": {
+    "info_general": "INFORMACIÓN GENERAL",
+    "nombre": "Nombre",
+    "tipo": "Tipo de material",
+    "sin_tipo": "Sin tipo",
+    "descripcion": "Descripción",
+    "estado": "Estado",
+    "seleccionar": "Seleccionar",
+    "imagen_titulo": "IMAGEN DEL MATERIAL",
+    "galeria": "Galería",
+    "camara": "Cámara",
+    "subiendo": "Subiendo imagen...",
+    "stock_precios": "STOCK Y PRECIOS",
+    "unidad": "Unidad de medida",
+    "stock_actual": "Stock actual",
+    "precio_unit": "Precio unitario ($)",
+    "aumento_mensual": "% aumento mensual estimado",
+    "guardando": "Guardando...",
+    "guardar": "Guardar material"
+  },
+  "ajuste_precios": {
+    "titulo": "Ajuste masivo de precios",
+    "descripcion": "Esta acción modificará el precio unitario de los materiales seleccionados. Los cambios se verán reflejados inmediatamente en las estadísticas y presupuestos pendientes.",
+    "porcentaje": "Porcentaje de aumento (%)",
+    "porcentaje_placeholder": "Ej: 12.5",
+    "tipo": "Tipo de material",
+    "tipo_helper": "Si no seleccionás uno, se aplicará a TODO el catálogo.",
+    "todos_materiales": "Todos los materiales",
+    "motivo": "Motivo o referencia",
+    "motivo_placeholder": "Ej: Actualización mensual de proveedores",
+    "cancelar": "Cancelar",
+    "confirmar": "Confirmar aumento",
+    "aplicando": "Aplicando ajuste...",
+    "confirm_title": "¿Aplicar ajuste de precios?",
+    "confirm_msg": "Se aplicará un {{porcentaje}}% {{contexto}}. Los presupuestos no confirmados serán recalculados automáticamente.",
+    "tipo_seleccionado": "al tipo seleccionado",
+    "todos": "a todos los materiales",
+    "confirm_btn": "Aplicar ajuste",
+    "success": "Precios ajustados y estadísticas actualizadas correctamente.",
+    "error_porcentaje": "Ingresá un porcentaje válido.",
+    "error_ajuste": "No se pudo aplicar el ajuste de precios."
+  },
+  "trabajadores": {
+    "title": "Trabajadores",
+    "subtitle": "Gestión de personal.",
+    "nuevo": "Nuevo trabajador",
+    "nuevo_corto": "Nuevo",
+    "especialidades": "Especialidades",
+    "buscar": "Buscar por nombre, apellido o DNI",
+    "loading": "Cargando trabajadores...",
+    "error_title": "Error al cargar trabajadores",
+    "error": "Revisa la conexión con el microservicio.",
+    "detail": {
+      "loading": "Cargando trabajador...",
+      "error": "No se pudo cargar el trabajador.",
+      "no_encontrado": "No encontrado",
+      "no_encontrado_msg": "El trabajador no existe.",
+      "subtitle": "Vista detallada del trabajador.",
+      "sin_especialidad": "Sin especialidad",
+      "info": "Información personal",
+      "nombre_completo": "Nombre completo",
+      "dni": "DNI",
+      "telefono": "Teléfono",
+      "especialidad": "Especialidad",
+      "fecha_ingreso": "Fecha de ingreso",
+      "estado": "Estado",
+      "activo": "Activo",
+      "inactivo": "Inactivo",
+      "fecha_registro": "Fecha de registro",
+      "ultima_actualizacion": "Última actualización"
+    },
+    "empty": {
+      "title": "No hay trabajadores",
+      "desc": "Aún no existen trabajadores o la búsqueda no devolvió resultados.",
+      "crear": "Crear primero"
+    },
+    "tabla": {
+      "nombre": "Nombre",
+      "dni": "DNI",
+      "especialidad": "Especialidad",
+      "telefono": "Teléfono",
+      "acciones": "Acciones"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "eliminar": "Borrar",
+      "volver": "Volver"
+    },
+    "confirm": {
+      "eliminar_title": "¿Eliminar trabajador?",
+      "eliminar_msg": "Esta acción no se puede deshacer. ¿Seguro que querés continuar?",
+      "eliminar_btn": "Sí, eliminar",
+      "cancelar": "Cancelar"
+    },
+    "notify": {
+      "eliminado": "Trabajador eliminado correctamente.",
+      "error_eliminar": "No se pudo eliminar el trabajador."
+    },
+    "stats": {
+      "titulo": "ESTADÍSTICAS Y ACTIVIDAD",
+      "actividad": "ACTIVIDAD RECIENTE",
+      "ultimo_agregado": "ÚLTIMO AGREGADO",
+      "ultimo_modificado": "ÚLTIMO MODIFICADO",
+      "por_especialidad": "TRABAJADORES POR ESPECIALIDAD",
+      "mas_labores": "TRABAJADORES CON MÁS LABORES",
+      "ultimos_pagos": "ÚLTIMOS PAGOS REGISTRADOS",
+      "ver_todos": "Ver todos",
+      "sin_datos": "Sin datos disponibles.",
+      "sin_pagos": "Sin pagos registrados.",
+      "sin_motivo": "Sin motivo",
+      "trabajadores_label": "trabajadores",
+      "labor": "labor",
+      "labores": "labores"
+    }
+  },
+  "trabajador_form": {
+    "datos_personales": "DATOS PERSONALES",
+    "nombre": "Nombre",
+    "apellido": "Apellido",
+    "dni": "DNI",
     "telefono": "Teléfono",
-    "email": "Email",
-    "direccion": "Dirección",
+    "fecha_ingreso": "Fecha de ingreso",
+    "especialidad": "Especialidad",
+    "estado": "Estado",
+    "jefe": "Jefe asignado",
+    "buscar": "Buscar...",
+    "buscar_trabajador": "Buscar trabajador...",
+    "sin_especificar": "Sin especificar",
+    "seleccionar": "Seleccionar",
+    "sin_jefe": "Sin jefe asignado",
+    "datos_facturacion": "DATOS DE FACTURACIÓN",
+    "opcionales": "(opcionales)",
     "razon_social": "Razón social",
-    "dni_cuit": "DNI / CUIT",
-    "obras": "Obras asociadas",
-    "sin_obras": "Sin obras asociadas"
-  },
-  "create": {
-    "title": "Nuevo cliente",
-    "subtitle": "Registrar un nuevo cliente en el sistema."
+    "cuit": "CUIT / CUIL",
+    "condicion_iva": "Condición IVA",
+    "iva": {
+      "monotributista": "Monotributista",
+      "responsable_inscripto": "Responsable Inscripto",
+      "exento": "Exento",
+      "consumidor_final": "Consumidor Final"
+    },
+    "direccion_fiscal": "Dirección fiscal",
+    "cbu": "CBU",
+    "alias_cbu": "Alias CBU",
+    "datos_acceso": "DATOS ACCESO AL SISTEMA",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "credenciales_aviso": "Próximamente podrás gestionar credenciales desde el módulo de Usuarios.",
+    "guardando": "Guardando...",
+    "actualizar": "Actualizar Trabajador",
+    "registrar": "Registrar Trabajador"
   },
   "edit": {
-    "title": "Editar cliente",
-    "subtitle": "Modificar información del cliente."
+    "title": "Editar trabajador",
+    "subtitle": "Modificar información del trabajador y sus permisos.",
+    "loading": "Cargando información del trabajador...",
+    "success": "Información actualizada correctamente.",
+    "error": "Error al intentar actualizar el trabajador.",
+    "email_duplicado": "El email \"{{email}}\" ya pertenece a otro trabajador ({{nombre}} {{apellido}})."
   },
-  "form": {
-    "seccion": "DATOS DEL CLIENTE",
-    "nombre": "Nombre *",
-    "apellido": "Apellido",
-    "razon_social": "Razón social",
-    "dni_cuit": "DNI / CUIT",
-    "telefono": "Teléfono *",
-    "email": "Email",
-    "direccion": "Dirección",
-    "guardando": "Guardando...",
-    "actualizar": "Actualizar cliente",
-    "crear": "Crear cliente"
+  "notificaciones": {
+    "titulo": "Notificaciones",
+    "marcar_todas": "Marcar todas",
+    "sin_leer": "Sin leer",
+    "todas": "Todas",
+    "empty_sin_leer": "No tenés notificaciones sin leer",
+    "empty_todas": "No hay notificaciones",
+    "ahora": "ahora",
+    "hace_min": "hace {{min}} min",
+    "hace_h": "hace {{hs}}h",
+    "hace_d": "hace {{dias}}d"
   },
-  "notify": {
-    "creado": "Cliente creado correctamente.",
-    "error_crear": "No se pudo crear el cliente.",
-    "actualizado": "Cliente actualizado correctamente.",
-    "error_actualizar": "No se pudo actualizar el cliente."
-  }
-},
-"materiales": {
-  "title": "Materiales",
-  "subtitle": "Gestión de materiales y stock.",
-  "nuevo": "Nuevo material",
-  "tipos": "Tipos",
-  "precios": "Precios",
-  "buscar": "Buscar por nombre o descripción",
-  "loading": "Cargando materiales...",
-  "error": "No se pudieron cargar los materiales.",
-  "empty": {
-    "title": "Sin materiales",
-    "desc": "No hay materiales registrados.",
-    "crear": "Crear primero"
-  },
-  "tabla": {
-    "nombre": "Nombre",
-    "tipo": "Tipo",
-    "unidad": "Unidad",
-    "precio_unit": "Precio unitario",
-    "stock": "Stock",
-    "acciones": "Acciones"
-  },
-  "acciones": {
-    "ver": "Ver",
-    "editar": "Editar",
-    "volver": "Volver"
-  },
-  "confirm": {
-    "eliminar_title": "¿Eliminar material?",
-    "eliminar_msg": "Solo se puede eliminar si no está en presupuestos activos.",
-    "eliminar_btn": "Eliminar"
-  },
-  "notify": {
-    "eliminado": "Material eliminado.",
-    "error_eliminar": "No se pudo eliminar."
-  },
-  "stats": {
-    "titulo": "ESTADÍSTICAS DE MATERIALES",
-    "mas_utilizados": "MATERIALES MÁS UTILIZADOS EN PRESUPUESTOS",
-    "mayor_aumento": "TOP 5 — MAYOR AUMENTO DE PRECIO",
-    "mayor_stock": "TOP 5 — MAYOR STOCK DISPONIBLE",
-    "menor_stock": "TOP 5 — MENOR STOCK DISPONIBLE",
-    "sin_datos": "Sin datos aún.",
-    "sin_historial": "Sin historial de incrementos aún.",
-    "veces": "veces",
-    "usos": "Usos"
+  "presupuestos": {
+    "title": "Presupuestos",
+    "subtitle": "Gestión de presupuestos vinculados a labores.",
+    "nuevo": "Nuevo presupuesto",
+    "exportar_pdf": "Exportar PDF",
+    "exportando": "Generando...",
+    "buscar": "Buscar por nombre",
+    "filtro_obra": "Obra",
+    "filtro_especialidad": "Especialidad",
+    "filtro_trabajador": "Trabajador",
+    "todas_obras": "Todas las obras",
+    "todas": "Todas",
+    "todos": "Todos",
+    "limpiar_filtros": "Limpiar filtros",
+    "loading": "Cargando presupuestos...",
+    "error": "No se pudieron cargar los presupuestos.",
+    "archivado": "Archivado",
+    "item": "Presupuesto",
+    "tabs": {
+      "activos": "Activos",
+      "archivados": "Archivados"
+    },
+    "edit": {
+      "title": "Editar presupuesto",
+      "subtitle": "Modificar información del presupuesto.",
+      "loading": "Cargando presupuesto...",
+      "success": "Presupuesto actualizado.",
+      "error": "No se pudo actualizar."
+    },
+    "empty": {
+      "title": "Sin presupuestos",
+      "desc": "No hay presupuestos creados.",
+      "archivados": "Sin presupuestos archivados",
+      "archivados_desc": "No hay presupuestos archivados.",
+      "sin_resultados": "No hay resultados para los filtros aplicados.",
+      "crear": "Crear primero"
+    },
+    "tabla": {
+      "nombre": "Nombre",
+      "labor": "Labor",
+      "obra": "Obra",
+      "especialidad": "Especialidad",
+      "trabajador": "Trabajador",
+      "total": "Total estimado",
+      "estado": "Estado",
+      "acciones": "Acciones"
+    },
+    "acciones": {
+      "ver": "Ver",
+      "editar": "Editar",
+      "volver": "Volver"
+    },
+    "confirm": {
+      "eliminar_title": "¿Eliminar presupuesto?",
+      "eliminar_msg": "Se eliminarán también los materiales asociados.",
+      "eliminar_btn": "Eliminar"
+    },
+    "notify": {
+      "eliminado": "Presupuesto eliminado.",
+      "error_eliminar": "No se pudo eliminar.",
+      "error_pdf": "Error al generar el PDF."
+    }
   },
   "detail": {
-    "loading": "Cargando material...",
-    "error": "No se pudo cargar el material.",
+    "loading": "Cargando presupuesto...",
+    "error": "No se pudo cargar el presupuesto.",
     "no_encontrado": "No encontrado",
-    "no_encontrado_msg": "El material no existe.",
-    "subtitle": "Vista detallada del material.",
+    "no_encontrado_msg": "El presupuesto no existe.",
+    "subtitle": "Vista detallada del presupuesto.",
     "info": "Información general",
-    "tipo": "Tipo de material",
+    "labor": "Labor asociada",
     "descripcion": "Descripción",
-    "unidad": "Unidad de medida",
-    "imagen": "Imagen",
-    "stock_precios": "STOCK Y PRECIOS",
-    "stock_actual": "Stock actual",
-    "precio_unit": "Precio unitario",
-    "aumento_mensual": "% aumento mensual estimado",
-    "historial": "Historial de precios",
-    "estado": "Estado",
+    "costo_mano_obra": "Costo mano de obra",
     "creado": "Creado",
-    "actualizado": "Actualizado"
+    "actualizado": "Actualizado",
+    "estado": "Estado",
+    "cambiar_estado": "CAMBIAR ESTADO",
+    "desglose": "DESGLOSE",
+    "materiales": "Materiales",
+    "mano_obra": "Mano de obra",
+    "total": "TOTAL ESTIMADO",
+    "responsable": "RESPONSABLE",
+    "sin_especialidad": "Sin especialidad",
+    "equipo": "EQUIPO",
+    "obra": "Obra",
+    "confirm_title": "¿Confirmar presupuesto?",
+    "confirm_msg": "Al confirmar, se descontará el stock de los materiales. Esta acción puede revertirse.",
+    "confirm_btn": "Confirmar y descontar stock",
+    "cambiar_estado_title": "¿Cambiar estado?",
+    "cambiar_estado_msg": "¿Seguro que querés cambiar el estado?",
+    "cambiar_btn": "Cambiar",
+    "estado_actualizado": "Estado actualizado.",
+    "error_estado": "No se pudo cambiar el estado."
   },
-  "historial": {
-    "fecha": "Fecha",
-    "precio_anterior": "Precio anterior",
-    "precio_nuevo": "Precio nuevo",
-    "porcentaje": "% aplicado",
-    "motivo": "Motivo"
-  }
-},
-"historial_precios": {
-  "title": "Historial de precios",
-  "subtitle": "Evolución de precios y ajustes aplicados a los materiales.",
-  "loading": "Cargando historial...",
-  "filtro": "Filtrar por material",
-  "todos": "Todos los materiales",
-  "grafico_titulo": "Evolución de precios",
-  "precio_label": "Precio",
-  "precio_unitario": "Precio unitario",
-  "empty": {
-    "title": "Sin historial",
-    "desc": "Aún no se han aplicado ajustes de precios."
-  },
-  "tabla": {
-    "fecha": "Fecha",
-    "material": "Material",
-    "precio_anterior": "Precio anterior",
-    "precio_nuevo": "Precio nuevo",
-    "porcentaje": "% aplicado",
-    "motivo": "Motivo"
-  }
-},
-"material_form": {
-  "info_general": "INFORMACIÓN GENERAL",
-  "nombre": "Nombre",
-  "tipo": "Tipo de material",
-  "sin_tipo": "Sin tipo",
-  "descripcion": "Descripción",
-  "estado": "Estado",
-  "seleccionar": "Seleccionar",
-  "imagen_titulo": "IMAGEN DEL MATERIAL",
-  "galeria": "Galería",
-  "camara": "Cámara",
-  "subiendo": "Subiendo imagen...",
-  "stock_precios": "STOCK Y PRECIOS",
-  "unidad": "Unidad de medida",
-  "stock_actual": "Stock actual",
-  "precio_unit": "Precio unitario ($)",
-  "aumento_mensual": "% aumento mensual estimado",
-  "guardando": "Guardando...",
-  "guardar": "Guardar material"
-},
-"ajuste_precios": {
-  "titulo": "Ajuste masivo de precios",
-  "descripcion": "Esta acción modificará el precio unitario de los materiales seleccionados. Los cambios se verán reflejados inmediatamente en las estadísticas y presupuestos pendientes.",
-  "porcentaje": "Porcentaje de aumento (%)",
-  "porcentaje_placeholder": "Ej: 12.5",
-  "tipo": "Tipo de material",
-  "tipo_helper": "Si no seleccionás uno, se aplicará a TODO el catálogo.",
-  "todos_materiales": "Todos los materiales",
-  "motivo": "Motivo o referencia",
-  "motivo_placeholder": "Ej: Actualización mensual de proveedores",
-  "cancelar": "Cancelar",
-  "confirmar": "Confirmar aumento",
-  "aplicando": "Aplicando ajuste...",
-  "confirm_title": "¿Aplicar ajuste de precios?",
-  "confirm_msg": "Se aplicará un {{porcentaje}}% {{contexto}}. Los presupuestos no confirmados serán recalculados automáticamente.",
-  "tipo_seleccionado": "al tipo seleccionado",
-  "todos": "a todos los materiales",
-  "confirm_btn": "Aplicar ajuste",
-  "success": "Precios ajustados y estadísticas actualizadas correctamente.",
-  "error_porcentaje": "Ingresá un porcentaje válido.",
-  "error_ajuste": "No se pudo aplicar el ajuste de precios."
-},
-"trabajadores": {
-  "title": "Trabajadores",
-  "subtitle": "Gestión de personal.",
-  "nuevo": "Nuevo trabajador",
-  "nuevo_corto": "Nuevo",
-  "especialidades": "Especialidades",
-  "buscar": "Buscar por nombre, apellido o DNI",
-  "loading": "Cargando trabajadores...",
-  "error_title": "Error al cargar trabajadores",
-  "error": "Revisa la conexión con el microservicio.",
-  
-"detail": {
-  "loading": "Cargando trabajador...",
-  "error": "No se pudo cargar el trabajador.",
-  "no_encontrado": "No encontrado",
-  "no_encontrado_msg": "El trabajador no existe.",
-  "subtitle": "Vista detallada del trabajador.",
-  "sin_especialidad": "Sin especialidad",
-  "info": "Información personal",
-  "nombre_completo": "Nombre completo",
-  "dni": "DNI",
-  "telefono": "Teléfono",
-  "especialidad": "Especialidad",
-  "fecha_ingreso": "Fecha de ingreso",
-  "estado": "Estado",
-  "activo": "Activo",
-  "inactivo": "Inactivo",
-  "fecha_registro": "Fecha de registro",
-  "ultima_actualizacion": "Última actualización"
-},
-  "empty": {
-    "title": "No hay trabajadores",
-    "desc": "Aún no existen trabajadores o la búsqueda no devolvió resultados.",
-    "crear": "Crear primero"
-  },
-  "tabla": {
-    "nombre": "Nombre",
+  "presupuesto_form": {
+    "info": "INFORMACIÓN DEL PRESUPUESTO",
+    "nombre": "Nombre del presupuesto",
+    "estado": "Estado",
+    "seleccionar": "Seleccionar",
+    "descripcion": "Descripción",
+    "labor": "Labor asociada",
+    "seleccionar_labor": "Seleccionar labor",
+    "costo_mano_obra": "Costo mano de obra ($)",
+    "info_vinculada": "INFORMACIÓN VINCULADA",
+    "labor_seleccionada": "LABOR SELECCIONADA",
+    "obra_vinculada": "OBRA VINCULADA",
+    "trabajador_asignado": "TRABAJADOR ASIGNADO",
+    "nombre_label": "Nombre",
+    "descripcion_label": "Descripción",
+    "ubicacion": "Ubicación",
     "dni": "DNI",
-    "especialidad": "Especialidad",
     "telefono": "Teléfono",
-    "acciones": "Acciones"
+    "sin_obra": "Sin obra vinculada",
+    "sin_trabajador": "Sin trabajador asignado",
+    "guardando": "Guardando...",
+    "guardar": "Guardar presupuesto"
   },
-  "acciones": {
-    "ver": "Ver",
-    "editar": "Editar",
-    "eliminar": "Borrar",
-    "volver": "Volver"
-  },
-  "confirm": {
-    "eliminar_title": "¿Eliminar trabajador?",
-    "eliminar_msg": "Esta acción no se puede deshacer. ¿Seguro que querés continuar?",
-    "eliminar_btn": "Sí, eliminar",
-    "cancelar": "Cancelar"
-  },
-  "notify": {
-    "eliminado": "Trabajador eliminado correctamente.",
-    "error_eliminar": "No se pudo eliminar el trabajador."
-  },
-  "stats": {
-    "titulo": "ESTADÍSTICAS Y ACTIVIDAD",
-    "actividad": "ACTIVIDAD RECIENTE",
-    "ultimo_agregado": "ÚLTIMO AGREGADO",
-    "ultimo_modificado": "ÚLTIMO MODIFICADO",
-    "por_especialidad": "TRABAJADORES POR ESPECIALIDAD",
-    "mas_labores": "TRABAJADORES CON MÁS LABORES",
-    "ultimos_pagos": "ÚLTIMOS PAGOS REGISTRADOS",
-    "ver_todos": "Ver todos",
-    "sin_datos": "Sin datos disponibles.",
-    "sin_pagos": "Sin pagos registrados.",
-    "sin_motivo": "Sin motivo",
-    "trabajadores_label": "trabajadores",
-    "labor": "labor",
-    "labores": "labores"
-  }
-},
-"trabajador_form": {
-  "datos_personales": "DATOS PERSONALES",
-  "nombre": "Nombre",
-  "apellido": "Apellido",
-  "dni": "DNI",
-  "telefono": "Teléfono",
-  "fecha_ingreso": "Fecha de ingreso",
-  "especialidad": "Especialidad",
-  "estado": "Estado",
-  "jefe": "Jefe asignado",
-  "buscar": "Buscar...",
-  "buscar_trabajador": "Buscar trabajador...",
-  "sin_especificar": "Sin especificar",
-  "seleccionar": "Seleccionar",
-  "sin_jefe": "Sin jefe asignado",
-  "datos_facturacion": "DATOS DE FACTURACIÓN",
-  "opcionales": "(opcionales)",
-  "razon_social": "Razón social",
-  "cuit": "CUIT / CUIL",
-  "condicion_iva": "Condición IVA",
-  "iva": {
-    "monotributista": "Monotributista",
-    "responsable_inscripto": "Responsable Inscripto",
-    "exento": "Exento",
-    "consumidor_final": "Consumidor Final"
-  },
-  "direccion_fiscal": "Dirección fiscal",
-  "cbu": "CBU",
-  "alias_cbu": "Alias CBU",
-  "datos_acceso": "DATOS ACCESO AL SISTEMA",
-  "email": "Correo Electrónico",
-  "password": "Contraseña",
-  "credenciales_aviso": "Próximamente podrás gestionar credenciales desde el módulo de Usuarios.",
-  "guardando": "Guardando...",
-  "actualizar": "Actualizar Trabajador",
-  "registrar": "Registrar Trabajador"
-},
-"edit": {
-  "title": "Editar trabajador",
-  "subtitle": "Modificar información del trabajador y sus permisos.",
-  "loading": "Cargando información del trabajador...",
-  "success": "Información actualizada correctamente.",
-  "error": "Error al intentar actualizar el trabajador.",
-  "email_duplicado": "El email \"{{email}}\" ya pertenece a otro trabajador ({{nombre}} {{apellido}})."
-},
-"notificaciones": {
-  "titulo": "Notificaciones",
-  "marcar_todas": "Marcar todas",
-  "sin_leer": "Sin leer",
-  "todas": "Todas",
-  "empty_sin_leer": "No tenés notificaciones sin leer",
-  "empty_todas": "No hay notificaciones",
-  "ahora": "ahora",
-  "hace_min": "hace {{min}} min",
-  "hace_h": "hace {{hs}}h",
-  "hace_d": "hace {{dias}}d"
-},
-"presupuestos": {
-  "title": "Presupuestos",
-  "subtitle": "Gestión de presupuestos vinculados a labores.",
-  "nuevo": "Nuevo presupuesto",
-  "exportar_pdf": "Exportar PDF",
-  "exportando": "Generando...",
-  "buscar": "Buscar por nombre",
-  "filtro_obra": "Obra",
-  "filtro_especialidad": "Especialidad",
-  "filtro_trabajador": "Trabajador",
-  "todas_obras": "Todas las obras",
-  "todas": "Todas",
-  "todos": "Todos",
-  "limpiar_filtros": "Limpiar filtros",
-  "loading": "Cargando presupuestos...",
-  "error": "No se pudieron cargar los presupuestos.",
-  "archivado": "Archivado",
-  "item": "Presupuesto",
-  "tabs": {
-    "activos": "Activos",
-    "archivados": "Archivados"
-  },
-"edit": {
-  "title": "Editar presupuesto",
-  "subtitle": "Modificar información del presupuesto.",
-  "loading": "Cargando presupuesto...",
-  "success": "Presupuesto actualizado.",
-  "error": "No se pudo actualizar."
-},
-  "empty": {
-    "title": "Sin presupuestos",
-    "desc": "No hay presupuestos creados.",
-    "archivados": "Sin presupuestos archivados",
-    "archivados_desc": "No hay presupuestos archivados.",
-    "sin_resultados": "No hay resultados para los filtros aplicados.",
-    "crear": "Crear primero"
-  },
-  "tabla": {
-    "nombre": "Nombre",
-    "labor": "Labor",
-    "obra": "Obra",
-    "especialidad": "Especialidad",
-    "trabajador": "Trabajador",
-    "total": "Total estimado",
-    "estado": "Estado",
-    "acciones": "Acciones"
-  },
-  "acciones": {
-    "ver": "Ver",
-    "editar": "Editar",
-    "volver": "Volver"
-  },
-  "confirm": {
-    "eliminar_title": "¿Eliminar presupuesto?",
-    "eliminar_msg": "Se eliminarán también los materiales asociados.",
-    "eliminar_btn": "Eliminar"
-  },
-  "notify": {
-    "eliminado": "Presupuesto eliminado.",
-    "error_eliminar": "No se pudo eliminar.",
-    "error_pdf": "Error al generar el PDF."
-  }
-},
-"detail": {
-  "loading": "Cargando presupuesto...",
-  "error": "No se pudo cargar el presupuesto.",
-  "no_encontrado": "No encontrado",
-  "no_encontrado_msg": "El presupuesto no existe.",
-  "subtitle": "Vista detallada del presupuesto.",
-  "info": "Información general",
-  "labor": "Labor asociada",
-  "descripcion": "Descripción",
-  "costo_mano_obra": "Costo mano de obra",
-  "creado": "Creado",
-  "actualizado": "Actualizado",
-  "estado": "Estado",
-  "cambiar_estado": "CAMBIAR ESTADO",
-  "desglose": "DESGLOSE",
-  "materiales": "Materiales",
-  "mano_obra": "Mano de obra",
-  "total": "TOTAL ESTIMADO",
-  "responsable": "RESPONSABLE",
-  "sin_especialidad": "Sin especialidad",
-  "equipo": "EQUIPO",
-  "obra": "Obra",
-  "confirm_title": "¿Confirmar presupuesto?",
-  "confirm_msg": "Al confirmar, se descontará el stock de los materiales. Esta acción puede revertirse.",
-  "confirm_btn": "Confirmar y descontar stock",
-  "cambiar_estado_title": "¿Cambiar estado?",
-  "cambiar_estado_msg": "¿Seguro que querés cambiar el estado?",
-  "cambiar_btn": "Cambiar",
-  "estado_actualizado": "Estado actualizado.",
-  "error_estado": "No se pudo cambiar el estado."
-},
-"presupuesto_form": {
-  "info": "INFORMACIÓN DEL PRESUPUESTO",
-  "nombre": "Nombre del presupuesto",
-  "estado": "Estado",
-  "seleccionar": "Seleccionar",
-  "descripcion": "Descripción",
-  "labor": "Labor asociada",
-  "seleccionar_labor": "Seleccionar labor",
-  "costo_mano_obra": "Costo mano de obra ($)",
-  "info_vinculada": "INFORMACIÓN VINCULADA",
-  "labor_seleccionada": "LABOR SELECCIONADA",
-  "obra_vinculada": "OBRA VINCULADA",
-  "trabajador_asignado": "TRABAJADOR ASIGNADO",
-  "nombre_label": "Nombre",
-  "descripcion_label": "Descripción",
-  "ubicacion": "Ubicación",
-  "dni": "DNI",
-  "telefono": "Teléfono",
-  "sin_obra": "Sin obra vinculada",
-  "sin_trabajador": "Sin trabajador asignado",
-  "guardando": "Guardando...",
-  "guardar": "Guardar presupuesto"
-},
-"agregar_material": {
-  "titulo": "Agregar materiales",
-  "buscar": "Buscar material...",
-  "material": "Material",
-  "seleccionar": "Seleccionar",
-  "stock": "Stock",
-  "cantidad": "Cantidad",
-  "aniadir": "Añadir",
-  "precio_label": "Precio",
-  "subtotal_label": "Subtotal",
-  "lista_titulo": "MATERIALES A AGREGAR ({{count}})",
-  "subtotal_lista": "SUBTOTAL LISTA",
-  "crear_nuevo": "Crear nuevo material",
-  "cancelar": "Cancelar",
-  "guardar": "Guardar",
-  "guardar_count": "Guardar ({{count}})",
-  "guardando": "Guardando...",
-  "ya_en_lista": "Este material ya está en la lista.",
-  "success": "{{count}} material(es) agregado(s) al presupuesto.",
-  "error": "Error al agregar materiales.",
-  "tabla": {
+  "agregar_material": {
+    "titulo": "Agregar materiales",
+    "buscar": "Buscar material...",
     "material": "Material",
+    "seleccionar": "Seleccionar",
+    "stock": "Stock",
     "cantidad": "Cantidad",
-    "precio_unit": "Precio unit.",
-    "subtotal": "Subtotal"
-  }
-},
-"pagos": {
-  "title": "Pagos",
-  "subtitle": "Historial de pagos y adelantos a trabajadores.",
-  "nuevo": "Registrar pago",
-  "nuevo_corto": "Nuevo",
-  "buscar": "Buscar por trabajador, presupuesto o motivo",
-  "loading": "Cargando pagos...",
-  "error": "No se pudieron cargar los pagos.",
-  "presupuesto": "Presupuesto",
-  "empty": {
-    "title": "Sin pagos",
-    "desc": "No hay pagos registrados.",
-    "crear": "Registrar primero"
+    "aniadir": "Añadir",
+    "precio_label": "Precio",
+    "subtotal_label": "Subtotal",
+    "lista_titulo": "MATERIALES A AGREGAR ({{count}})",
+    "subtotal_lista": "SUBTOTAL LISTA",
+    "crear_nuevo": "Crear nuevo material",
+    "cancelar": "Cancelar",
+    "guardar": "Guardar",
+    "guardar_count": "Guardar ({{count}})",
+    "guardando": "Guardando...",
+    "ya_en_lista": "Este material ya está en la lista.",
+    "success": "{{count}} material(es) agregado(s) al presupuesto.",
+    "error": "Error al agregar materiales.",
+    "tabla": {
+      "material": "Material",
+      "cantidad": "Cantidad",
+      "precio_unit": "Precio unit.",
+      "subtotal": "Subtotal"
+    }
   },
-"detail": {
-  "loading": "Cargando pago...",
-  "error": "No se pudo cargar el pago.",
-  "no_encontrado": "No encontrado",
-  "no_encontrado_msg": "El pago no existe.",
-  "subtitle": "Detalle del pago registrado.",
-  "comprobante_titulo": "Comprobante de pago",
-  "volver": "Volver",
-  "exportar_pdf": "Exportar PDF",
-  "trabajador": "Trabajador",
-  "presupuesto": "Presupuesto",
-  "forma_pago": "Forma de pago",
-  "motivo": "Motivo",
-  "fecha": "Fecha",
-  "estado": "Estado",
-  "total": "TOTAL",
-  "estado_pago": "Estado del pago",
-  "cambiar_estado": "CAMBIAR ESTADO",
-  "monto": "MONTO",
-  "estado_actualizado": "Estado actualizado.",
-  "error_estado": "No se pudo cambiar el estado."
-},
-  "tabla": {
-    "trabajador": "Trabajador",
+  "pagos": {
+    "title": "Pagos",
+    "subtitle": "Historial de pagos y adelantos a trabajadores.",
+    "nuevo": "Registrar pago",
+    "nuevo_corto": "Nuevo",
+    "buscar": "Buscar por trabajador, presupuesto o motivo",
+    "loading": "Cargando pagos...",
+    "error": "No se pudieron cargar los pagos.",
     "presupuesto": "Presupuesto",
-    "monto": "Monto",
-    "fecha": "Fecha",
-    "forma_pago": "Forma de pago",
-    "estado": "Estado",
-    "acciones": "Acciones"
+    "empty": {
+      "title": "Sin pagos",
+      "desc": "No hay pagos registrados.",
+      "crear": "Registrar primero"
+    },
+    "detail": {
+      "loading": "Cargando pago...",
+      "error": "No se pudo cargar el pago.",
+      "no_encontrado": "No encontrado",
+      "no_encontrado_msg": "El pago no existe.",
+      "subtitle": "Detalle del pago registrado.",
+      "comprobante_titulo": "Comprobante de pago",
+      "volver": "Volver",
+      "exportar_pdf": "Exportar PDF",
+      "trabajador": "Trabajador",
+      "presupuesto": "Presupuesto",
+      "forma_pago": "Forma de pago",
+      "motivo": "Motivo",
+      "fecha": "Fecha",
+      "estado": "Estado",
+      "total": "TOTAL",
+      "estado_pago": "Estado del pago",
+      "cambiar_estado": "CAMBIAR ESTADO",
+      "monto": "MONTO",
+      "estado_actualizado": "Estado actualizado.",
+      "error_estado": "No se pudo cambiar el estado."
+    },
+    "tabla": {
+      "trabajador": "Trabajador",
+      "presupuesto": "Presupuesto",
+      "monto": "Monto",
+      "fecha": "Fecha",
+      "forma_pago": "Forma de pago",
+      "estado": "Estado",
+      "acciones": "Acciones"
+    },
+    "confirm": {
+      "eliminar_title": "¿Eliminar pago?",
+      "eliminar_msg": "Esta acción no se puede deshacer.",
+      "eliminar_btn": "Eliminar"
+    },
+    "notify": {
+      "eliminado": "Pago eliminado.",
+      "error_eliminar": "No se pudo eliminar el pago."
+    }
   },
-  "confirm": {
-    "eliminar_title": "¿Eliminar pago?",
-    "eliminar_msg": "Esta acción no se puede deshacer.",
-    "eliminar_btn": "Eliminar"
-  },
-  "notify": {
-    "eliminado": "Pago eliminado.",
-    "error_eliminar": "No se pudo eliminar el pago."
-  }
-},
-"pagos_trabajador": {
-  "subtitle": "Historial de pagos del trabajador.",
-  "volver": "Volver",
-  "nuevo": "Nuevo pago",
-  "total_pagado": "Total pagado",
-  "saldo_pendiente": "Saldo pendiente",
-  "total_pagos": "Total pagos",
-  "sin_pagos": "No hay pagos registrados para este trabajador.",
-  "motivo": "Motivo"
-},
-"pagos_stats": {
-  "total_general": "TOTAL GENERAL",
-  "total_pagado": "TOTAL PAGADO",
-  "total_parcial": "TOTAL PARCIAL",
-  "cantidad_pagos": "CANTIDAD DE PAGOS",
-  "evolucion_mensual": "EVOLUCIÓN MENSUAL",
-  "forma_pago": "FORMA DE PAGO",
-  "por_trabajador": "PAGOS POR TRABAJADOR"
-},
-"pago_form": {
-  "paso1_titulo": "1 · SELECCIONÁ EL PRESUPUESTO",
-  "paso1_desc": "Solo se muestran presupuestos Confirmados. El sistema completará automáticamente el trabajador, labor, equipo y cliente asociados.",
-  "presupuesto": "Presupuesto *",
-  "sin_presupuestos": "No hay presupuestos confirmados disponibles",
-  "seleccionar_presupuesto": "Seleccionar presupuesto",
-  "labor": "LABOR",
-  "obra": "Obra",
-  "cliente": "CLIENTE",
-  "responsable": "RESPONSABLE",
-  "sin_especialidad": "Sin especialidad",
-  "sin_estado": "Sin estado",
-  "equipo": "EQUIPO",
-  "materiales": "MATERIALES",
-  "situacion_financiera": "SITUACIÓN FINANCIERA",
-  "cancelado_total": "Presupuesto cancelado en su totalidad — no quedan saldos pendientes.",
-  "pagado": "PAGADO",
-  "parcial": "PARCIAL",
-  "saldo_pendiente": "SALDO PENDIENTE",
-  "cobrado": "COBRADO",
-  "ultimos_pagos": "ÚLTIMOS PAGOS",
-  "sin_pagos_registrados": "Sin pagos registrados",
-  "sin_forma_pago": "Sin forma de pago",
-  "paso2_titulo": "2 · DATOS DEL PAGO",
-  "saldo_disponible": "Saldo disponible:",
-  "monto": "Monto *",
-  "maximo": "Máximo: ${{saldo}}",
-  "monto_supera": "El monto supera el saldo pendiente (${{saldo}})",
-  "fecha": "Fecha *",
-  "estado": "Estado",
-  "forma_pago": "Forma de pago",
-  "sin_especificar": "Sin especificar",
-  "motivo": "Motivo",
-  "guardando": "Guardando...",
-  "guardar": "Guardar pago"
-},
-"pago_modal": {
-  "titulo": "Registrar pago",
-  "success": "Pago registrado.",
-  "error": "No se pudo registrar el pago."
-},
-"presentismo_admin": {
-  "title": "Presentismo — Panel admin",
-  "subtitle": "Estadísticas e historial de asistencia de todos los trabajadores",
-  "tab_stats": "Estadísticas",
-  "tab_historial": "Historial completo",
-  "desde": "Desde",
-  "hasta": "Hasta",
-  "filtro_obra": "Filtrar por obra",
-  "todas_obras": "Todas las obras",
-  "calculando": "Calculando estadísticas...",
-  "total_registros": "Total registros",
-  "dias_periodo": "{{dias}} días de período",
-  "trabajadores_activos": "Trabajadores activos",
-  "al_menos_uno": "Con al menos 1 registro",
-  "obras_actividad": "Obras con actividad",
-  "dias_actividad": "Días con actividad",
-  "de_dias": "de {{dias}} días",
-  "registros_dia_semana": "REGISTROS POR DÍA DE LA SEMANA",
-  "sin_datos": "Sin datos en el período",
-  "asistencia_perfecta": "ASISTENCIA PERFECTA ({{dias}} días)",
-  "sin_asistencia_perfecta": "Ningún trabajador con asistencia perfecta en el período",
-  "dia": "día",
-  "dias_label": "días",
-  "ranking_cumplidores": "RANKING — MÁS CUMPLIDORES",
-  "ausentes_hoy": "AUSENTES HOY",
-  "todos_marcaron": "Todos los trabajadores marcaron hoy",
-  "ranking_puntos": "RANKING GLOBAL — PUNTOS ACUMULADOS",
-  "sin_puntos": "Ningún trabajador tiene puntos aún",
-  "asistencia_por_obra": "ASISTENCIA POR OBRA",
-  "hist_fecha": "Fecha",
-  "hist_trabajador": "ID trabajador",
-  "hist_obra": "Obra",
-  "cargando_historial": "Cargando historial...",
-  "sin_registros": "No hay registros con los filtros aplicados",
-  "dias_semana": {
-    "dom": "Dom", "lun": "Lun", "mar": "Mar",
-    "mie": "Mié", "jue": "Jue", "vie": "Vie", "sab": "Sáb"
-  },
-  "tabla": {
-    "trabajador": "Trabajador",
-    "dias": "Días",
-    "registros": "Registros",
-    "puntos": "Puntos",
-    "ultimo": "Último"
-  },
-  "obra_tabla": {
-    "obra": "Obra",
-    "registros": "Registros",
-    "trabajadores": "Trabajadores",
-    "dias": "Días"
-  },
-  "hist_tabla": {
-    "trabajador": "Trabajador",
-    "obra": "Obra",
-    "fecha": "Fecha",
-    "hora": "Hora",
-    "coordenadas": "Coordenadas",
-    "observaciones": "Observaciones"
-  }
-},
-"presentismo": {
-  "title": "Presentismo",
-  "subtitle": "Marcá tu asistencia diaria",
-  "subtitle_trabajador": "Hola, {{nombre}} {{apellido}} — marcá tu asistencia",
-  "cargando_obras": "Cargando tus obras...",
-  "marcar_titulo": "Marcar presentismo",
-  "marcar_desc": "Se registrará tu ubicación al confirmar",
-  "sin_obras": "No tenés obras asignadas actualmente. Contactá a tu administrador.",
-  "seleccionar_obra": "Seleccioná tu obra",
-  "elegir_obra": "Elegí una obra...",
-  "sin_direccion": "Sin dirección registrada",
-  "asignado_hasta": "Asignado hasta",
-  "observaciones": "Observaciones (opcional)",
-  "observaciones_placeholder": "Ej: llegué tarde por tráfico...",
-  "obteniendo_ubicacion": "Obteniendo ubicación...",
-  "registrando": "Registrando...",
-  "confirmar": "Confirmar presencia",
-  "gps_aviso": "Tu ubicación GPS se registrará automáticamente",
-  "selecciona_obra": "Seleccioná una obra primero",
-  "marcado_ok": "Presentismo marcado correctamente",
-  "error_marcar": "No se pudo marcar el presentismo",
-  "geo_denegado": "Permiso de ubicación denegado. Habilitá la geolocalización en tu navegador.",
-  "geo_no_disponible": "No se pudo obtener tu ubicación. Intentá de nuevo.",
-  "geo_timeout": "Tiempo de espera agotado. Intentá de nuevo.",
-  "geo_error": "Error al obtener ubicación.",
-  "historial_titulo": "HISTORIAL DE ASISTENCIA",
-  "cargando_historial": "Cargando historial...",
-  "sin_historial": "No hay registros de asistencia aún.",
-  "tabla": {
-    "fecha": "Fecha",
-    "hora": "Hora",
-    "obra": "Obra",
-    "coordenadas": "Coordenadas",
-    "observaciones": "Observaciones"
-  }
-},
-"usuarios": {
-  "title": "Usuarios",
-  "subtitle": "Gestión de usuarios administradores del sistema.",
-  "nuevo": "Nuevo usuario",
-  "buscar": "Buscar por nombre o email",
-  "filtro_rol": "Filtrar por rol",
-  "todos_roles": "Todos los roles",
-  "limpiar": "Limpiar",
-  "loading": "Cargando usuarios...",
-  "error": "No se pudieron cargar los usuarios.",
-  "empty": {
-    "title": "Sin usuarios",
-    "desc": "No hay usuarios registrados.",
-    "sin_resultados": "No hay resultados para los filtros aplicados.",
-    "crear": "Crear primero"
-  },
-"edit": {
-  "title": "Editar usuario",
-  "subtitle": "Modificar información del usuario.",
-  "subtitle_trabajador": "Solo podés modificar el acceso al sistema de este trabajador.",
-  "loading": "Cargando usuario...",
-  "success": "Usuario actualizado.",
-  "error": "No se pudo actualizar."
-},
-  "detail": {
-  "loading": "Cargando usuario...",
-  "error": "No se pudo cargar el usuario.",
-  "no_encontrado": "No encontrado",
-  "no_encontrado_msg": "El usuario no existe.",
-  "subtitle": "Vista detallada del usuario.",
-  "info": "Información del usuario",
-  "nombre": "Nombre",
-  "email": "Email",
-  "rol": "Rol",
-  "estado": "Estado",
-  "creado": "Creado",
-  "actualizado": "Actualizado"
-},
-  "tabla": {
-    "usuario": "Usuario",
-    "email": "Email",
-    "rol": "Rol",
-    "estado": "Estado",
-    "acciones": "Acciones"
-  },
-  "acciones": {
-    "ver": "Ver detalle",
-    "totp": "Regenerar TOTP",
-    "baja": "Dar de baja",
+  "pagos_trabajador": {
+    "subtitle": "Historial de pagos del trabajador.",
     "volver": "Volver",
-    "editar": "Editar",
-    "cambiar_password": "Cambiar contraseña"
+    "nuevo": "Nuevo pago",
+    "total_pagado": "Total pagado",
+    "saldo_pendiente": "Saldo pendiente",
+    "total_pagos": "Total pagos",
+    "sin_pagos": "No hay pagos registrados para este trabajador.",
+    "motivo": "Motivo"
   },
-  "confirm": {
-    "baja_title": "¿Dar de baja este usuario?",
-    "baja_msg": "El usuario perderá acceso al sistema.",
-    "baja_btn": "Dar de baja",
-    "totp_title": "¿Regenerar TOTP?",
-    "totp_msg": "Se generará un nuevo código para {{email}}. El anterior dejará de funcionar.",
-    "totp_btn": "Regenerar"
+  "pagos_stats": {
+    "total_general": "TOTAL GENERAL",
+    "total_pagado": "TOTAL PAGADO",
+    "total_parcial": "TOTAL PARCIAL",
+    "cantidad_pagos": "CANTIDAD DE PAGOS",
+    "evolucion_mensual": "EVOLUCIÓN MENSUAL",
+    "forma_pago": "FORMA DE PAGO",
+    "por_trabajador": "PAGOS POR TRABAJADOR"
   },
-  "notify": {
-    "baja_ok": "Usuario dado de baja.",
-    "error_baja": "No se pudo dar de baja.",
-    "error_totp": "No se pudo regenerar el TOTP."
+  "pago_form": {
+    "paso1_titulo": "1 · SELECCIONÁ EL PRESUPUESTO",
+    "paso1_desc": "Solo se muestran presupuestos Confirmados. El sistema completará automáticamente el trabajador, labor, equipo y cliente asociados.",
+    "presupuesto": "Presupuesto *",
+    "sin_presupuestos": "No hay presupuestos confirmados disponibles",
+    "seleccionar_presupuesto": "Seleccionar presupuesto",
+    "labor": "LABOR",
+    "obra": "Obra",
+    "cliente": "CLIENTE",
+    "responsable": "RESPONSABLE",
+    "sin_especialidad": "Sin especialidad",
+    "sin_estado": "Sin estado",
+    "equipo": "EQUIPO",
+    "materiales": "MATERIALES",
+    "situacion_financiera": "SITUACIÓN FINANCIERA",
+    "cancelado_total": "Presupuesto cancelado en su totalidad — no quedan saldos pendientes.",
+    "pagado": "PAGADO",
+    "parcial": "PARCIAL",
+    "saldo_pendiente": "SALDO PENDIENTE",
+    "cobrado": "COBRADO",
+    "ultimos_pagos": "ÚLTIMOS PAGOS",
+    "sin_pagos_registrados": "Sin pagos registrados",
+    "sin_forma_pago": "Sin forma de pago",
+    "paso2_titulo": "2 · DATOS DEL PAGO",
+    "saldo_disponible": "Saldo disponible:",
+    "monto": "Monto *",
+    "maximo": "Máximo: ${{saldo}}",
+    "monto_supera": "El monto supera el saldo pendiente (${{saldo}})",
+    "fecha": "Fecha *",
+    "estado": "Estado",
+    "forma_pago": "Forma de pago",
+    "sin_especificar": "Sin especificar",
+    "motivo": "Motivo",
+    "guardando": "Guardando...",
+    "guardar": "Guardar pago"
+  },
+  "pago_modal": {
+    "titulo": "Registrar pago",
+    "success": "Pago registrado.",
+    "error": "No se pudo registrar el pago."
+  },
+  "presentismo_admin": {
+    "title": "Presentismo — Panel admin",
+    "subtitle": "Estadísticas e historial de asistencia de todos los trabajadores",
+    "tab_stats": "Estadísticas",
+    "tab_historial": "Historial completo",
+    "desde": "Desde",
+    "hasta": "Hasta",
+    "filtro_obra": "Filtrar por obra",
+    "todas_obras": "Todas las obras",
+    "calculando": "Calculando estadísticas...",
+    "total_registros": "Total registros",
+    "dias_periodo": "{{dias}} días de período",
+    "trabajadores_activos": "Trabajadores activos",
+    "al_menos_uno": "Con al menos 1 registro",
+    "obras_actividad": "Obras con actividad",
+    "dias_actividad": "Días con actividad",
+    "de_dias": "de {{dias}} días",
+    "registros_dia_semana": "REGISTROS POR DÍA DE LA SEMANA",
+    "sin_datos": "Sin datos en el período",
+    "asistencia_perfecta": "ASISTENCIA PERFECTA ({{dias}} días)",
+    "sin_asistencia_perfecta": "Ningún trabajador con asistencia perfecta en el período",
+    "dia": "día",
+    "dias_label": "días",
+    "ranking_cumplidores": "RANKING — MÁS CUMPLIDORES",
+    "ausentes_hoy": "AUSENTES HOY",
+    "todos_marcaron": "Todos los trabajadores marcaron hoy",
+    "ranking_puntos": "RANKING GLOBAL — PUNTOS ACUMULADOS",
+    "sin_puntos": "Ningún trabajador tiene puntos aún",
+    "asistencia_por_obra": "ASISTENCIA POR OBRA",
+    "hist_fecha": "Fecha",
+    "hist_trabajador": "ID trabajador",
+    "hist_obra": "Obra",
+    "cargando_historial": "Cargando historial...",
+    "sin_registros": "No hay registros con los filtros aplicados",
+    "dias_semana": {
+      "dom": "Dom",
+      "lun": "Lun",
+      "mar": "Mar",
+      "mie": "Mié",
+      "jue": "Jue",
+      "vie": "Vie",
+      "sab": "Sáb"
+    },
+    "tabla": {
+      "trabajador": "Trabajador",
+      "dias": "Días",
+      "registros": "Registros",
+      "puntos": "Puntos",
+      "ultimo": "Último"
+    },
+    "obra_tabla": {
+      "obra": "Obra",
+      "registros": "Registros",
+      "trabajadores": "Trabajadores",
+      "dias": "Días"
+    },
+    "hist_tabla": {
+      "trabajador": "Trabajador",
+      "obra": "Obra",
+      "fecha": "Fecha",
+      "hora": "Hora",
+      "coordenadas": "Coordenadas",
+      "observaciones": "Observaciones"
+    }
+  },
+  "presentismo": {
+    "title": "Presentismo",
+    "subtitle": "Marcá tu asistencia diaria",
+    "subtitle_trabajador": "Hola, {{nombre}} {{apellido}} — marcá tu asistencia",
+    "cargando_obras": "Cargando tus obras...",
+    "marcar_titulo": "Marcar presentismo",
+    "marcar_desc": "Se registrará tu ubicación al confirmar",
+    "sin_obras": "No tenés obras asignadas actualmente. Contactá a tu administrador.",
+    "seleccionar_obra": "Seleccioná tu obra",
+    "elegir_obra": "Elegí una obra...",
+    "sin_direccion": "Sin dirección registrada",
+    "asignado_hasta": "Asignado hasta",
+    "observaciones": "Observaciones (opcional)",
+    "observaciones_placeholder": "Ej: llegué tarde por tráfico...",
+    "obteniendo_ubicacion": "Obteniendo ubicación...",
+    "registrando": "Registrando...",
+    "confirmar": "Confirmar presencia",
+    "gps_aviso": "Tu ubicación GPS se registrará automáticamente",
+    "selecciona_obra": "Seleccioná una obra primero",
+    "marcado_ok": "Presentismo marcado correctamente",
+    "error_marcar": "No se pudo marcar el presentismo",
+    "geo_denegado": "Permiso de ubicación denegado. Habilitá la geolocalización en tu navegador.",
+    "geo_no_disponible": "No se pudo obtener tu ubicación. Intentá de nuevo.",
+    "geo_timeout": "Tiempo de espera agotado. Intentá de nuevo.",
+    "geo_error": "Error al obtener ubicación.",
+    "historial_titulo": "HISTORIAL DE ASISTENCIA",
+    "cargando_historial": "Cargando historial...",
+    "sin_historial": "No hay registros de asistencia aún.",
+    "tabla": {
+      "fecha": "Fecha",
+      "hora": "Hora",
+      "obra": "Obra",
+      "coordenadas": "Coordenadas",
+      "observaciones": "Observaciones"
+    }
+  },
+  "usuarios": {
+    "title": "Usuarios",
+    "subtitle": "Gestión de usuarios administradores del sistema.",
+    "nuevo": "Nuevo usuario",
+    "buscar": "Buscar por nombre o email",
+    "filtro_rol": "Filtrar por rol",
+    "todos_roles": "Todos los roles",
+    "limpiar": "Limpiar",
+    "loading": "Cargando usuarios...",
+    "error": "No se pudieron cargar los usuarios.",
+    "empty": {
+      "title": "Sin usuarios",
+      "desc": "No hay usuarios registrados.",
+      "sin_resultados": "No hay resultados para los filtros aplicados.",
+      "crear": "Crear primero"
+    },
+    "edit": {
+      "title": "Editar usuario",
+      "subtitle": "Modificar información del usuario.",
+      "subtitle_trabajador": "Solo podés modificar el acceso al sistema de este trabajador.",
+      "loading": "Cargando usuario...",
+      "success": "Usuario actualizado.",
+      "error": "No se pudo actualizar."
+    },
+    "detail": {
+      "loading": "Cargando usuario...",
+      "error": "No se pudo cargar el usuario.",
+      "no_encontrado": "No encontrado",
+      "no_encontrado_msg": "El usuario no existe.",
+      "subtitle": "Vista detallada del usuario.",
+      "info": "Información del usuario",
+      "nombre": "Nombre",
+      "email": "Email",
+      "rol": "Rol",
+      "estado": "Estado",
+      "creado": "Creado",
+      "actualizado": "Actualizado"
+    },
+    "tabla": {
+      "usuario": "Usuario",
+      "email": "Email",
+      "rol": "Rol",
+      "estado": "Estado",
+      "acciones": "Acciones"
+    },
+    "acciones": {
+      "ver": "Ver detalle",
+      "totp": "Regenerar TOTP",
+      "baja": "Dar de baja",
+      "volver": "Volver",
+      "editar": "Editar",
+      "cambiar_password": "Cambiar contraseña"
+    },
+    "confirm": {
+      "baja_title": "¿Dar de baja este usuario?",
+      "baja_msg": "El usuario perderá acceso al sistema.",
+      "baja_btn": "Dar de baja",
+      "totp_title": "¿Regenerar TOTP?",
+      "totp_msg": "Se generará un nuevo código para {{email}}. El anterior dejará de funcionar.",
+      "totp_btn": "Regenerar"
+    },
+    "notify": {
+      "baja_ok": "Usuario dado de baja.",
+      "error_baja": "No se pudo dar de baja.",
+      "error_totp": "No se pudo regenerar el TOTP."
+    }
+  },
+  "usuario_form": {
+    "seccion": "DATOS DEL USUARIO",
+    "aviso_trabajador_pre": "Este usuario es un",
+    "trabajador": "trabajador",
+    "aviso_trabajador_post": "Solo podés modificar su email y contraseña de acceso. Para editar nombre, apellido y especialidad, hacelo desde el módulo de",
+    "modulo_trabajadores": "Trabajadores",
+    "nombre": "Nombre",
+    "email": "Email",
+    "password": "Contraseña",
+    "password_opcional": "Nueva contraseña (dejar vacío para no cambiar)",
+    "rol": "Rol",
+    "rol_bloqueado": "El rol de un trabajador no puede modificarse",
+    "seleccionar": "Seleccionar",
+    "aviso_totp": "⚠️ Al crear el usuario se generará automáticamente un código QR para configurar la autenticación TOTP. Asegurate de que el usuario lo escanee antes de cerrar la ventana.",
+    "guardando": "Guardando...",
+    "actualizar": "Actualizar usuario",
+    "crear": "Crear usuario"
+  },
+  "qr_modal": {
+    "titulo": "Configurar autenticador",
+    "descripcion": "Escaneá este código QR con Google Authenticator u otra app TOTP para configurar el acceso de {{email}}.",
+    "aviso_unico": "Este código solo se muestra una vez. Guardalo antes de cerrar.",
+    "no_escanear": "¿No podés escanear el QR? Usá el código manual",
+    "clave_secreta": "CLAVE SECRETA (BASE32)",
+    "copiar_tooltip": "Copiar al portapapeles",
+    "copiar_btn": "Copiar código",
+    "copiado": "¡Copiado!",
+    "instruccion_manual": "Ingresá este código manualmente en tu app de autenticación (Google Authenticator, Authy, etc.) en lugar de escanear el QR.",
+    "listo": "Listo, ya lo guardé"
+  },
+  "cambiar_password": {
+    "titulo": "Cambiar contraseña",
+    "nueva": "Nueva contraseña",
+    "confirmar": "Confirmar contraseña",
+    "cancelar": "Cancelar",
+    "cambiar": "Cambiar",
+    "guardando": "Guardando...",
+    "obligatorio": "Obligatorio",
+    "min_length": "Mínimo 6 caracteres",
+    "no_coinciden": "Las contraseñas no coinciden.",
+    "success": "Contraseña actualizada correctamente.",
+    "error": "No se pudo cambiar la contraseña."
+  },
+  "gastos": {
+    "title": "Gastos Imprevistos",
+    "subtitle_one": "1 gasto registrado",
+    "subtitle_other": "{{count}} gastos registrados",
+    "nuevo": "Nuevo gasto",
+    "registrar_primero": "Registrar el primero",
+    "sin_gastos": "No hay gastos imprevistos registrados",
+    "loading": "Cargando gastos imprevistos...",
+    "error": "No se pudieron cargar los gastos imprevistos.",
+    "deudor_automatico": "Deudor automático",
+    "tabs": {
+      "listado": "Listado",
+      "estadisticas": "Estadísticas"
+    },
+    "estados": {
+      "pendiente": "Pendiente",
+      "parcialmente_pagado": "Parcialmente pagado",
+      "saldado": "Saldado"
+    },
+    "tabla": {
+      "monto": "Monto",
+      "obra": "Obra",
+      "especialidad": "Especialidad",
+      "forma_pago": "Forma de pago",
+      "fecha": "Fecha",
+      "estado": "Estado",
+      "acciones": "Acciones"
+    },
+    "form": {
+      "title": "Registrar gasto imprevisto",
+      "obra": "Obra",
+      "especialidad": "Especialidad",
+      "descripcion": "Descripción",
+      "motivo": "Motivo",
+      "monto": "Monto",
+      "forma_pago": "Forma de pago",
+      "pagado_por": "Pagado por (trabajador/usuario)",
+      "deudor_cliente": "Deudor cliente (opcional)",
+      "fecha": "Fecha",
+      "seleccionar": "Seleccionar",
+      "campos_requeridos": "Campos requeridos",
+      "registrando": "Registrando...",
+      "registrar": "Registrar",
+      "cancelar": "Cancelar"
+    },
+    "estado_modal": {
+      "title": "Cambiar estado",
+      "nuevo_estado": "Nuevo estado",
+      "guardando": "Guardando...",
+      "guardar": "Guardar",
+      "cancelar": "Cancelar"
+    },
+    "eliminar_modal": {
+      "title": "¿Eliminar gasto imprevisto?",
+      "mensaje": "Esta acción no se puede deshacer.",
+      "eliminando": "Eliminando...",
+      "eliminar": "Eliminar",
+      "cancelar": "Cancelar"
+    },
+    "notify": {
+      "creado": "Gasto imprevisto registrado.",
+      "error_crear": "No se pudo registrar el gasto.",
+      "estado_actualizado": "Estado actualizado.",
+      "error_estado": "No se pudo actualizar el estado.",
+      "eliminado": "Gasto eliminado.",
+      "error_eliminar": "No se pudo eliminar el gasto."
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "total_gastos": "Total gastos",
+      "monto_total": "Monto total",
+      "pendiente": "Pendiente",
+      "saldado": "Saldado",
+      "por_especialidad": "Gastos por especialidad",
+      "por_obra": "Gastos por obra",
+      "sin_datos": "Sin datos"
+    }
   }
-},
-"usuario_form": {
-  "seccion": "DATOS DEL USUARIO",
-  "aviso_trabajador_pre": "Este usuario es un",
-  "trabajador": "trabajador",
-  "aviso_trabajador_post": "Solo podés modificar su email y contraseña de acceso. Para editar nombre, apellido y especialidad, hacelo desde el módulo de",
-  "modulo_trabajadores": "Trabajadores",
-  "nombre": "Nombre",
-  "email": "Email",
-  "password": "Contraseña",
-  "password_opcional": "Nueva contraseña (dejar vacío para no cambiar)",
-  "rol": "Rol",
-  "rol_bloqueado": "El rol de un trabajador no puede modificarse",
-  "seleccionar": "Seleccionar",
-  "aviso_totp": "⚠️ Al crear el usuario se generará automáticamente un código QR para configurar la autenticación TOTP. Asegurate de que el usuario lo escanee antes de cerrar la ventana.",
-  "guardando": "Guardando...",
-  "actualizar": "Actualizar usuario",
-  "crear": "Crear usuario"
-},
-"qr_modal": {
-  "titulo": "Configurar autenticador",
-  "descripcion": "Escaneá este código QR con Google Authenticator u otra app TOTP para configurar el acceso de {{email}}.",
-  "aviso_unico": "Este código solo se muestra una vez. Guardalo antes de cerrar.",
-  "no_escanear": "¿No podés escanear el QR? Usá el código manual",
-  "clave_secreta": "CLAVE SECRETA (BASE32)",
-  "copiar_tooltip": "Copiar al portapapeles",
-  "copiar_btn": "Copiar código",
-  "copiado": "¡Copiado!",
-  "instruccion_manual": "Ingresá este código manualmente en tu app de autenticación (Google Authenticator, Authy, etc.) en lugar de escanear el QR.",
-  "listo": "Listo, ya lo guardé"
-},
-"cambiar_password": {
-  "titulo": "Cambiar contraseña",
-  "nueva": "Nueva contraseña",
-  "confirmar": "Confirmar contraseña",
-  "cancelar": "Cancelar",
-  "cambiar": "Cambiar",
-  "guardando": "Guardando...",
-  "obligatorio": "Obligatorio",
-  "min_length": "Mínimo 6 caracteres",
-  "no_coinciden": "Las contraseñas no coinciden.",
-  "success": "Contraseña actualizada correctamente.",
-  "error": "No se pudo cambiar la contraseña."
 }
-
-
-}
-
-
-
-
-
-
-
-

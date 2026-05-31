@@ -64,6 +64,10 @@ import { ClienteEditPage } from '../../modules/clientes/pages/ClienteEditPage';
 import { OnboardWizard } from '../../modules/configuracion/pages/OnboardWizard';
 import { ConfiguracionPage } from '../../modules/configuracion/pages/ConfiguracionPage';
 
+//Gastos
+import { GastosImprevistosPage } from '../../modules/gastosImprevistos/pages/gastosImprevistos.page';
+
+
 const ROLES_ADMIN  = [1, 3, 4, 6];
 const ROLES_WORKER = [7, 8];
 const ROLES_ALL    = [...ROLES_ADMIN, ...ROLES_WORKER];
@@ -152,6 +156,11 @@ export const AppRouter = () => {
 
         {/* Configuración — usa AppLayout normal */}
         <Route path="/configuracion" element={<ConfiguracionPage />} />
+
+        {/* Gastos Imprevistos — usa AppLayout normal */}
+
+        <Route path="/gastos-imprevistos" element={<GastosImprevistosPage />} />
+
 
       </Route>
 
