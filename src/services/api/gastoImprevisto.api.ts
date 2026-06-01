@@ -7,7 +7,7 @@ import type {
   UpdateEstadoGastoPayload,
 } from '../../modules/gastosImprevistos/types/gastosImprevisto.types';
 
-const BASE = '/gastos';
+const BASE = '/gastos-imprevistos';
 
 export const gastoImprevistoApi = {
   async getAll(): Promise<GastoImprevisto[]> {
