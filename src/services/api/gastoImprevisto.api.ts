@@ -1,4 +1,5 @@
 // src/services/api/gastoImprevisto.api.ts
+import { env } from '../../app/config/env';
 
 import httpClient from '../httpClient';
 import type {
@@ -7,7 +8,7 @@ import type {
   UpdateEstadoGastoPayload,
 } from '../../modules/gastosImprevistos/types/gastosImprevisto.types';
 
-const BASE = '/gastos-imprevistos';
+const BASE = `${env.obraApiUrl}/gastos-imprevistos`;
 
 export const gastoImprevistoApi = {
   async getAll(): Promise<GastoImprevisto[]> {
