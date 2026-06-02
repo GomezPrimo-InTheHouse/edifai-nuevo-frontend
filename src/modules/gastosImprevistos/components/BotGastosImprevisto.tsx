@@ -377,7 +377,7 @@ import {
   Dialog, DialogActions, DialogContent, DialogTitle,
   IconButton, MenuItem, Stack, TextField, Typography, useTheme,
 } from '@mui/material';
-import { Mic, MicOff, Send, Check, X, Bot, AlertTriangle } from 'lucide-react';
+import { Mic, MicOff, Check, X, Bot, AlertTriangle } from 'lucide-react';
 import type { CreateGastoImprevistoPayload } from '../types/gastosImprevisto.types';
 import type { Obra } from '../../obras/types/obra.types';
 import type { EspecialidadOption } from '../../trabajadores/types/trabajador.types';
