@@ -35,6 +35,10 @@ export const gastoImprevistoApi = {
     const res = await httpClient.patch<{ success: boolean; data: GastoImprevisto }>(`${BASE}/${id}/estado`, payload);
     return res.data.data;
   },
+  async updateDeudor(id: number, payload: { deudor_cliente_id?: number | null; deudor_usuario_id?: number | null }): Promise<GastoImprevisto> {
+  const res = await httpClient.patch<{ success: boolean; data: GastoImprevisto }>(`${BASE}/${id}/deudor`, payload);
+  return res.data.data;
+},
 
   async remove(id: number): Promise<void> {
     await httpClient.delete(`${BASE}/${id}`);

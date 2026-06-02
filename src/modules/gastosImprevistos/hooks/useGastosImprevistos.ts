@@ -57,3 +57,12 @@ export const useEliminarGastoImprevisto = () => {
     onSuccess:  () => qc.invalidateQueries({ queryKey: KEYS.all }),
   });
 };
+
+export const useActualizarDeudorGasto = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: { deudor_cliente_id?: number | null; deudor_usuario_id?: number | null } }) =>
+      gastoImprevistoApi.updateDeudor(id, payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: KEYS.all }),
+  });
+};
