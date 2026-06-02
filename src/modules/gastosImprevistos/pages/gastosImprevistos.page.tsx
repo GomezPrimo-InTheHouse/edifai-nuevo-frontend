@@ -609,9 +609,9 @@ const CHART_COLORS = ['#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#EF4444', '#F
 
 // ── Estado chip ──────────────────────────────────────────────
 const ESTADO_COLOR: Record<string, 'warning' | 'info' | 'success'> = {
-  pendiente: 'warning',
+  activo:               'warning',
   'parcialmente pagado': 'info',
-  saldado: 'success',
+  saldado:              'success',
 };
 
 const EstadoChip: React.FC<{ estadoNombre?: string }> = ({ estadoNombre }) => {
@@ -1094,23 +1094,24 @@ export const GastosImprevistosPage: React.FC = () => {
       </Dialog>
 
       {/* ── Modal Cambiar Estado ── */}
-      <Dialog open={!!openEstado} onClose={() => setOpenEstado(null)} maxWidth="xs" fullWidth>
-        <DialogTitle>{t('gastos.estado_modal.title')}</DialogTitle>
-        <DialogContent>
-          <TextField select fullWidth size="small" label={t('gastos.estado_modal.nuevo_estado')} sx={{ mt: 1 }}
-            value={nuevoEstado} onChange={(e) => setNuevoEstado(Number(e.target.value))}>
-            <MenuItem value={16}>{t('gastos.estados.pendiente')}</MenuItem>
-            <MenuItem value={17}>{t('gastos.estados.parcialmente_pagado')}</MenuItem>
-            <MenuItem value={18}>{t('gastos.estados.saldado')}</MenuItem>
-          </TextField>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenEstado(null)}>{t('gastos.estado_modal.cancelar')}</Button>
-          <Button variant="contained" onClick={handleEstado} disabled={estadoMutation.isPending}>
-            {estadoMutation.isPending ? t('gastos.estado_modal.guardando') : t('gastos.estado_modal.guardar')}
-          </Button>
-        </DialogActions>
-      </Dialog>
+    {/* ── Modal Cambiar Estado ── */}
+<Dialog open={!!openEstado} onClose={() => setOpenEstado(null)} maxWidth="xs" fullWidth>
+  <DialogTitle>{t('gastos.estado_modal.title')}</DialogTitle>
+  <DialogContent>
+    <TextField select fullWidth size="small" label={t('gastos.estado_modal.nuevo_estado')} sx={{ mt: 1 }}
+      value={nuevoEstado} onChange={(e) => setNuevoEstado(Number(e.target.value))}>
+      <MenuItem value={16}>Activo / Pendiente</MenuItem>
+      <MenuItem value={26}>Parcialmente pagado</MenuItem>
+      <MenuItem value={27}>Saldado</MenuItem>
+    </TextField>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenEstado(null)}>{t('gastos.estado_modal.cancelar')}</Button>
+    <Button variant="contained" onClick={handleEstado} disabled={estadoMutation.isPending}>
+      {estadoMutation.isPending ? t('gastos.estado_modal.guardando') : t('gastos.estado_modal.guardar')}
+    </Button>
+  </DialogActions>
+</Dialog>
 
       {/* ── Modal Confirmar Eliminar ── */}
       <Dialog open={!!openEliminar} onClose={() => setOpenEliminar(null)} maxWidth="xs" fullWidth>
