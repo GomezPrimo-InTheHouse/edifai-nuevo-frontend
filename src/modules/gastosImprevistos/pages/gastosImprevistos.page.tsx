@@ -862,7 +862,7 @@ export const GastosImprevistosPage: React.FC = () => {
                       )}
 
                       <Typography variant="caption" color="text.disabled">
-                        {new Date(gasto.fecha + 'T12:00:00').toLocaleDateString('es-AR')}
+                        {new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
                       </Typography>
 
                       {gasto.deudor_automatico && (
