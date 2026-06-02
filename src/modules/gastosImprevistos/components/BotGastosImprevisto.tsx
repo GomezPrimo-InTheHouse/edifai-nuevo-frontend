@@ -767,53 +767,53 @@ export const BotGastoImprevisto: React.FC<BotGastoImprevistoProps> = ({
     setGrabando(false);
   };
 
-  // ── Whisper — transcripción ──────────────────────────────────
-  const transcribirConWhisper = async (blob: Blob, mimeType: string) => {
-    setProcesando(true);
-    setEtapa('transcribiendo');
-    setError(null);
+ const transcribirConWhisper = async (blob: Blob, mimeType: string) => {
+  setProcesando(true);
+  setEtapa('transcribiendo');
+  setError(null);
 
-    try {
-      const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-      const file = blobToFile(blob, `audio.${extension}`);
+  try {
+    const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+    const file = blobToFile(blob, `audio.${extension}`);
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('model', 'whisper-1');
-      formData.append('language', 'es');
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('model', 'whisper-large-v3-turbo');
+    formData.append('language', 'es');
+    formData.append('response_format', 'json');
 
-      const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
-        },
-        body: formData,
-      });
+    const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+      },
+      body: formData,
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        console.error('Whisper error:', data);
-        setError(`Error al transcribir: ${data.error?.message ?? 'Error desconocido'}`);
-        return;
-      }
-
-      const transcripcion = data.text?.trim();
-      if (!transcripcion) {
-        setError('No se detectó voz. Intentá de nuevo.');
-        return;
-      }
-
-      setTexto(transcripcion);
-      await procesarConClaude(transcripcion);
-
-    } catch (err: any) {
-      setError(`Error al transcribir el audio: ${err.message}`);
-    } finally {
-      setProcesando(false);
-      setEtapa(null);
+    if (!res.ok) {
+      console.error('Groq error:', data);
+      setError(`Error al transcribir: ${data.error?.message ?? 'Error desconocido'}`);
+      return;
     }
-  };
+
+    const transcripcion = data.text?.trim();
+    if (!transcripcion) {
+      setError('No se detectó voz. Intentá de nuevo.');
+      return;
+    }
+
+    setTexto(transcripcion);
+    await procesarConClaude(transcripcion);
+
+  } catch (err: any) {
+    setError(`Error al transcribir el audio: ${err.message}`);
+  } finally {
+    setProcesando(false);
+    setEtapa(null);
+  }
+};
 
   // ── Claude — estructurar JSON ────────────────────────────────
   const procesarConClaude = async (textoInput?: string) => {
