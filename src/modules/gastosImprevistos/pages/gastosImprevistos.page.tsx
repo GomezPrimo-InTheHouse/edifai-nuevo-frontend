@@ -609,9 +609,9 @@ const CHART_COLORS = ['#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#EF4444', '#F
 
 // ── Estado chip ──────────────────────────────────────────────
 const ESTADO_COLOR: Record<string, 'warning' | 'info' | 'success'> = {
-  activo:               'warning',
+  activo: 'warning',
   'parcialmente pagado': 'info',
-  saldado:              'success',
+  saldado: 'success',
 };
 
 const EstadoChip: React.FC<{ estadoNombre?: string }> = ({ estadoNombre }) => {
@@ -648,37 +648,37 @@ export const GastosImprevistosPage: React.FC = () => {
   const { data: gastos = [], isLoading, isError, refetch } = useGastosImprevistosList() as {
     data: GastoImprevisto[]; isLoading: boolean; isError: boolean; refetch: () => void;
   };
-  const { data: obras       = [] } = useObrasList();
+  const { data: obras = [] } = useObrasList();
   const { data: especialidades = [] } = useEspecialidadesList();
-  const { data: formasPago  = [] } = useFormasPagoList();
+  const { data: formasPago = [] } = useFormasPagoList();
   const { data: trabajadores = [] } = useTrabajadoresList();
-  const { data: clientes    = [] } = useClientesList();
+  const { data: clientes = [] } = useClientesList();
 
   // ── Mutations ─────────────────────────────────────────────────
-  const crearMutation    = useCrearGastoImprevisto();
-  const estadoMutation   = useActualizarEstadoGasto();
+  const crearMutation = useCrearGastoImprevisto();
+  const estadoMutation = useActualizarEstadoGasto();
   const eliminarMutation = useEliminarGastoImprevisto();
-  const deudorMutation   = useActualizarDeudorGasto();
+  const deudorMutation = useActualizarDeudorGasto();
 
   // ── UI state ─────────────────────────────────────────────────
-  const [tab,           setTab]          = useState(0);
-  const [openCrear,     setOpenCrear]    = useState(false);
-  const [openEstado,    setOpenEstado]   = useState<GastoImprevisto | null>(null);
-  const [openEliminar,  setOpenEliminar] = useState<number | null>(null);
-  const [form,          setForm]         = useState<CreateGastoImprevistoPayload>(EMPTY_FORM);
-  const [nuevoEstado,   setNuevoEstado]  = useState<number>(0);
-  const [errors,        setErrors]       = useState<string[]>([]);
+  const [tab, setTab] = useState(0);
+  const [openCrear, setOpenCrear] = useState(false);
+  const [openEstado, setOpenEstado] = useState<GastoImprevisto | null>(null);
+  const [openEliminar, setOpenEliminar] = useState<number | null>(null);
+  const [form, setForm] = useState<CreateGastoImprevistoPayload>(EMPTY_FORM);
+  const [nuevoEstado, setNuevoEstado] = useState<number>(0);
+  const [errors, setErrors] = useState<string[]>([]);
 
   // Deudor inline
-  const [editandoDeudor,    setEditandoDeudor]    = useState<number | null>(null);
+  const [editandoDeudor, setEditandoDeudor] = useState<number | null>(null);
   const [deudorSeleccionado, setDeudorSeleccionado] = useState<number | ''>('');
 
   // ── Stats ─────────────────────────────────────────────────────
   const stats = useMemo(() => {
-    const total      = gastos.length;
+    const total = gastos.length;
     const montoTotal = gastos.reduce((acc, g) => acc + Number(g.monto), 0);
-    const pendiente  = gastos.filter(g => g.estado_nombre === 'pendiente').reduce((acc, g) => acc + Number(g.monto), 0);
-    const saldado    = gastos.filter(g => g.estado_nombre === 'saldado').reduce((acc, g) => acc + Number(g.monto), 0);
+    const pendiente = gastos.filter(g => g.estado_nombre === 'pendiente').reduce((acc, g) => acc + Number(g.monto), 0);
+    const saldado = gastos.filter(g => g.estado_nombre === 'saldado').reduce((acc, g) => acc + Number(g.monto), 0);
 
     const porEspecialidad = Object.values(
       gastos.reduce((acc, g) => {
@@ -704,19 +704,19 @@ export const GastosImprevistosPage: React.FC = () => {
   }, [gastos]);
 
   if (isLoading) return <LoadingState message={t('gastos.loading')} />;
-  if (isError)   return <ErrorState title="Error" message={t('gastos.error')} onRetry={refetch} />;
+  if (isError) return <ErrorState title="Error" message={t('gastos.error')} onRetry={refetch} />;
 
   // ── Handlers ─────────────────────────────────────────────────
   const handleCrear = async () => {
     const errs: string[] = [];
-    if (!form.obra_id)                    errs.push('obra_id');
-    if (!form.especialidad_id)            errs.push('especialidad_id');
-    if (!form.descripcion)                errs.push('descripcion');
-    if (!form.motivo)                     errs.push('motivo');
-    if (!form.monto || form.monto <= 0)   errs.push('monto');
-    if (!form.forma_pago_id)              errs.push('forma_pago_id');
-    if (!form.fecha)                      errs.push('fecha');
-    if (!form.pagado_por_id)              errs.push('pagado_por');
+    if (!form.obra_id) errs.push('obra_id');
+    if (!form.especialidad_id) errs.push('especialidad_id');
+    if (!form.descripcion) errs.push('descripcion');
+    if (!form.motivo) errs.push('motivo');
+    if (!form.monto || form.monto <= 0) errs.push('monto');
+    if (!form.forma_pago_id) errs.push('forma_pago_id');
+    if (!form.fecha) errs.push('fecha');
+    if (!form.pagado_por_id) errs.push('pagado_por');
     if (errs.length > 0) { setErrors(errs); return; }
     try {
       await crearMutation.mutateAsync(form);
@@ -759,8 +759,8 @@ export const GastosImprevistosPage: React.FC = () => {
   };
 
   // ── Chart colors ──────────────────────────────────────────────
-  const tickColor  = theme.palette.text.secondary;
-  const tooltipBg  = theme.palette.background.paper;
+  const tickColor = theme.palette.text.secondary;
+  const tooltipBg = theme.palette.background.paper;
   const tooltipBorder = theme.palette.divider;
 
   // ── Render ────────────────────────────────────────────────────
@@ -857,8 +857,28 @@ export const GastosImprevistosPage: React.FC = () => {
 
                       {gasto.especialidad_nombre && (
                         <Typography variant="caption" color="text.secondary">
-                          {gasto.especialidad_nombre} · {gasto.forma_pago_nombre}
+                          {gasto.especialidad_nombre}
                         </Typography>
+                      )}
+                      {gasto.pagado_por_nombre && (
+                        <Stack direction="row" alignItems="center" gap={0.5}>
+                          <Typography variant="caption" color="text.disabled">Pagado por:</Typography>
+                          <Typography variant="caption" fontWeight={600} color="text.secondary">
+                            {gasto.pagado_por_nombre}
+                          </Typography>
+                        </Stack>
+                      )}
+                      {(gasto.formas_pago ?? []).length > 0 && (
+                        <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                          {(gasto.formas_pago ?? []).map((fp, i) => (
+                            <Chip
+                              key={i}
+                              label={`${fp.forma_pago_nombre ?? 'Pago'} $${Number(fp.monto).toLocaleString('es-AR')}`}
+                              size="small"
+                              sx={{ bgcolor: theme.palette.action.hover, color: 'text.secondary', fontSize: 11 }}
+                            />
+                          ))}
+                        </Stack>
                       )}
 
                       <Typography variant="caption" color="text.disabled">
@@ -934,10 +954,10 @@ export const GastosImprevistosPage: React.FC = () => {
           {/* KPIs */}
           <Grid container spacing={2}>
             {[
-              { label: t('gastos.stats.total_gastos'),  value: stats.total,       color: '#F59E0B', isCount: true },
-              { label: t('gastos.stats.monto_total'),   value: stats.montoTotal,  color: '#3B82F6' },
-              { label: t('gastos.stats.pendiente'),     value: stats.pendiente,   color: '#EF4444' },
-              { label: t('gastos.stats.saldado'),       value: stats.saldado,     color: '#16A34A' },
+              { label: t('gastos.stats.total_gastos'), value: stats.total, color: '#F59E0B', isCount: true },
+              { label: t('gastos.stats.monto_total'), value: stats.montoTotal, color: '#3B82F6' },
+              { label: t('gastos.stats.pendiente'), value: stats.pendiente, color: '#EF4444' },
+              { label: t('gastos.stats.saldado'), value: stats.saldado, color: '#16A34A' },
             ].map((kpi) => (
               <Grid key={kpi.label} size={{ xs: 6, md: 3 }}>
                 <Card elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper' }}>
@@ -1094,24 +1114,24 @@ export const GastosImprevistosPage: React.FC = () => {
       </Dialog>
 
       {/* ── Modal Cambiar Estado ── */}
-    {/* ── Modal Cambiar Estado ── */}
-<Dialog open={!!openEstado} onClose={() => setOpenEstado(null)} maxWidth="xs" fullWidth>
-  <DialogTitle>{t('gastos.estado_modal.title')}</DialogTitle>
-  <DialogContent>
-    <TextField select fullWidth size="small" label={t('gastos.estado_modal.nuevo_estado')} sx={{ mt: 1 }}
-      value={nuevoEstado} onChange={(e) => setNuevoEstado(Number(e.target.value))}>
-      <MenuItem value={16}>Activo / Pendiente</MenuItem>
-      <MenuItem value={26}>Parcialmente pagado</MenuItem>
-      <MenuItem value={27}>Saldado</MenuItem>
-    </TextField>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setOpenEstado(null)}>{t('gastos.estado_modal.cancelar')}</Button>
-    <Button variant="contained" onClick={handleEstado} disabled={estadoMutation.isPending}>
-      {estadoMutation.isPending ? t('gastos.estado_modal.guardando') : t('gastos.estado_modal.guardar')}
-    </Button>
-  </DialogActions>
-</Dialog>
+      {/* ── Modal Cambiar Estado ── */}
+      <Dialog open={!!openEstado} onClose={() => setOpenEstado(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>{t('gastos.estado_modal.title')}</DialogTitle>
+        <DialogContent>
+          <TextField select fullWidth size="small" label={t('gastos.estado_modal.nuevo_estado')} sx={{ mt: 1 }}
+            value={nuevoEstado} onChange={(e) => setNuevoEstado(Number(e.target.value))}>
+            <MenuItem value={16}>Activo / Pendiente</MenuItem>
+            <MenuItem value={26}>Parcialmente pagado</MenuItem>
+            <MenuItem value={27}>Saldado</MenuItem>
+          </TextField>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEstado(null)}>{t('gastos.estado_modal.cancelar')}</Button>
+          <Button variant="contained" onClick={handleEstado} disabled={estadoMutation.isPending}>
+            {estadoMutation.isPending ? t('gastos.estado_modal.guardando') : t('gastos.estado_modal.guardar')}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* ── Modal Confirmar Eliminar ── */}
       <Dialog open={!!openEliminar} onClose={() => setOpenEliminar(null)} maxWidth="xs" fullWidth>
