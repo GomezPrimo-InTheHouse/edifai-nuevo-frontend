@@ -118,7 +118,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
       onlyAdmin: false,
       items: [
         { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6] },
+        { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 7, 8] },
         { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6] },
         { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6] },
         { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
