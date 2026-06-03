@@ -99,6 +99,8 @@ export const AppRouter = () => {
       {/* ── Compartidas ── */}
       <Route element={<ProtectedRoute allowedRoles={ROLES_ALL} />}>
         <Route index element={<DashboardPage />} />
+        <Route path="/gastos-imprevistos" element={<GastosImprevistosPage />} />
+
       </Route>
 
       {/* ── Labores (admin + workers) ── */}
@@ -159,7 +161,6 @@ export const AppRouter = () => {
 
         {/* Gastos Imprevistos — usa AppLayout normal */}
 
-        <Route path="/gastos-imprevistos" element={<GastosImprevistosPage />} />
 
 
       </Route>
