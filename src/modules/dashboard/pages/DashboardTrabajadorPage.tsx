@@ -1,25 +1,21 @@
 // src/modules/dashboard/pages/DashboardTrabajadorPage.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Box, Button, Card, CardContent, Chip, CircularProgress,
-  Dialog, DialogActions, DialogContent, DialogTitle,
-  Grid, LinearProgress, MenuItem, Stack,
-  Table, TableBody, TableCell, TableHead, TableRow,
-  TextField, Typography, useTheme, Avatar,
+  Box, Card, CardContent, Chip, Grid, LinearProgress,
+  Stack, Table, TableBody, TableCell, TableHead, TableRow,
+  Typography, useTheme, Avatar,
 } from '@mui/material';
-import { CalendarCheck, HardHat, DollarSign, Receipt, Award, Plus } from 'lucide-react';
+import { CalendarCheck, HardHat, DollarSign, Receipt, Award } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
-// import { useAuthStore } from '../../../app/store/auth.store';
 import { dashboardApi } from '../../../services/api/dashboard.api';
 import { KpiCard, formatMoney } from '../components/DashboardShared';
 import { useCrearGastoImprevisto } from '../../gastosImprevistos/hooks/useGastosImprevistos';
 import { useFormasPagoList } from '../../pagos/hooks/useFormasPago';
 import { useNotify } from '../../../shared/hooks/useNotify';
-import { gastoImprevistoApi } from '../../../services/api/gastoImprevisto.api';
-import type { CreateGastoImprevistoPayloadV2, FormaPagoDetalle } from '../../gastosImprevistos/types/gastosImprevisto.types';
+import { BotGastoImprevisto } from '../../gastosImprevistos/components/BotGastosImprevisto';
 
 const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0, 'Labor en proceso': 25,
@@ -31,65 +27,36 @@ const PROGRESO_COLOR: Record<string, string> = {
   'Avanzada': '#F59E0B', 'Muy avanzada': '#2563EB', 'Finalizada': '#16A34A',
 };
 
-// ── Form de gasto simplificado para worker ───────────────────
-interface GastoWorkerForm {
-  obra_id:         number;
-  especialidad_id: number;
-  descripcion:     string;
-  monto:           number;
-  pagado_por_id:   number;
-  fecha:           string;
-  formas_pago:     FormaPagoDetalle[];
-}
-
-const EMPTY_FORM = (trabajadorId: number, especialidadId: number): GastoWorkerForm => ({
-  obra_id:         0,
-  especialidad_id: especialidadId,
-  descripcion:     '',
-  monto:           0,
-  pagado_por_id:   trabajadorId,
-  fecha:           new Date().toISOString().split('T')[0],
-  formas_pago:     [{ forma_pago_id: 0, monto: 0 }],
-});
-
 export const DashboardTrabajadorPage: React.FC = () => {
-  const { t } = useTranslation();
-  const theme  = useTheme();
+  const { t }    = useTranslation();
+  const theme    = useTheme();
   const navigate = useNavigate();
-  const notify = useNotify();
+  const notify   = useNotify();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['dashboard-trabajador'],
-    queryFn:  dashboardApi.getTrabajador,
+    queryKey:        ['dashboard-trabajador'],
+    queryFn:         dashboardApi.getTrabajador,
     refetchInterval: 60000,
   });
 
-  // Queries auxiliares para el form de gasto
   const { data: formasPago = [] } = useFormasPagoList();
-  const crearGastoMutation = useCrearGastoImprevisto();
-
-  // Estado del modal de gasto
-  const [openGasto,    setOpenGasto]    = useState(false);
-  const [form,         setForm]         = useState<GastoWorkerForm | null>(null);
-  const [formErrors,   setFormErrors]   = useState<string[]>([]);
-  const [subiendoTicket, setSubiendoTicket] = useState(false);
-  const [ticketPreview,  setTicketPreview]  = useState<string | null>(null);
-  const [ticketUrl,      setTicketUrl]      = useState<string | null>(null);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const crearGastoMutation        = useCrearGastoImprevisto();
 
   if (isLoading) return <LoadingState message={t('dashboard.loading_worker')} />;
   if (!data)     return null;
 
   const { trabajador, obra_actual, kpis, labores, dias_asistencia, ultimos_pagos, mes_actual } = data;
 
-  // Datos del trabajador para el form
-  const trabajadorId   = trabajador.id;
-  const especialidadId = trabajador.especialidad_id ?? 0;
+  const trabajadorId = trabajador.id;
   const equipo: { id: number; nombre: string; apellido: string }[] = trabajador.equipo ?? [];
 
-  // Obras del trabajador (de sus labores activas)
+  // Obras disponibles extraídas de las labores activas
   const obrasDisponibles = Array.from(
-    new Map(labores.map((l: any) => [l.obra_id, { id: l.obra_id, nombre: l.obra_nombre }])).values()
+    new Map(
+      labores
+        .filter((l: any) => l.obra_id && l.obra_nombre)
+        .map((l: any) => [l.obra_id, { id: l.obra_id, nombre: l.obra_nombre }])
+    ).values()
   );
 
   // ── Calendario ───────────────────────────────────────────────
@@ -111,104 +78,10 @@ export const DashboardTrabajadorPage: React.FC = () => {
 
   const diasSemana = ['lu', 'ma', 'mi', 'ju', 'vi', 'sa', 'do'];
 
-  // ── Handlers gasto ───────────────────────────────────────────
-  const handleAbrirGasto = () => {
-    setForm(EMPTY_FORM(trabajadorId, especialidadId));
-    setFormErrors([]);
-    setTicketPreview(null);
-    setTicketUrl(null);
-    setOpenGasto(true);
-  };
-
-  const handleTicketChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setSubiendoTicket(true);
-    try {
-      const localUrl = URL.createObjectURL(file);
-      setTicketPreview(localUrl);
-      const url = await gastoImprevistoApi.uploadTicket(file);
-      setTicketUrl(url);
-
-      // Analizar con IA y pre-llenar
-      const resultado = await gastoImprevistoApi.analizarTicketConIA(
-        url,
-        formasPago.map((f: any) => ({ id: f.id, nombre: f.nombre }))
-      );
-      setForm(prev => prev ? {
-        ...prev,
-        ...(resultado.descripcion && { descripcion: resultado.descripcion }),
-        ...(resultado.monto       && { monto: resultado.monto }),
-        ...(resultado.fecha       && { fecha: resultado.fecha }),
-        ...(resultado.formas_pago && resultado.formas_pago.length > 0 && { formas_pago: resultado.formas_pago }),
-      } : prev);
-    } catch {
-      notify.error('Error al procesar el ticket');
-    } finally {
-      setSubiendoTicket(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-  };
-
-  const agregarFormaPago = () => {
-    setForm(prev => prev ? {
-      ...prev,
-      formas_pago: [...prev.formas_pago, { forma_pago_id: 0, monto: 0 }],
-    } : prev);
-  };
-
-  const actualizarFormaPago = (i: number, field: 'forma_pago_id' | 'monto', value: number) => {
-    setForm(prev => {
-      if (!prev) return prev;
-      const fp = [...prev.formas_pago];
-      fp[i] = { ...fp[i], [field]: value };
-      return { ...prev, formas_pago: fp };
-    });
-  };
-
-  const eliminarFormaPago = (i: number) => {
-    setForm(prev => prev ? { ...prev, formas_pago: prev.formas_pago.filter((_, idx) => idx !== i) } : prev);
-  };
-
-  const handleGuardarGasto = async () => {
-    if (!form) return;
-    const errs: string[] = [];
-    if (!form.obra_id)      errs.push('obra');
-    if (!form.descripcion)  errs.push('descripcion');
-    if (!form.monto || form.monto <= 0) errs.push('monto');
-    if (form.formas_pago.length === 0)  errs.push('forma_pago');
-    const suma = form.formas_pago.reduce((acc, fp) => acc + Number(fp.monto), 0);
-    if (Math.abs(suma - Number(form.monto)) > 0.01) errs.push('suma_formas_pago');
-    if (errs.length > 0) { setFormErrors(errs); return; }
-
-    const payload: CreateGastoImprevistoPayloadV2 = {
-      obra_id:         form.obra_id,
-      especialidad_id: form.especialidad_id,
-      descripcion:     form.descripcion,
-      monto:           form.monto,
-      formas_pago:     form.formas_pago,
-      pagado_por_id:   form.pagado_por_id,
-      fecha:           form.fecha,
-      ticket_url:      ticketUrl,
-    };
-
-    try {
-      await crearGastoMutation.mutateAsync(payload as any);
-      notify.success('Gasto registrado correctamente');
-      setOpenGasto(false);
-    } catch {
-      notify.error('Error al registrar el gasto');
-    }
-  };
-
-  const sumaFormasPago = form?.formas_pago.reduce((acc, fp) => acc + Number(fp.monto), 0) ?? 0;
-  const formasPagoSuman = form?.monto ? Math.abs(sumaFormasPago - Number(form.monto)) <= 0.01 : false;
-
-  // ── Render ────────────────────────────────────────────────────
   return (
     <Stack spacing={3}>
 
-      {/* Header trabajador */}
+      {/* ── Header trabajador ── */}
       <Card elevation={0} sx={{
         borderRadius: 3,
         border: `1px solid ${theme.palette.divider}`,
@@ -251,7 +124,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* KPIs */}
+      {/* ── KPIs ── */}
       <Grid container spacing={2}>
         <Grid size={{ xs: 6, sm: 3 }}>
           <KpiCard icon={<HardHat size={20} />} label={t('dashboard.kpis.labores_activas_worker')}
@@ -278,22 +151,31 @@ export const DashboardTrabajadorPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Botón registrar gasto */}
-      <Button
-        variant="contained" fullWidth startIcon={<Plus size={18} />}
-        onClick={handleAbrirGasto}
-        sx={{
-          py: 1.5, borderRadius: 2, fontWeight: 700, fontSize: 15,
-          bgcolor: '#F59E0B', color: '#0F172A',
-          '&:hover': { bgcolor: '#D97706' },
-        }}
-      >
-        Registrar gasto imprevisto
-      </Button>
+      {/* ── Bot registrar gasto ── */}
+      <Box sx={{ width: '100%' }}>
+        <BotGastoImprevisto
+          obras={obrasDisponibles as any[]}
+          especialidades={
+            trabajador.especialidad_id
+              ? [{ id: trabajador.especialidad_id, nombre: (trabajador as any).especialidad_nombre ?? 'Mi especialidad' }]
+              : []
+          }
+          formasPago={formasPago as any[]}
+          trabajadores={[
+            { id: trabajadorId, nombre: trabajador.nombre, apellido: trabajador.apellido },
+            ...equipo,
+          ]}
+          onConfirmar={async (payload) => {
+            await crearGastoMutation.mutateAsync(payload as any);
+            notify.success('Gasto registrado correctamente');
+          }}
+          isSubmitting={crearGastoMutation.isPending}
+        />
+      </Box>
 
       <Grid container spacing={2}>
 
-        {/* Calendario */}
+        {/* ── Calendario ── */}
         <Grid size={{ xs: 12, md: 5 }}>
           <Card elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ p: 2.5 }}>
@@ -303,6 +185,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
                   {t('dashboard.worker.calendario_titulo', { mes: MESES[mes_actual.mes - 1], anio: mes_actual.anio })}
                 </Typography>
               </Stack>
+
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', mb: 1 }}>
                 {diasSemana.map((d) => (
                   <Typography key={d} sx={{ fontSize: 11, textAlign: 'center', color: 'text.disabled', fontWeight: 600 }}>
@@ -310,12 +193,13 @@ export const DashboardTrabajadorPage: React.FC = () => {
                   </Typography>
                 ))}
               </Box>
+
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
                 {diasGrid.map((d, i) => {
                   if (d === null) return <Box key={`e-${i}`} />;
-                  const str   = diaStr(d);
-                  const hoy   = new Date().toISOString().split('T')[0];
-                  const finde = esFinDeSemana(d);
+                  const str     = diaStr(d);
+                  const hoy     = new Date().toISOString().split('T')[0];
+                  const finde   = esFinDeSemana(d);
                   const marcado = dias_asistencia.includes(str);
                   const esHoy   = str === hoy;
                   const futuro  = str > hoy;
@@ -329,21 +213,22 @@ export const DashboardTrabajadorPage: React.FC = () => {
 
                   return (
                     <Box key={`dia-${d}`} sx={{
-                      height: 32, borderRadius: 1, display: 'flex',
-                      alignItems: 'center', justifyContent: 'center', bgcolor: bg,
-                      border: esHoy ? '2px solid #F59E0B' : 'none',
+                      height: 32, borderRadius: 1,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      bgcolor: bg, border: esHoy ? '2px solid #F59E0B' : 'none',
                     }}>
                       <Typography sx={{ fontSize: 12, fontWeight: esHoy ? 800 : 500, color }}>{d}</Typography>
                     </Box>
                   );
                 })}
               </Box>
+
               <Stack direction="row" gap={2} mt={1.5}>
                 {(['presente', 'ausente', 'futuro'] as const).map((key) => {
                   const cfg = {
-                    presente: { bg: '#DCFCE7', color: '#15803D' },
-                    ausente:  { bg: '#FEE2E2', color: '#DC2626' },
-                    futuro:   { bg: theme.palette.action.hover, color: theme.palette.text.disabled },
+                    presente: { bg: '#DCFCE7' },
+                    ausente:  { bg: '#FEE2E2' },
+                    futuro:   { bg: theme.palette.action.hover },
                   }[key];
                   return (
                     <Stack key={key} direction="row" alignItems="center" gap={0.5}>
@@ -359,7 +244,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
           </Card>
         </Grid>
 
-        {/* Mis labores */}
+        {/* ── Mis labores ── */}
         <Grid size={{ xs: 12, md: 7 }}>
           <Card elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.palette.divider}`, height: '100%' }}>
             <CardContent sx={{ p: 2.5 }}>
@@ -379,7 +264,8 @@ export const DashboardTrabajadorPage: React.FC = () => {
                     return (
                       <Box key={l.id} onClick={() => navigate(`/labores/${l.id}`)}
                         sx={{
-                          p: 1.5, borderRadius: 2, border: `1px solid ${theme.palette.divider}`,
+                          p: 1.5, borderRadius: 2,
+                          border: `1px solid ${theme.palette.divider}`,
                           cursor: 'pointer', transition: 'all 0.15s',
                           '&:hover': { borderColor: color, bgcolor: `${color}08` },
                         }}>
@@ -405,7 +291,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
           </Card>
         </Grid>
 
-        {/* Últimos pagos */}
+        {/* ── Últimos pagos ── */}
         <Grid size={{ xs: 12 }}>
           <Card elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.palette.divider}` }}>
             <CardContent sx={{ p: 2.5 }}>
@@ -431,17 +317,35 @@ export const DashboardTrabajadorPage: React.FC = () => {
                   <TableBody>
                     {ultimos_pagos.map((p: any) => (
                       <TableRow key={p.id} hover>
-                        <TableCell><Typography sx={{ fontSize: 13 }}>{new Date(p.fecha).toLocaleDateString('es-AR')}</Typography></TableCell>
-                        <TableCell><Typography sx={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>{formatMoney(Number(p.monto))}</Typography></TableCell>
-                        <TableCell><Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{p.forma_pago_nombre ?? '—'}</Typography></TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: 13 }}>
+                            {new Date(p.fecha).toLocaleDateString('es-AR')}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#10B981' }}>
+                            {formatMoney(Number(p.monto))}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>
+                            {p.forma_pago_nombre ?? '—'}
+                          </Typography>
+                        </TableCell>
                         <TableCell>
                           <Chip label={p.estado} size="small" sx={{
                             fontSize: 11, fontWeight: 700, height: 20,
-                            bgcolor: p.estado === 'Pagado' ? '#DCFCE7' : p.estado === 'Pendiente' ? '#FEF9C3' : '#FEE2E2',
-                            color:   p.estado === 'Pagado' ? '#15803D' : p.estado === 'Pendiente' ? '#854D0E' : '#DC2626',
+                            bgcolor: p.estado === 'Pagado'   ? '#DCFCE7'
+                                   : p.estado === 'Pendiente' ? '#FEF9C3' : '#FEE2E2',
+                            color:   p.estado === 'Pagado'   ? '#15803D'
+                                   : p.estado === 'Pendiente' ? '#854D0E' : '#DC2626',
                           }} />
                         </TableCell>
-                        <TableCell><Typography sx={{ fontSize: 13, color: 'text.secondary' }}>{p.motivo ?? '—'}</Typography></TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>
+                            {p.motivo ?? '—'}
+                          </Typography>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -451,132 +355,6 @@ export const DashboardTrabajadorPage: React.FC = () => {
           </Card>
         </Grid>
       </Grid>
-
-      {/* ── Modal registrar gasto ── */}
-      <Dialog open={openGasto} onClose={() => setOpenGasto(false)} maxWidth="sm" fullWidth
-        PaperProps={{ sx: { mx: { xs: 1, sm: 3 }, borderRadius: 3 } }}>
-        <DialogTitle>
-          <Stack direction="row" alignItems="center" gap={1}>
-            <Receipt size={20} color="#F59E0B" />
-            <Typography fontWeight={700}>Registrar gasto imprevisto</Typography>
-          </Stack>
-        </DialogTitle>
-        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
-          {form && (
-            <Stack spacing={2} sx={{ mt: 1 }}>
-
-              {/* Ticket upload */}
-              <Box>
-                <input ref={fileInputRef} type="file"
-                  accept="image/jpeg,image/png,image/webp,application/pdf"
-                  style={{ display: 'none' }} onChange={handleTicketChange}
-                  capture="environment" />
-                <Button variant="outlined" fullWidth
-                  startIcon={subiendoTicket ? <CircularProgress size={16} /> : <Plus size={16} />}
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={subiendoTicket}
-                  sx={{ borderRadius: 2, py: 1.5 }}>
-                  {subiendoTicket ? 'Analizando ticket...' : ticketUrl ? 'Cambiar ticket' : '📷 Subir ticket / factura'}
-                </Button>
-                {ticketPreview && (
-                  <Box sx={{ mt: 1, borderRadius: 2, overflow: 'hidden', border: `1px solid ${theme.palette.divider}` }}>
-                    <img src={ticketPreview} alt="Ticket" style={{ width: '100%', maxHeight: 150, objectFit: 'cover' }} />
-                  </Box>
-                )}
-              </Box>
-
-              {/* Obra */}
-              <TextField select fullWidth size="small" label="Obra"
-                error={formErrors.includes('obra')}
-                value={form.obra_id || ''}
-                onChange={(e) => setForm(f => f ? { ...f, obra_id: Number(e.target.value) } : f)}>
-                <MenuItem value="">Seleccionar obra</MenuItem>
-                {(obrasDisponibles as any[]).map((o) => (
-                  <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>
-                ))}
-              </TextField>
-
-              {/* Descripción */}
-              <TextField fullWidth size="small" label="Descripción"
-                error={formErrors.includes('descripcion')}
-                value={form.descripcion}
-                onChange={(e) => setForm(f => f ? { ...f, descripcion: e.target.value } : f)}
-                multiline minRows={2} />
-
-              {/* Monto */}
-              <TextField fullWidth size="small" type="number" label="Monto total"
-                error={formErrors.includes('monto')}
-                value={form.monto || ''}
-                onChange={(e) => setForm(f => f ? { ...f, monto: Number(e.target.value) } : f)} />
-
-              {/* Pagado por */}
-              <TextField select fullWidth size="small" label="Pagado por"
-                value={form.pagado_por_id || ''}
-                onChange={(e) => setForm(f => f ? { ...f, pagado_por_id: Number(e.target.value) } : f)}>
-                <MenuItem value={trabajadorId}>{trabajador.nombre} {trabajador.apellido} (yo)</MenuItem>
-                {equipo.map((t) => (
-                  <MenuItem key={t.id} value={t.id}>{t.nombre} {t.apellido}</MenuItem>
-                ))}
-              </TextField>
-
-              {/* Fecha */}
-              <TextField fullWidth size="small" type="date" label="Fecha"
-                value={form.fecha}
-                onChange={(e) => setForm(f => f ? { ...f, fecha: e.target.value } : f)}
-                InputLabelProps={{ shrink: true }} />
-
-              {/* Formas de pago */}
-              <Box>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
-                  <Typography variant="caption" fontWeight={700} color="text.secondary">FORMAS DE PAGO</Typography>
-                  {form.monto > 0 && (
-                    <Typography variant="caption" color={formasPagoSuman ? 'success.main' : 'error'}>
-                      {formasPagoSuman ? '✅ Suma correcta' : `Faltan $${(Number(form.monto) - sumaFormasPago).toLocaleString('es-AR')}`}
-                    </Typography>
-                  )}
-                </Stack>
-                <Stack spacing={1}>
-                  {form.formas_pago.map((fp, i) => (
-                    <Stack key={i} direction="row" spacing={1} alignItems="center">
-                      <TextField select size="small" sx={{ flex: 1 }}
-                        value={fp.forma_pago_id || ''}
-                        onChange={(e) => actualizarFormaPago(i, 'forma_pago_id', Number(e.target.value))}>
-                        <MenuItem value="">Forma de pago</MenuItem>
-                        {(formasPago as any[]).map((f) => <MenuItem key={f.id} value={f.id}>{f.nombre}</MenuItem>)}
-                      </TextField>
-                      <TextField size="small" type="number" sx={{ width: 110 }}
-                        placeholder="Monto" value={fp.monto || ''}
-                        onChange={(e) => actualizarFormaPago(i, 'monto', Number(e.target.value))} />
-                      {form.formas_pago.length > 1 && (
-                        <Button size="small" color="error" onClick={() => eliminarFormaPago(i)}
-                          sx={{ minWidth: 32, p: 0.5 }}>✕</Button>
-                      )}
-                    </Stack>
-                  ))}
-                </Stack>
-                <Button size="small" onClick={agregarFormaPago} sx={{ mt: 1, color: 'text.secondary' }}>
-                  + Agregar forma de pago
-                </Button>
-              </Box>
-
-              {formErrors.includes('suma_formas_pago') && (
-                <Typography variant="caption" color="error">
-                  Las formas de pago deben sumar el monto total
-                </Typography>
-              )}
-            </Stack>
-          )}
-        </DialogContent>
-        <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: 2 }}>
-          <Button onClick={() => setOpenGasto(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleGuardarGasto}
-            disabled={crearGastoMutation.isPending}
-            sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' } }}>
-            {crearGastoMutation.isPending ? 'Guardando...' : 'Registrar gasto'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
     </Stack>
   );
 };
