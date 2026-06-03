@@ -14,12 +14,15 @@ export interface Avance {
   aprobado_por?: number | null;
   fecha_aprobacion?: string | null;
   observacion_admin?: string | null;
-  resultado_vision?: string | null;
+  
   fecha_registro: string;
   created_at: string;
   trabajador_nombre?: string;
   labor_nombre?: string;
   admin_nombre?: string;
+  resultado_vision?:        string | null;
+  cambio_detectado?:        boolean | null;
+  imagen_comparada_con_id?: number | null;
 }
 
 const obraBaseUrl = `${env.obraApiUrl}/obra`;
