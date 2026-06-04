@@ -1,3 +1,4 @@
+// src/modules/trabajadores/pages/TrabajadoresPorEspecialidadPage.tsx
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -14,7 +15,8 @@ import { useEspecialidadesList } from '../hooks/useEspecialidades';
 import { useJefesConEquipo } from '../hooks/useTrabajadores';
 import type { JefeConEquipo } from '../types/trabajador.types';
 
-// Card de cada miembro del equipo
+type NavigateFn = (path: string, options?: { state?: any }) => void;
+
 function MiembroRow({ trabajador, onView, onEdit }: {
   trabajador: any;
   onView: () => void;
@@ -42,14 +44,19 @@ function MiembroRow({ trabajador, onView, onEdit }: {
   );
 }
 
-// Card de cada jefe con su equipo colapsable
-function JefeCard({ jefe, onNavigate }: { jefe: JefeConEquipo; onNavigate: (path: string) => void }) {
+function JefeCard({ jefe, onNavigate }: { jefe: JefeConEquipo; onNavigate: NavigateFn }) {
   const [equipoOpen, setEquipoOpen] = React.useState(false);
+
+  const verJefe  = () => onNavigate(`/trabajadores/${jefe.id}`, {
+    state: { breadcrumbLabel: `${jefe.nombre} ${jefe.apellido}` },
+  });
+  const editJefe = () => onNavigate(`/trabajadores/${jefe.id}/editar`, {
+    state: { breadcrumbLabel: `${jefe.nombre} ${jefe.apellido}` },
+  });
 
   return (
     <Card sx={{ borderRadius: 3, boxShadow: 1 }}>
       <CardContent sx={{ p: 2.5 }}>
-        {/* Header del jefe */}
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
           <Stack direction="row" spacing={1.5} alignItems="center">
             <Avatar sx={{ width: 42, height: 42, bgcolor: '#0F172A', fontSize: 14, fontWeight: 700 }}>
@@ -60,46 +67,42 @@ function JefeCard({ jefe, onNavigate }: { jefe: JefeConEquipo; onNavigate: (path
                 <Typography fontWeight={700} fontSize={15}>
                   {jefe.nombre} {jefe.apellido}
                 </Typography>
-                <Chip label="Jefe" size="small" sx={{ fontSize: 10, height: 18, bgcolor: '#F59E0B', color: '#fff', fontWeight: 700 }} />
+                <Chip label="Jefe" size="small"
+                  sx={{ fontSize: 10, height: 18, bgcolor: '#F59E0B', color: '#fff', fontWeight: 700 }} />
               </Stack>
               <Typography variant="caption" color="text.secondary">DNI: {jefe.dni}</Typography>
             </Box>
           </Stack>
           <Stack direction="row" spacing={0.5} alignItems="center">
-            <IconButton size="small" onClick={() => onNavigate(`/trabajadores/${jefe.id}`)}>
-              <Eye size={16} />
-            </IconButton>
-            <IconButton size="small" onClick={() => onNavigate(`/trabajadores/${jefe.id}/editar`)}>
-              <Pencil size={16} />
-            </IconButton>
+            <IconButton size="small" onClick={verJefe}><Eye size={16} /></IconButton>
+            <IconButton size="small" onClick={editJefe}><Pencil size={16} /></IconButton>
           </Stack>
         </Stack>
 
-        {/* Botón equipo */}
         {jefe.equipo.length > 0 && (
           <>
             <Divider sx={{ my: 1.5 }} />
-            <Stack
-              direction="row" spacing={1} alignItems="center"
-              onClick={() => setEquipoOpen((prev) => !prev)}
-              sx={{ cursor: 'pointer', color: '#64748B', '&:hover': { color: '#0F172A' } }}
-            >
+            <Stack direction="row" spacing={1} alignItems="center"
+              onClick={() => setEquipoOpen(p => !p)}
+              sx={{ cursor: 'pointer', color: '#64748B', '&:hover': { color: '#0F172A' } }}>
               <Users size={14} />
               <Typography fontSize={12} fontWeight={600}>
                 Equipo ({jefe.equipo.length} {jefe.equipo.length === 1 ? 'miembro' : 'miembros'})
               </Typography>
               {equipoOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </Stack>
-
-            {/* Lista colapsable del equipo */}
             <Collapse in={equipoOpen} timeout="auto" unmountOnExit>
               <Box sx={{ mt: 1 }}>
                 {jefe.equipo.map((miembro) => (
                   <MiembroRow
                     key={miembro.id}
                     trabajador={miembro}
-                    onView={() => onNavigate(`/trabajadores/${miembro.id}`)}
-                    onEdit={() => onNavigate(`/trabajadores/${miembro.id}/editar`)}
+                    onView={() => onNavigate(`/trabajadores/${miembro.id}`, {
+                      state: { breadcrumbLabel: `${miembro.nombre} ${miembro.apellido}` },
+                    })}
+                    onEdit={() => onNavigate(`/trabajadores/${miembro.id}/editar`, {
+                      state: { breadcrumbLabel: `${miembro.nombre} ${miembro.apellido}` },
+                    })}
                   />
                 ))}
               </Box>
@@ -107,7 +110,6 @@ function JefeCard({ jefe, onNavigate }: { jefe: JefeConEquipo; onNavigate: (path
           </>
         )}
 
-        {/* Sin equipo */}
         {jefe.equipo.length === 0 && (
           <>
             <Divider sx={{ my: 1.5 }} />
@@ -127,10 +129,12 @@ export const TrabajadoresPorEspecialidadPage: React.FC = () => {
   const { data: especialidades = [] } = useEspecialidadesList();
   const { data: jefes = [], isLoading, isError, refetch } = useJefesConEquipo(espId);
 
-  const especialidadNombre = especialidades.find((e) => e.id === espId)?.nombre ?? 'Especialidad';
+  const especialidadNombre = especialidades.find(e => e.id === espId)?.nombre ?? 'Especialidad';
 
   if (isLoading) return <LoadingState message="Cargando equipo..." />;
-  if (isError) return <ErrorState title="Error" message="No se pudo cargar el equipo." onRetry={refetch} />;
+  if (isError)   return <ErrorState title="Error" message="No se pudo cargar el equipo." onRetry={refetch} />;
+
+  const handleNavigate: NavigateFn = (path, options) => navigate(path, options);
 
   return (
     <AppLayout>
@@ -146,11 +150,10 @@ export const TrabajadoresPorEspecialidadPage: React.FC = () => {
         />
       )}
 
-      {/* Grilla de cards por jefe */}
       <Grid container spacing={2}>
         {jefes.map((jefe) => (
           <Grid key={jefe.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <JefeCard jefe={jefe} onNavigate={navigate} />
+            <JefeCard jefe={jefe} onNavigate={handleNavigate} />
           </Grid>
         ))}
       </Grid>

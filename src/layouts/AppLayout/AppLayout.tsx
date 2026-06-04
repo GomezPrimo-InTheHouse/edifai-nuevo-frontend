@@ -172,7 +172,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
                   return (
                     <NavItem key={esp.id} label={esp.nombre} path={path}
                       isActive={location.pathname === path}
-                      onClick={() => navigate(path)} indent />
+                      onClick={() => navigate(path, { state: { breadcrumbLabel: esp.nombre } })}
+                      indent />
                   );
                 })}
               </NavDropdown>
