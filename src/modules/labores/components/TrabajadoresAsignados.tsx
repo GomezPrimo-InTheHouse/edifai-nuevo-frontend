@@ -69,8 +69,9 @@ export function TrabajadoresAsignados({
                     <Typography variant="body2" fontWeight={700} sx={{ color: '#0F172A', fontSize: 12, lineHeight: 1.3, flex: 1, minWidth: 0 }} noWrap>
                       {l.nombre}
                     </Typography>
-                    <LaborEstadoChip estadoNombre={estadoNombre} />
-                  </Stack>
+                    <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                      <LaborEstadoChip estadoNombre={estadoNombre} />
+                    </Box>                  </Stack>
 
                   <Box sx={{ mb: 1.5 }}>
                     <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>

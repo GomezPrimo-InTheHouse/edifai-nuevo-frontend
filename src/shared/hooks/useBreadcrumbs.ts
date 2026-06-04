@@ -151,6 +151,14 @@ if (location.pathname.startsWith('/trabajadores/especialidad/') && state?.breadc
     { label: state.breadcrumbLabel },
   ];
 }
+// Ruta /clientes/:id
+if (location.pathname.startsWith('/clientes/') && state?.breadcrumbLabel) {
+  return [
+    { label: 'Dashboard', path: '/' },
+    { label: 'Clientes',  path: '/clientes' },
+    { label: state.breadcrumbLabel },
+  ];
+}
 
 segments.forEach((segment, index) => {
   accumulatedPath += `/${segment}`;
