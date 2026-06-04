@@ -123,6 +123,7 @@ export const AppRouter = () => {
         <Route path="/obras/:id" element={<ObraDetailPage />} />
         <Route path="/obras/:id/editar" element={<ObraEditPage />} />
 
+        <Route path="/trabajadores/especialidad" element={<Navigate to="/trabajadores" replace />} />
         <Route path="/trabajadores" element={<TrabajadoresListPage />} />
         <Route path="/trabajadores/nuevo" element={<TrabajadorCreatePage />} />
         <Route path="/trabajadores/:id" element={<TrabajadorDetailPage />} />
