@@ -288,7 +288,31 @@
     "notify": {
       "eliminada": "Labor eliminada.",
       "error_eliminar": "No se pudo eliminar la labor."
-    }
+    },
+    "detail": {
+  "loading": "Cargando labor...",
+  "error": "No se pudo cargar la labor.",
+  "no_encontrada": "No encontrada",
+  "no_encontrada_msg": "La labor no existe.",
+  "info_general": "Información general",
+  "obra": "Obra",
+  "descripcion": "Descripción",
+  "trabajador_asignado": "Trabajador asignado",
+  "sin_trabajador": "Sin trabajador asignado",
+  "fechas": "Fechas",
+  "inicio_estimado": "Inicio estimado",
+  "fin_estimado": "Fin estimado",
+  "inicio_real": "Inicio real",
+  "fin_real": "Fin real",
+  "estado": "Estado",
+  "progreso": "Progreso",
+  "cambiar_estado": "CAMBIAR ESTADO",
+  "creada": "Creada",
+  "actualizada": "Actualizada",
+  "subtitle": "Vista detallada de la labor.",
+  "volver": "Volver",
+  "editar": "Editar"
+}
   },
   "labor_form": {
     "nombre": "Nombre de la labor",

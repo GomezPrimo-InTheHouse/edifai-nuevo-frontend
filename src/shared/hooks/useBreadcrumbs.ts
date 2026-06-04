@@ -160,6 +160,14 @@ if (location.pathname.startsWith('/clientes/') && state?.breadcrumbLabel) {
   ];
 }
 
+if (location.pathname.startsWith('/labores/') && state?.breadcrumbLabel) {
+  return [
+    { label: 'Dashboard', path: '/' },
+    { label: 'Labores',   path: '/labores' },
+    { label: state.breadcrumbLabel },
+  ];
+}
+
 segments.forEach((segment, index) => {
   accumulatedPath += `/${segment}`;
   const isLast    = index === segments.length - 1;
