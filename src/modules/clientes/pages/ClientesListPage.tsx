@@ -57,14 +57,14 @@ export const ClientesListPage: React.FC = () => {
                       )}
                     </Box>
                     <Stack direction="row" spacing={0.5}>
-                    // Ver cliente
+                   
                       <IconButton size="small" onClick={() => navigate(`/clientes/${cliente.id}`, {
                         state: { breadcrumbLabel: cliente.razon_social ?? `${cliente.nombre}${cliente.apellido ? ` ${cliente.apellido}` : ''}` }
                       })}>
                         <Eye size={16} />
                       </IconButton>
 
-                  // Editar cliente
+                
                       <IconButton size="small" onClick={() => navigate(`/clientes/${cliente.id}/editar`, {
                         state: { breadcrumbLabel: cliente.razon_social ?? `${cliente.nombre}${cliente.apellido ? ` ${cliente.apellido}` : ''}` }
                       })}>
