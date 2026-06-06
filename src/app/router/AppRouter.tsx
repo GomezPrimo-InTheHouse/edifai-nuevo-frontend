@@ -224,7 +224,7 @@ import { ConfiguracionPage } from '../../modules/configuracion/pages/Configuraci
 import { GastosImprevistosPage } from '../../modules/gastosImprevistos/pages/gastosImprevistos.page';
 
 const ROLES_ADMIN         = [1, 3, 4, 6];
-const ROLES_ADMIN_PRIVADO = [9];
+// const ROLES_ADMIN_PRIVADO = [9];
 const ROLES_ADMIN_ALL     = [1, 3, 4, 6, 9];
 const ROLES_WORKER        = [7, 8];
 const ROLES_ALL           = [...ROLES_ADMIN_ALL, ...ROLES_WORKER];
