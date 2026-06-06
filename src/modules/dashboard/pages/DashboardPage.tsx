@@ -784,6 +784,7 @@ const DashboardPage: React.FC = () => {
         <Typography color="text.secondary">{t('dashboard.no_dashboard')}</Typography>
       )}
     </AppLayout>
+    
   );
 };
 
