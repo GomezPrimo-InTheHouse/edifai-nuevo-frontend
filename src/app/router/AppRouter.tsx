@@ -177,8 +177,6 @@
 //   );
 // };
 
-
-
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../../routes/ProtectedRoute';
 import { LoginPage } from '../../modules/auth/pages/LoginPage';
@@ -223,11 +221,10 @@ import { OnboardWizard } from '../../modules/configuracion/pages/OnboardWizard';
 import { ConfiguracionPage } from '../../modules/configuracion/pages/ConfiguracionPage';
 import { GastosImprevistosPage } from '../../modules/gastosImprevistos/pages/gastosImprevistos.page';
 
-const ROLES_ADMIN         = [1, 3, 4, 6, 9];
-// const ROLES_ADMIN_PRIVADO = [9];
-const ROLES_ADMIN_ALL     = [1, 3, 4, 6, 9];
-const ROLES_WORKER        = [7, 8];
-const ROLES_ALL           = [...ROLES_ADMIN_ALL, ...ROLES_WORKER];
+const ROLES_ADMIN     = [1, 3, 4, 6];
+const ROLES_ADMIN_ALL = [1, 3, 4, 6, 9];
+const ROLES_WORKER    = [7, 8];
+const ROLES_ALL       = [...ROLES_ADMIN_ALL, ...ROLES_WORKER];
 
 export const AppRouter = () => {
   const navigate = useNavigate();
@@ -251,22 +248,15 @@ export const AppRouter = () => {
       <Route element={<ProtectedRoute allowedRoles={ROLES_ALL} />}>
         <Route index element={<DashboardPage />} />
         <Route path="/gastos-imprevistos" element={<GastosImprevistosPage />} />
-      </Route>
-
-      {/* ── Labores (admin + workers) ── */}
-      <Route element={<ProtectedRoute allowedRoles={ROLES_ALL} />}>
         <Route path="/labores" element={<LaboresListPage />} />
         <Route path="/labores/:id" element={<LaborDetailPage />} />
       </Route>
 
-      {/* ── Labores solo admin ── */}
+      {/* ── Admin completo + admin_privado ── */}
       <Route element={<ProtectedRoute allowedRoles={ROLES_ADMIN_ALL} />}>
         <Route path="/labores/nueva" element={<LaborCreatePage />} />
         <Route path="/labores/:id/editar" element={<LaborEditPage />} />
-      </Route>
 
-      {/* ── Admin completo + admin_privado ── */}
-      <Route element={<ProtectedRoute allowedRoles={ROLES_ADMIN_ALL} />}>
         <Route path="/obras" element={<ObrasListPage />} />
         <Route path="/obras/nueva" element={<ObraCreatePage />} />
         <Route path="/obras/:id" element={<ObraDetailPage />} />
