@@ -120,6 +120,7 @@ import { LoadingState } from '../../../shared/components/LoadingState/LoadingSta
 import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { useClientesList } from '../hooks/useClientes';
 import { ClienteEstadoChip } from '../components/ClienteEstadoChip';
+import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 
 export const ClientesListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -131,7 +132,7 @@ export const ClientesListPage: React.FC = () => {
   if (isError) return <ErrorState title="Error" message={t('clientes.error')} onRetry={refetch} />;
 
   return (
-    <>
+    <AppLayout>
       <PageHeader
         title={t('clientes.title')}
         subtitle={t('clientes.subtitle', { count: clientes.length })}
@@ -212,6 +213,6 @@ export const ClientesListPage: React.FC = () => {
           ))}
         </Grid>
       )}
-    </>
+    </AppLayout>
   );
 };
