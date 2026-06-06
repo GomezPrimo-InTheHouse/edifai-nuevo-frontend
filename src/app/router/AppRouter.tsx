@@ -291,6 +291,14 @@ export const AppRouter = () => {
 
         <Route path="/presentismo/admin" element={<PresentismoAdminPage />} />
         <Route path="/configuracion" element={<ConfiguracionPage />} />
+
+        {/* ── Admin completo + admin_privado ── */}
+
+        
+        <Route path="/usuarios" element={<UsuariosListPage />} />
+        <Route path="/usuarios/:id" element={<UsuarioDetailPage />} />
+        <Route path="/usuarios/:id/editar" element={<UsuarioEditPage />} />
+        
       </Route>
 
       {/* ── Solo admin completo (NO admin_privado) ── */}

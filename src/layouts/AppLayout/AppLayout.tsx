@@ -131,7 +131,7 @@ const menuSections = [
     title: t('nav.secciones.sistema'),
     onlyAdmin: true,
     items: [
-      { label: t('nav.usuarios'), icon: <Group />, path: '/usuarios', allowedRoles: [1, 3, 4, 6] },
+      { label: t('nav.usuarios'), icon: <Group />, path: '/usuarios', allowedRoles: [1, 3, 4, 6, 9] },
     ],
   },
 ];
