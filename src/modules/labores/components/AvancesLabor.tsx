@@ -381,7 +381,7 @@ import { avanceApi, type Avance } from '../../../services/api/avance.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { useAuthStore } from '../../../app/store/auth.store';
 
-const ROLES_ADMIN  = [1, 3, 4, 6];
+const ROLES_ADMIN  = [1, 3, 4, 6, 9];
 const ROLES_WORKER = [7, 8];
 const PORCENTAJES  = [25, 50, 75, 100];
 

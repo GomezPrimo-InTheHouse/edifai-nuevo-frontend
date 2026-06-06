@@ -26,7 +26,7 @@ import { AvancesLabor } from '../components/AvancesLabor';
 import { useAuthStore } from '../../../app/store/auth.store';
 import { useLocation } from 'react-router-dom';
 
-const ROLES_ADMIN = [1, 3, 4, 6];
+const ROLES_ADMIN = [1, 3, 4, 6, 9];
 
 const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0, 'Labor en proceso': 25,

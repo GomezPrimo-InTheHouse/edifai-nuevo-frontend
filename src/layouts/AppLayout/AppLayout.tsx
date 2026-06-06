@@ -24,7 +24,7 @@ interface AppLayoutProps {
 }
 
 const drawerWidth = 250;
-const ROLES_ADMIN = [1, 3, 4, 6];
+const ROLES_ADMIN = [1, 3, 4, 6, 9];
 
 function NavItem({ label, icon, isActive, onClick, indent = false }: {
   label: string; icon?: React.ReactNode; path?: string;

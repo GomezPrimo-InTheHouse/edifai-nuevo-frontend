@@ -764,7 +764,7 @@ import { useAuthStore } from '../../../app/store/auth.store';
 import { DashboardAdminPage } from './DashboardAdminPage';
 import { DashboardTrabajadorPage } from './DashboardTrabajadorPage';
 
-const ROLES_ADMIN  = [1, 3, 4, 6];
+const ROLES_ADMIN  = [1, 3, 4, 6, 9];
 const ROLES_WORKER = [7, 8];
 
 const DashboardPage: React.FC = () => {
