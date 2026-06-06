@@ -102,36 +102,39 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
   const displayEmail = user?.email ?? '—';
   const displayRol = user?.rol_nombre ?? '—';
 
-  const menuSections = [
-    {
-      title: t('nav.secciones.general'),
-      onlyAdmin: false,
-      items: [
-        { label: t('nav.dashboard'), icon: <Dashboard />, path: '/', allowedRoles: [1, 3, 4, 6, 7, 8] },
-        { label: t('nav.obras'), icon: <Construction />, path: '/obras', allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.labores'), icon: <AssignmentTurnedIn />, path: '/labores', allowedRoles: [1, 3, 4, 6, 7, 8] },
-        { label: t('nav.clientes'), icon: <Group />, path: '/clientes', allowedRoles: [1, 3, 4, 6] },
-      ],
-    },
-    {
-      title: t('nav.secciones.operaciones'),
-      onlyAdmin: false,
-      items: [
-        { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6] },
-        { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 7, 8] },
-        { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6] },
-        { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
-      ],
-    },
-    {
-      title: t('nav.secciones.sistema'),
-      onlyAdmin: true,
-      items: [
-        { label: t('nav.usuarios'), icon: <Group />, path: '/usuarios', allowedRoles: [1, 3, 4, 6] },
-      ],
-    },
-  ];
+
+
+// Cambiar allowedRoles en menuSections:
+const menuSections = [
+  {
+    title: t('nav.secciones.general'),
+    onlyAdmin: false,
+    items: [
+      { label: t('nav.dashboard'), icon: <Dashboard />, path: '/', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+      { label: t('nav.obras'), icon: <Construction />, path: '/obras', allowedRoles: [1, 3, 4, 6, 9] },
+      { label: t('nav.labores'), icon: <AssignmentTurnedIn />, path: '/labores', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+      { label: t('nav.clientes'), icon: <Group />, path: '/clientes', allowedRoles: [1, 3, 4, 6, 9] },
+    ],
+  },
+  {
+    title: t('nav.secciones.operaciones'),
+    onlyAdmin: false,
+    items: [
+      { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6, 9] },
+      { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 9] },
+      { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+      { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6, 9] },
+      { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
+    ],
+  },
+  {
+    title: t('nav.secciones.sistema'),
+    onlyAdmin: true,
+    items: [
+      { label: t('nav.usuarios'), icon: <Group />, path: '/usuarios', allowedRoles: [1, 3, 4, 6] },
+    ],
+  },
+];
 
   React.useEffect(() => {
     if (user && ROLES_ADMIN.includes(user.rol_id) && !user.onboarding_completado && location.pathname !== '/onboarding') {
