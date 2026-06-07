@@ -1242,5 +1242,81 @@
       "por_obra": "Gastos por obra",
       "sin_datos": "Sem dados"
     }
+  },
+  "market": {
+  "title": "Market",
+  "subtitle": "Compre e venda materiais com outros administradores.",
+  "mis_publicaciones": "Minhas publicações",
+  "loading": "Carregando market...",
+  "error": "Não foi possível carregar o market.",
+  "empty": {
+    "title": "Sem publicações ativas",
+    "desc": "Ainda não há materiais publicados no market.",
+    "publicar": "Publicar material"
+  },
+  "publicacion": {
+    "title": "Publicar no Market",
+    "cantidad": "Quantidade a publicar",
+    "cantidad_hint": "Estoque disponível: {{stock}} {{unidad}}",
+    "precio": "Preço unitário",
+    "moneda": "Moeda",
+    "descripcion": "Descrição (opcional)",
+    "publicar": "Publicar",
+    "cancelar_pub": "Cancelar publicação",
+    "publicando": "Publicando...",
+    "ya_publicado": "Já publicado no Market",
+    "ver_publicacion": "Ver no Market"
+  },
+  "card": {
+    "vendedor": "Vendedor",
+    "cantidad": "Quantidade disponível",
+    "precio": "Preço unitário",
+    "total": "Total estimado",
+    "contactar": "Contatar vendedor",
+    "comprar": "Iniciar compra"
+  },
+  "transaccion": {
+    "title": "Detalhe da transação",
+    "cantidad_comprar": "Quantidade a comprar",
+    "confirmar": "Confirmar compra",
+    "cancelar": "Cancelar",
+    "confirmada": "Confirmada",
+    "cancelada": "Cancelada",
+    "pendiente": "Pendente",
+    "total": "Total",
+    "vendedor": "Vendedor",
+    "comprador": "Comprador"
+  },
+  "chat": {
+    "title": "Chat com {{nombre}}",
+    "placeholder": "Escreva uma mensagem...",
+    "enviar": "Enviar",
+    "sin_mensajes": "Ainda não há mensagens. Comece a conversa!"
+  },
+  "mis_pubs": {
+    "title": "Minhas publicações",
+    "subtitle": "Materiais que você está vendendo no Market.",
+    "activas": "Ativas",
+    "historial": "Histórico",
+    "empty": "Você não tem publicações ativas.",
+    "empty_historial": "Sem histórico de publicações."
+  },
+  "notify": {
+    "publicado": "Material publicado no Market.",
+    "cancelado": "Publicação cancelada. Estoque devolvido.",
+    "transaccion_iniciada": "Transação iniciada com sucesso.",
+    "transaccion_confirmada": "Transação confirmada.",
+    "transaccion_cancelada": "Transação cancelada.",
+    "mensaje_enviado": "Mensagem enviada.",
+    "error_publicar": "Não foi possível publicar o material.",
+    "error_cancelar": "Não foi possível cancelar a publicação.",
+    "error_transaccion": "Não foi possível processar a transação.",
+    "error_mensaje": "Não foi possível enviar a mensagem."
+  },
+  "estados": {
+    "activa": "Ativa",
+    "vendida": "Vendida",
+    "cancelada": "Cancelada"
   }
+}
 }

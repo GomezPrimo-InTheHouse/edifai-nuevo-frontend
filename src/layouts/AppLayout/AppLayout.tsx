@@ -4,11 +4,11 @@ import {
   ListItemButton, ListItemIcon, ListItemText, IconButton, Avatar, Collapse,
   useTheme,
 } from '@mui/material';
-import {
-  Menu, Dashboard, Construction, Group, Inventory2,
-  AssignmentTurnedIn, ReceiptLong,
-  KeyboardArrowDown, KeyboardArrowUp,
-} from '@mui/icons-material';
+// import {
+//   Menu, Dashboard, Construction, Group, Inventory2,
+//   AssignmentTurnedIn, ReceiptLong,
+//   KeyboardArrowDown, KeyboardArrowUp,
+// } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useEspecialidadesList } from '../../modules/trabajadores/hooks/useEspecialidades';
@@ -17,6 +17,12 @@ import { useAuthStore } from '../../app/store/auth.store';
 import { NotificacionesPopover } from '../../components/NotificacionesPopover';
 import { AppBreadcrumbs } from '../../shared/components/AppBreadcrumbs/AppBreadcrumbs';
 import { ConfiguracionPopover } from '../../components/ConfiguracionPopover';
+import {
+  Menu, Dashboard, Construction, Group, Inventory2,
+  AssignmentTurnedIn, ReceiptLong,
+  KeyboardArrowDown, KeyboardArrowUp,
+} from '@mui/icons-material';
+import { ShoppingBag } from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -123,6 +129,8 @@ const menuSections = [
       { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6, 9] },
       { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 9] },
       { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+      { label: t('market.title'), icon: <ShoppingBag size={20} />, path: '/market', allowedRoles: [1, 3, 4, 6, 9] },
+
       { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6, 9] },
       { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
     ],

@@ -1,166 +1,10 @@
-
-// import React from 'react';
-// import { useNavigate, useParams } from 'react-router-dom';
-// import {
-//   Box, Button, Card, CardContent, Divider,
-//   Grid, Stack, Typography, Table, TableHead,
-//   TableRow, TableCell, TableBody, Paper, useTheme,
-// } from '@mui/material';
-// import { ArrowLeft, Pencil, Package, DollarSign, TrendingUp, Calendar, Image } from 'lucide-react';
-// import { useTranslation } from 'react-i18next';
-// import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
-// import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
-// import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
-// import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
-// import { StockBadge } from '../components/StockBadge';
-// import { useMaterialDetail } from '../hooks/useMateriales';
-// import { useHistorialByMaterial } from '../hooks/useHistorialIncrementos';
-// import { useTiposMaterialList } from '../hooks/useTipoMaterial';
-
-// function formatDate(value?: string | null): string {
-//   if (!value) return '-';
-//   return new Date(value).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-// }
-
-// function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-//   return (
-//     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-//       <Box sx={{ color: 'text.disabled', mt: 0.3 }}>{icon}</Box>
-//       <Box>
-//         <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, display: 'block' }}>{label}</Typography>
-//         <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 500 }}>{value}</Typography>
-//       </Box>
-//     </Box>
-//   );
-// }
-
-// export const MaterialDetailPage: React.FC = () => {
-//   const navigate = useNavigate();
-//   const theme = useTheme();
-//   const { t } = useTranslation();
-//   const { id } = useParams<{ id: string }>();
-//   const materialId = Number(id);
-
-//   const { data: material, isLoading, isError, refetch } = useMaterialDetail(materialId);
-//   const { data: historial = [] } = useHistorialByMaterial(materialId);
-//   const { data: tipos = [] } = useTiposMaterialList();
-
-//   if (isLoading) return <LoadingState message={t('materiales.detail.loading')} />;
-//   if (isError) return <ErrorState title="Error" message={t('materiales.detail.error')} onRetry={refetch} />;
-//   if (!material) return <ErrorState title={t('materiales.detail.no_encontrado')} message={t('materiales.detail.no_encontrado_msg')} />;
-
-//   const tipoNombre = tipos.find((t) => t.id === material.tipo_material_id)?.nombre ?? '-';
-
-//   return (
-//     <AppLayout>
-//       <PageHeader
-//         title={material.nombre}
-//         subtitle={t('materiales.detail.subtitle')}
-//         actions={
-//           <Stack direction="row" spacing={1}>
-//             <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/materiales')}>
-//               {t('materiales.acciones.volver')}
-//             </Button>
-//             <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/materiales/${material.id}/editar`)}>
-//               {t('materiales.acciones.editar')}
-//             </Button>
-//           </Stack>
-//         }
-//       />
-
-//       <Grid container spacing={3}>
-//         <Grid size={{ xs: 12, md: 8 }}>
-//           <Card sx={{ borderRadius: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
-//             <CardContent sx={{ p: 3 }}>
-//               <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>{t('materiales.detail.info')}</Typography>
-//               <Divider sx={{ mb: 3 }} />
-//               <Stack spacing={2.5}>
-//                 <DetailRow icon={<Package size={16} />} label={t('materiales.detail.tipo')} value={tipoNombre} />
-//                 <DetailRow icon={<Package size={16} />} label={t('materiales.detail.descripcion')} value={material.descripcion || '-'} />
-//                 <DetailRow icon={<Package size={16} />} label={t('materiales.detail.unidad')} value={material.unidad} />
-//                 {material.imagen_url && (
-//                   <DetailRow icon={<Image size={16} />} label={t('materiales.detail.imagen')} value={material.imagen_url} />
-//                 )}
-//               </Stack>
-
-//               <Divider sx={{ my: 3 }} />
-//               <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: 'text.secondary' }}>
-//                 {t('materiales.detail.stock_precios')}
-//               </Typography>
-//               <Grid container spacing={2}>
-//                 <Grid size={{ xs: 6 }}>
-//                   <DetailRow icon={<Package size={16} />} label={t('materiales.detail.stock_actual')} value={`${material.stock_actual} ${material.unidad}`} />
-//                 </Grid>
-//                 <Grid size={{ xs: 6 }}>
-//                   <DetailRow icon={<DollarSign size={16} />} label={t('materiales.detail.precio_unit')} value={`$${Number(material.precio_unitario).toLocaleString('es-AR')}`} />
-//                 </Grid>
-//                 <Grid size={{ xs: 6 }}>
-//                   <DetailRow icon={<TrendingUp size={16} />} label={t('materiales.detail.aumento_mensual')} value={material.porcentaje_aumento_mensual ? `${material.porcentaje_aumento_mensual}%` : '-'} />
-//                 </Grid>
-//               </Grid>
-//             </CardContent>
-//           </Card>
-
-//           {historial.length > 0 && (
-//             <Card sx={{ borderRadius: 3, mt: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
-//               <CardContent sx={{ p: 3 }}>
-//                 <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>{t('materiales.detail.historial')}</Typography>
-//                 <Divider sx={{ mb: 2 }} />
-//                 <Paper sx={{ borderRadius: 2, overflow: 'hidden', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
-//                   <Table size="small">
-//                     <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
-//                       <TableRow>
-//                         <TableCell>{t('materiales.historial.fecha')}</TableCell>
-//                         <TableCell>{t('materiales.historial.precio_anterior')}</TableCell>
-//                         <TableCell>{t('materiales.historial.precio_nuevo')}</TableCell>
-//                         <TableCell>{t('materiales.historial.porcentaje')}</TableCell>
-//                         <TableCell>{t('materiales.historial.motivo')}</TableCell>
-//                       </TableRow>
-//                     </TableHead>
-//                     <TableBody>
-//                       {historial.map((h) => (
-//                         <TableRow key={h.id}>
-//                           <TableCell>{formatDate(h.created_at)}</TableCell>
-//                           <TableCell>${Number(h.precio_anterior).toLocaleString('es-AR')}</TableCell>
-//                           <TableCell>${Number(h.precio_nuevo).toLocaleString('es-AR')}</TableCell>
-//                           <TableCell>{h.porcentaje_aplicado}%</TableCell>
-//                           <TableCell>{h.motivo || '-'}</TableCell>
-//                         </TableRow>
-//                       ))}
-//                     </TableBody>
-//                   </Table>
-//                 </Paper>
-//               </CardContent>
-//             </Card>
-//           )}
-//         </Grid>
-
-//         <Grid size={{ xs: 12, md: 4 }}>
-//           <Card sx={{ borderRadius: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
-//             <CardContent sx={{ p: 3 }}>
-//               <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>{t('materiales.detail.estado')}</Typography>
-//               <Divider sx={{ mb: 3 }} />
-//               <StockBadge stock={Number(material.stock_actual)} unidad={material.unidad} />
-//               <Divider sx={{ my: 3 }} />
-//               <Stack spacing={2}>
-//                 <DetailRow icon={<Calendar size={16} />} label={t('materiales.detail.creado')} value={formatDate(material.created_at)} />
-//                 <DetailRow icon={<Calendar size={16} />} label={t('materiales.detail.actualizado')} value={formatDate(material.updated_at)} />
-//               </Stack>
-//             </CardContent>
-//           </Card>
-//         </Grid>
-//       </Grid>
-//     </AppLayout>
-//   );
-// };
-
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Button, Card, CardContent, Chip, Divider,
   Grid, Stack, Typography, Paper, useMediaQuery, useTheme,
 } from '@mui/material';
-import { ArrowLeft, Pencil, Package, DollarSign, TrendingUp, Calendar, Image } from 'lucide-react';
+import { ArrowLeft, Pencil, Package, DollarSign, TrendingUp, Calendar, Image, ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
@@ -170,6 +14,9 @@ import { StockBadge } from '../components/StockBadge';
 import { useMaterialDetail } from '../hooks/useMateriales';
 import { useHistorialByMaterial } from '../hooks/useHistorialIncrementos';
 import { useTiposMaterialList } from '../hooks/useTipoMaterial';
+import { PublicarMaterialModal } from '../../market/components/PublicarMaterialModal';
+import { useMisPublicaciones } from '../../market/hooks/useMisPublicaciones';
+import { useAuthStore } from '../../../app/store/auth.store';
 
 function formatDate(value?: string | null): string {
   if (!value) return '-';
@@ -188,6 +35,8 @@ function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: strin
   );
 }
 
+const ROLES_MARKET = [1, 3, 4, 6, 9];
+
 export const MaterialDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -199,12 +48,20 @@ export const MaterialDetailPage: React.FC = () => {
   const { data: material, isLoading, isError, refetch } = useMaterialDetail(materialId);
   const { data: historial = [] } = useHistorialByMaterial(materialId);
   const { data: tipos = [] } = useTiposMaterialList();
+  const { data: misPublicaciones = [] } = useMisPublicaciones();
+  const user = useAuthStore((s) => s.user);
+
+  const [publicarOpen, setPublicarOpen] = useState(false);
 
   if (isLoading) return <LoadingState message={t('materiales.detail.loading')} />;
   if (isError) return <ErrorState title="Error" message={t('materiales.detail.error')} onRetry={refetch} />;
   if (!material) return <ErrorState title={t('materiales.detail.no_encontrado')} message={t('materiales.detail.no_encontrado_msg')} />;
 
   const tipoNombre = tipos.find((tp) => tp.id === material.tipo_material_id)?.nombre ?? '-';
+  const puedePublicar = ROLES_MARKET.includes(user?.rol_id ?? -1);
+  const publicacionActiva = misPublicaciones.find(
+    (p) => p.material_id === material.id && p.estado === 'activa'
+  );
 
   return (
     <AppLayout>
@@ -256,14 +113,12 @@ export const MaterialDetailPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Historial de precios */}
           {historial.length > 0 && (
             <Card sx={{ borderRadius: 3, mt: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
               <CardContent sx={{ p: 3 }}>
                 <Typography variant="h6" fontWeight={700} sx={{ mb: 2 }}>{t('materiales.detail.historial')}</Typography>
                 <Divider sx={{ mb: 2 }} />
 
-                {/* Mobile — cards */}
                 {isMobile ? (
                   <Stack spacing={1.5}>
                     {historial.map((h) => (
@@ -272,12 +127,9 @@ export const MaterialDetailPage: React.FC = () => {
                         border: `1px solid ${theme.palette.divider}`,
                         bgcolor: theme.palette.action.hover,
                       }}>
-                        {/* Fecha */}
                         <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mb: 1 }}>
                           {formatDate(h.created_at)}
                         </Typography>
-
-                        {/* Precios */}
                         <Stack direction="row" spacing={1.5} sx={{ mb: 1.5 }}>
                           <Box sx={{ flex: 1, p: 1.25, borderRadius: 1.5, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}` }}>
                             <Typography variant="caption" color="text.secondary" display="block">
@@ -296,8 +148,6 @@ export const MaterialDetailPage: React.FC = () => {
                             </Typography>
                           </Box>
                         </Stack>
-
-                        {/* Porcentaje + motivo */}
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                           <Chip
                             label={`+${h.porcentaje_aplicado}%`}
@@ -314,7 +164,6 @@ export const MaterialDetailPage: React.FC = () => {
                     ))}
                   </Stack>
                 ) : (
-                  /* Desktop — tabla */
                   <Paper sx={{ borderRadius: 2, overflow: 'hidden', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
                     <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse' }}>
                       <Box component="thead" sx={{ bgcolor: theme.palette.action.hover }}>
@@ -361,6 +210,7 @@ export const MaterialDetailPage: React.FC = () => {
           )}
         </Grid>
 
+        {/* Panel derecho */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ borderRadius: 3, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
             <CardContent sx={{ p: 3 }}>
@@ -372,10 +222,45 @@ export const MaterialDetailPage: React.FC = () => {
                 <DetailRow icon={<Calendar size={16} />} label={t('materiales.detail.creado')} value={formatDate(material.created_at)} />
                 <DetailRow icon={<Calendar size={16} />} label={t('materiales.detail.actualizado')} value={formatDate(material.updated_at)} />
               </Stack>
+
+              {/* Botón Market */}
+              {puedePublicar && (
+                <>
+                  <Divider sx={{ my: 3 }} />
+                  {publicacionActiva ? (
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<ShoppingBag size={16} />}
+                      onClick={() => navigate('/market')}
+                      sx={{ borderColor: '#F59E0B', color: '#F59E0B', borderRadius: 2 }}
+                    >
+                      {t('market.publicacion.ver_publicacion')}
+                    </Button>
+                  ) : (
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      startIcon={<ShoppingBag size={16} />}
+                      onClick={() => setPublicarOpen(true)}
+                      disabled={Number(material.stock_actual) <= 0}
+                      sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' }, borderRadius: 2 }}
+                    >
+                      {t('market.publicacion.publicar')}
+                    </Button>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
+      <PublicarMaterialModal
+        open={publicarOpen}
+        onClose={() => setPublicarOpen(false)}
+        material={material}
+      />
     </AppLayout>
   );
 };

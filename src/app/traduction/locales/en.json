@@ -1242,5 +1242,81 @@
       "por_obra": "Expenses by project",
       "sin_datos": "No data"
     }
+  },
+  "market": {
+  "title": "Market",
+  "subtitle": "Buy and sell materials with other administrators.",
+  "mis_publicaciones": "My listings",
+  "loading": "Loading market...",
+  "error": "Could not load the market.",
+  "empty": {
+    "title": "No active listings",
+    "desc": "No materials have been listed in the market yet.",
+    "publicar": "List a material"
+  },
+  "publicacion": {
+    "title": "List on Market",
+    "cantidad": "Quantity to list",
+    "cantidad_hint": "Available stock: {{stock}} {{unidad}}",
+    "precio": "Unit price",
+    "moneda": "Currency",
+    "descripcion": "Description (optional)",
+    "publicar": "Publish",
+    "cancelar_pub": "Cancel listing",
+    "publicando": "Publishing...",
+    "ya_publicado": "Already listed on Market",
+    "ver_publicacion": "View on Market"
+  },
+  "card": {
+    "vendedor": "Seller",
+    "cantidad": "Available quantity",
+    "precio": "Unit price",
+    "total": "Estimated total",
+    "contactar": "Contact seller",
+    "comprar": "Start purchase"
+  },
+  "transaccion": {
+    "title": "Transaction detail",
+    "cantidad_comprar": "Quantity to buy",
+    "confirmar": "Confirm purchase",
+    "cancelar": "Cancel",
+    "confirmada": "Confirmed",
+    "cancelada": "Cancelled",
+    "pendiente": "Pending",
+    "total": "Total",
+    "vendedor": "Seller",
+    "comprador": "Buyer"
+  },
+  "chat": {
+    "title": "Chat with {{nombre}}",
+    "placeholder": "Write a message...",
+    "enviar": "Send",
+    "sin_mensajes": "No messages yet. Start the conversation!"
+  },
+  "mis_pubs": {
+    "title": "My listings",
+    "subtitle": "Materials you are selling on the Market.",
+    "activas": "Active",
+    "historial": "History",
+    "empty": "You have no active listings.",
+    "empty_historial": "No listing history."
+  },
+  "notify": {
+    "publicado": "Material listed on the Market.",
+    "cancelado": "Listing cancelled. Stock returned.",
+    "transaccion_iniciada": "Transaction started successfully.",
+    "transaccion_confirmada": "Transaction confirmed.",
+    "transaccion_cancelada": "Transaction cancelled.",
+    "mensaje_enviado": "Message sent.",
+    "error_publicar": "Could not list the material.",
+    "error_cancelar": "Could not cancel the listing.",
+    "error_transaccion": "Could not process the transaction.",
+    "error_mensaje": "Could not send the message."
+  },
+  "estados": {
+    "activa": "Active",
+    "vendida": "Sold",
+    "cancelada": "Cancelled"
   }
+}
 }

@@ -176,7 +176,6 @@
 //     </Routes>
 //   );
 // };
-
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../../routes/ProtectedRoute';
 import { LoginPage } from '../../modules/auth/pages/LoginPage';
@@ -220,6 +219,8 @@ import { ClienteEditPage } from '../../modules/clientes/pages/ClienteEditPage';
 import { OnboardWizard } from '../../modules/configuracion/pages/OnboardWizard';
 import { ConfiguracionPage } from '../../modules/configuracion/pages/ConfiguracionPage';
 import { GastosImprevistosPage } from '../../modules/gastosImprevistos/pages/gastosImprevistos.page';
+import { MarketPage } from '../../modules/market/pages/MarketPage';
+import { MisPublicacionesPage } from '../../modules/market/pages/MisPublicacionesPage';
 
 const ROLES_ADMIN     = [1, 3, 4, 6];
 const ROLES_ADMIN_ALL = [1, 3, 4, 6, 9];
@@ -292,21 +293,19 @@ export const AppRouter = () => {
         <Route path="/presentismo/admin" element={<PresentismoAdminPage />} />
         <Route path="/configuracion" element={<ConfiguracionPage />} />
 
-        {/* ── Admin completo + admin_privado ── */}
-
-        
+        {/* Usuarios — visible para admin_privado pero sin /nuevo */}
         <Route path="/usuarios" element={<UsuariosListPage />} />
         <Route path="/usuarios/:id" element={<UsuarioDetailPage />} />
         <Route path="/usuarios/:id/editar" element={<UsuarioEditPage />} />
-        
+
+        {/* Market */}
+        <Route path="/market" element={<MarketPage />} />
+        <Route path="/market/mis-publicaciones" element={<MisPublicacionesPage />} />
       </Route>
 
       {/* ── Solo admin completo (NO admin_privado) ── */}
       <Route element={<ProtectedRoute allowedRoles={ROLES_ADMIN} />}>
-        <Route path="/usuarios" element={<UsuariosListPage />} />
         <Route path="/usuarios/nuevo" element={<UsuarioCreatePage />} />
-        <Route path="/usuarios/:id" element={<UsuarioDetailPage />} />
-        <Route path="/usuarios/:id/editar" element={<UsuarioEditPage />} />
       </Route>
 
       {/* ── Workers ── */}

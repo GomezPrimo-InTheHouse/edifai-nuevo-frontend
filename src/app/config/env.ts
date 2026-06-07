@@ -22,7 +22,7 @@ export const env = {
   
   trabajadoresApiUrl: required('VITE_TRABAJADORES_API_URL'),
   presentismoApiUrl: required('VITE_PRESENTISMO_API_URL'),
-
+  
   obraApiUrl: required('VITE_OBRA_API_URL'),
   laboresApiUrl: required('VITE_LABORES_API_URL'),
   estadosApiUrl: required('VITE_ESTADOS_API_URL'),
