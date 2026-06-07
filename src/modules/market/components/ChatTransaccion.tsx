@@ -22,6 +22,9 @@ export const ChatTransaccion: React.FC<ChatTransaccionProps> = ({ transaccion_id
   const enviarMutation = useEnviarMensaje(transaccion_id);
   const marcarLeidosMutation = useMarcarLeidos(transaccion_id);
 
+  // ← fix: usar userId en lugar de id
+const miId = user?.id ?? -1;
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [mensajes]);
@@ -45,7 +48,6 @@ export const ChatTransaccion: React.FC<ChatTransaccionProps> = ({ transaccion_id
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: 3, overflow: 'hidden',
     }}>
-      {/* Header */}
       <Box sx={{
         px: 2, py: 1.5,
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -56,7 +58,6 @@ export const ChatTransaccion: React.FC<ChatTransaccionProps> = ({ transaccion_id
         </Typography>
       </Box>
 
-      {/* Mensajes */}
       <Box sx={{ flex: 1, overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -71,7 +72,7 @@ export const ChatTransaccion: React.FC<ChatTransaccionProps> = ({ transaccion_id
         )}
 
         {mensajes.map((msg) => {
-          const esMio = msg.remitente_id === user?.id;
+          const esMio = msg.remitente_id === miId;
           return (
             <Box key={msg.id} sx={{
               display: 'flex',

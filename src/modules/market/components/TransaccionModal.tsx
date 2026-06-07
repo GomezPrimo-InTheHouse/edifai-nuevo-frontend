@@ -23,20 +23,32 @@ export const TransaccionModal: React.FC<Props> = ({ open, onClose, publicacion, 
   const { t } = useTranslation();
   const notify = useNotify();
   const user = useAuthStore((s) => s.user);
-  const [cantidad, setCantidad] = useState(1);
+  const [cantidad, setCantidad] = useState<number>(1);
   const iniciarMutation = useIniciarTransaccion();
 
   const esNuevaCompra = Boolean(publicacion) && !transaccion;
+
+  // ← fix: parsear cantidad como número explícitamente
+  const cantidadMaxima = publicacion ? Number(publicacion.cantidad) : 0;
+  const cantidadValida = cantidad > 0 && cantidad <= cantidadMaxima;
+
   const total = publicacion
     ? (cantidad * Number(publicacion.precio_unitario)).toLocaleString('es-AR')
     : '0';
 
   const interlocutorNombre = transaccion
-    ? (transaccion.comprador_id === user?.id ? transaccion.vendedor_nombre : transaccion.comprador_nombre)
+    ? (transaccion.comprador_id === user?.id
+        ? transaccion.vendedor_nombre
+        : transaccion.comprador_nombre)
     : publicacion?.vendedor_nombre ?? '';
 
+  const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value);
+    if (!isNaN(val)) setCantidad(val);
+  };
+
   const handleComprar = async () => {
-    if (!publicacion) return;
+    if (!publicacion || !cantidadValida) return;
     try {
       await iniciarMutation.mutateAsync({ publicacion_id: publicacion.id, cantidad_comprada: cantidad });
       notify.success(t('market.notify.transaccion_iniciada'));
@@ -52,7 +64,7 @@ export const TransaccionModal: React.FC<Props> = ({ open, onClose, publicacion, 
       <DialogContent sx={{ p: 0 }}>
         <Grid container sx={{ height: { md: 520 } }}>
 
-          {/* Panel izquierdo — detalle */}
+          {/* Panel izquierdo */}
           <Grid size={{ xs: 12, md: 5 }} sx={{
             p: 3,
             borderRight: { md: `1px solid ${theme.palette.divider}` },
@@ -123,20 +135,29 @@ export const TransaccionModal: React.FC<Props> = ({ open, onClose, publicacion, 
                       type="number"
                       size="small"
                       value={cantidad}
-                      onChange={(e) => setCantidad(Number(e.target.value))}
-                      inputProps={{ min: 0.01, max: Number(publicacion.cantidad), step: 0.01 }}
-                      InputProps={{ endAdornment: <InputAdornment position="end">{publicacion.unidad}</InputAdornment> }}
+                      onChange={handleCantidadChange}
+                      inputProps={{ min: 0.01, max: cantidadMaxima, step: 0.01 }}
+                      InputProps={{
+                        endAdornment: <InputAdornment position="end">{publicacion.unidad}</InputAdornment>
+                      }}
+                      helperText={`Máximo disponible: ${cantidadMaxima} ${publicacion.unidad}`}
+                      error={cantidad > cantidadMaxima || cantidad <= 0}
                     />
-                    <Box sx={{ p: 1.5, borderRadius: 2, bgcolor: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                    <Box sx={{
+                      p: 1.5, borderRadius: 2,
+                      bgcolor: 'rgba(245,158,11,0.08)',
+                      border: '1px solid rgba(245,158,11,0.2)',
+                    }}>
                       <Stack direction="row" justifyContent="space-between">
                         <Typography variant="body2" color="text.secondary">{t('market.transaccion.total')}</Typography>
                         <Typography variant="h6" fontWeight={800} sx={{ color: '#F59E0B' }}>${total}</Typography>
                       </Stack>
                     </Box>
                     <Button
-                      fullWidth variant="contained"
+                      fullWidth
+                      variant="contained"
                       onClick={handleComprar}
-                      disabled={iniciarMutation.isPending || cantidad <= 0 || cantidad > Number(publicacion.cantidad)}
+                      disabled={iniciarMutation.isPending || !cantidadValida}
                       sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' }, borderRadius: 2 }}
                     >
                       {t('market.transaccion.confirmar')}
