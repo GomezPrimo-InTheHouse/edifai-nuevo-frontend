@@ -18,7 +18,7 @@ import {
   AssignmentTurnedIn, ReceiptLong,
   KeyboardArrowDown, KeyboardArrowUp,
 } from '@mui/icons-material';
-import { MessageSquare, ShoppingBag } from 'lucide-react';
+import {  ShoppingBag } from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -126,7 +126,6 @@ const menuSections = [
       { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 9] },
       { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
       { label: t('market.title'), icon: <ShoppingBag size={20} />, path: '/market', allowedRoles: [1, 3, 4, 6, 9] },
-      { label: 'Inbox', icon: <MessageSquare size={20} />, path: '/market/inbox', allowedRoles: [1, 3, 4, 6, 9] },
       { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6, 9] },
       { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
     ],
