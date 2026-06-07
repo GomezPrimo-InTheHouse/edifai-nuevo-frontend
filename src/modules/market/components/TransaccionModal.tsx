@@ -38,8 +38,8 @@ export const TransaccionModal: React.FC<Props> = ({ open, onClose, publicacion, 
 
   const interlocutorNombre = transaccion
     ? (transaccion.comprador_id === user?.id
-        ? transaccion.vendedor_nombre
-        : transaccion.comprador_nombre)
+      ? transaccion.vendedor_nombre
+      : transaccion.comprador_nombre)
     : publicacion?.vendedor_nombre ?? '';
 
   const handleCantidadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,6 +177,8 @@ export const TransaccionModal: React.FC<Props> = ({ open, onClose, publicacion, 
               <ChatTransaccion
                 transaccion_id={transaccion.id}
                 interlocutor_nombre={interlocutorNombre}
+                es_comprador={transaccion.comprador_id === user?.id}
+                transaccion_estado={transaccion.estado}
               />
             ) : (
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
