@@ -280,10 +280,12 @@ export const InboxPage: React.FC = () => {
           </Box>
 
           <Box sx={{ flex: 1, overflow: 'hidden' }}>
-            <ChatTransaccion
-              transaccion_id={seleccionada.id}
-              interlocutor_nombre={getInterlocutor(seleccionada).nombre}
-            />
+<ChatTransaccion
+  transaccion_id={seleccionada.id}
+  interlocutor_nombre={getInterlocutor(seleccionada).nombre}
+  es_comprador={seleccionada.comprador_id === user?.id}
+  transaccion_estado={seleccionada.estado}
+/>
           </Box>
         </>
       ) : (

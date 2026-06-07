@@ -73,6 +73,29 @@ export const marketApi = {
   );
   return res.data.data;
   },
+  
+  async subirComprobante(transaccion_id: number, file: File): Promise<{
+  success: boolean;
+  validado: boolean;
+  analisis: {
+    es_comprobante: boolean;
+    monto_detectado: number | null;
+    monto_coincide: boolean | null;
+    confianza: 'alta' | 'media' | 'baja';
+    motivo: string;
+  };
+  comprobanteUrl: string | null;
+  message: string;
+}> {
+  const formData = new FormData();
+  formData.append('comprobante', file);
+  const res = await httpClient.post(
+    `${baseUrl}/comprobante/${transaccion_id}`,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' } }
+  );
+  return res.data;
+},
 
 
 };
