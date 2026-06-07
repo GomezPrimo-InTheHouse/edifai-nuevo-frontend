@@ -44,8 +44,8 @@ export const marketApi = {
   },
 
   async actualizarTransaccion(id: number, estado: 'confirmada' | 'cancelada'): Promise<void> {
-    await httpClient.put(`${baseUrl}/transacciones/${id}`, { estado });
-  },
+  await httpClient.put(`${baseUrl}/transacciones/${id}`, { estado });
+},
 
   // Mensajes
   async getMensajes(transaccion_id: number): Promise<Mensaje[]> {
@@ -66,8 +66,13 @@ export const marketApi = {
     const res = await httpClient.get<{ success: boolean; data: MensajesNoLeidos[] }>(`${baseUrl}/mensajes/no-leidos`);
     return res.data.data;
   },
-  async getInbox(): Promise<Transaccion[]> {
-  const res = await httpClient.get<{ success: boolean; data: Transaccion[] }>(`${baseUrl}/transacciones/inbox`);
+
+  async getInbox(archivadas = false): Promise<Transaccion[]> {
+  const res = await httpClient.get<{ success: boolean; data: Transaccion[] }>(
+    `${baseUrl}/transacciones/inbox?archivadas=${archivadas}`
+  );
   return res.data.data;
-},
+  },
+
+
 };

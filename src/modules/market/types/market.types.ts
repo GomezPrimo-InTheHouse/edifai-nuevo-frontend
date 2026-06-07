@@ -25,6 +25,7 @@ export interface Transaccion {
   moneda: string;
   total: number;
   estado: 'pendiente' | 'confirmada' | 'cancelada';
+  archivada: boolean;
   nombre_material: string;
   unidad: string;
   comprador_nombre: string;

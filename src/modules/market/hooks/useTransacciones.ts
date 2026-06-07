@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { marketApi } from '../../../services/api/market.api';
 import { marketQueryKeys } from './usePublicaciones';
+import { inboxQueryKey, historialQueryKey } from './useInbox';
 import type { IniciarTransaccionPayload } from '../types/market.types';
 
 export function useTransacciones() {
@@ -17,6 +18,7 @@ export function useIniciarTransaccion() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: marketQueryKeys.transacciones });
       queryClient.invalidateQueries({ queryKey: marketQueryKeys.publicaciones });
+      queryClient.invalidateQueries({ queryKey: inboxQueryKey });
     },
   });
 }
@@ -29,6 +31,9 @@ export function useActualizarTransaccion() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: marketQueryKeys.transacciones });
       queryClient.invalidateQueries({ queryKey: marketQueryKeys.publicaciones });
+      queryClient.invalidateQueries({ queryKey: inboxQueryKey });
+      queryClient.invalidateQueries({ queryKey: historialQueryKey });
+      queryClient.invalidateQueries({ queryKey: marketQueryKeys.misPublicaciones });
     },
   });
 }
