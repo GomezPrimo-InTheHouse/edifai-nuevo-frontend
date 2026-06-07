@@ -71,23 +71,24 @@ export const InboxPage: React.FC = () => {
   };
 
   const AccionesTx = ({ tx }: { tx: Transaccion }) => {
-    if (tx.estado !== 'pendiente') return null;
-    const esVendedor = tx.vendedor_id === user?.id;
+  if (tx.estado !== 'pendiente') return null;
+  const esVendedor = tx.vendedor_id === user?.id;
 
-    return (
-      <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
-        {esVendedor && (
-          <Button
-            size="small"
-            variant="contained"
-            startIcon={<Check size={14} />}
-            onClick={() => handleAccion(tx, 'confirmada')}
-            disabled={actualizarMutation.isPending}
-            sx={{ bgcolor: '#16A34A', color: '#fff', '&:hover': { bgcolor: '#15803D' }, flex: 1, borderRadius: 2 }}
-          >
-            Confirmar venta
-          </Button>
-        )}
+  return (
+    <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+      {esVendedor && (
+        <Button
+          size="small"
+          variant="contained"
+          startIcon={<Check size={14} />}
+          onClick={() => handleAccion(tx, 'confirmada')}
+          disabled={actualizarMutation.isPending}
+          sx={{ bgcolor: '#16A34A', color: '#fff', '&:hover': { bgcolor: '#15803D' }, flex: 1, borderRadius: 2 }}
+        >
+          Confirmar venta
+        </Button>
+      )}
+      {esVendedor && (
         <Button
           size="small"
           variant="outlined"
@@ -99,9 +100,10 @@ export const InboxPage: React.FC = () => {
         >
           Cancelar
         </Button>
-      </Stack>
-    );
-  };
+      )}
+    </Stack>
+  );
+};
 
   const ListaConversaciones = () => (
     <Box sx={{
