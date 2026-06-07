@@ -3,7 +3,7 @@ import {
   Box, Button, Grid, Stack, TextField,
   Typography, useMediaQuery, useTheme,
 } from '@mui/material';
-import { ShoppingBag, Plus } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';

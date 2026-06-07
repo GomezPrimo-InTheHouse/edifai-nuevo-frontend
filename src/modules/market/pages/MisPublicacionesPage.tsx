@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import {
   Box, Button, Card, CardContent, Chip,
-  Grid, Stack, Tab, Tabs, Typography,
-  useMediaQuery, useTheme,
+  Grid, Stack, Tab, Tabs, Typography, useTheme,
 } from '@mui/material';
-import { ArrowLeft, Package, X } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
@@ -23,7 +22,7 @@ export const MisPublicacionesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const notify = useNotify();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+//   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [tab, setTab] = useState(0);
   const [transaccionSeleccionada, setTransaccionSeleccionada] = useState<Transaccion | null>(null);

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Box, Chip, CircularProgress, Typography, useTheme } from '@mui/material';
+import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useChatTransaccion, useEnviarMensaje, useMarcarLeidos } from '../hooks/useChatTransaccion';
 import { ChatInput } from './ChatInput';
