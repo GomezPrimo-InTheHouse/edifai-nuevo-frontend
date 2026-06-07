@@ -1,9 +1,6 @@
 import { useState } from 'react';
-import {
-  Box, Button, Grid, Stack, TextField,
-  Typography, useMediaQuery, useTheme,
-} from '@mui/material';
-import { ShoppingBag } from 'lucide-react';
+
+import { Box, Badge, Button, Grid, Stack, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
@@ -15,12 +12,17 @@ import { TransaccionModal } from '../components/TransaccionModal';
 import { usePublicaciones } from '../hooks/usePublicaciones';
 import type { Publicacion } from '../types/market.types';
 import { useNavigate } from 'react-router-dom';
+import { MessageSquare, ShoppingBag } from 'lucide-react';
+import { useMensajesNoLeidos } from '../hooks/useChatTransaccion';
 
 export const MarketPage: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+// en el componente:
+const { data: noLeidos = [] } = useMensajesNoLeidos();
+const totalNoLeidos = noLeidos.reduce((acc, item) => acc + Number(item.cantidad), 0);
 
   const { data: publicaciones = [], isLoading, isError, refetch } = usePublicaciones();
   const [search, setSearch] = useState('');
@@ -45,15 +47,18 @@ export const MarketPage: React.FC = () => {
       <PageHeader
         title={t('market.title')}
         subtitle={t('market.subtitle')}
-        actions={
-          <Button
-            variant="outlined"
-            startIcon={<ShoppingBag size={16} />}
-            onClick={() => navigate('/market/mis-publicaciones')}
-          >
-            {t('market.mis_publicaciones')}
-          </Button>
-        }
+actions={
+  <Stack direction="row" spacing={1}>
+    <Badge badgeContent={totalNoLeidos} color="warning" invisible={totalNoLeidos === 0}>
+      <Button variant="outlined" startIcon={<MessageSquare size={16} />} onClick={() => navigate('/market/inbox')}>
+        Inbox
+      </Button>
+    </Badge>
+    <Button variant="outlined" startIcon={<ShoppingBag size={16} />} onClick={() => navigate('/market/mis-publicaciones')}>
+      {t('market.mis_publicaciones')}
+    </Button>
+  </Stack>
+}
       />
 
       {/* Buscador */}

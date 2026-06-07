@@ -221,6 +221,7 @@ import { ConfiguracionPage } from '../../modules/configuracion/pages/Configuraci
 import { GastosImprevistosPage } from '../../modules/gastosImprevistos/pages/gastosImprevistos.page';
 import { MarketPage } from '../../modules/market/pages/MarketPage';
 import { MisPublicacionesPage } from '../../modules/market/pages/MisPublicacionesPage';
+import { InboxPage } from '../../modules/market/pages/InboxPage';
 
 const ROLES_ADMIN     = [1, 3, 4, 6];
 const ROLES_ADMIN_ALL = [1, 3, 4, 6, 9];
@@ -301,6 +302,8 @@ export const AppRouter = () => {
         {/* Market */}
         <Route path="/market" element={<MarketPage />} />
         <Route path="/market/mis-publicaciones" element={<MisPublicacionesPage />} />
+        <Route path="/market/inbox" element={<InboxPage />} />
+
       </Route>
 
       {/* ── Solo admin completo (NO admin_privado) ── */}

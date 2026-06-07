@@ -66,4 +66,8 @@ export const marketApi = {
     const res = await httpClient.get<{ success: boolean; data: MensajesNoLeidos[] }>(`${baseUrl}/mensajes/no-leidos`);
     return res.data.data;
   },
+  async getInbox(): Promise<Transaccion[]> {
+  const res = await httpClient.get<{ success: boolean; data: Transaccion[] }>(`${baseUrl}/transacciones/inbox`);
+  return res.data.data;
+},
 };

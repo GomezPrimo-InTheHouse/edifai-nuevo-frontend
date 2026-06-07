@@ -32,6 +32,9 @@ export interface Transaccion {
   vendedor_nombre: string;
   vendedor_email: string;
   mensajes_no_leidos: number;
+  ultimo_mensaje: string | null;
+  ultimo_mensaje_at: string | null;
+  publicacion_estado: string;
   created_at: string;
 }
 
