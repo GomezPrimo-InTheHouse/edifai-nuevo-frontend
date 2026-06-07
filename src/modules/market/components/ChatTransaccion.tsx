@@ -174,7 +174,6 @@ export const ChatTransaccion: React.FC<ChatTransaccionProps> = ({
               ref={fileInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-              capture="environment"
               style={{ display: 'none' }}
               onChange={handleFileChange}
             />
