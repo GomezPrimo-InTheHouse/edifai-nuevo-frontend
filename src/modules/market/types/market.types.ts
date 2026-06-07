@@ -37,6 +37,7 @@ export interface Transaccion {
   ultimo_mensaje_at: string | null;
   publicacion_estado: string;
   created_at: string;
+  ya_tiene_solicitud?: boolean;
 }
 
 export interface Mensaje {

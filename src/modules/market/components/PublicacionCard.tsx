@@ -2,7 +2,7 @@ import {
   Box, Button, Card, CardContent, Chip,
   Stack, Typography, useTheme,
 } from '@mui/material';
-import { ShoppingCart, User } from 'lucide-react';
+import { ShoppingCart, User, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Publicacion } from '../types/market.types';
 import { useAuthStore } from '../../../app/store/auth.store';
@@ -10,9 +10,10 @@ import { useAuthStore } from '../../../app/store/auth.store';
 interface Props {
   publicacion: Publicacion;
   onComprar: (publicacion: Publicacion) => void;
+  yaTieneSolicitud?: boolean;
 }
 
-export const PublicacionCard: React.FC<Props> = ({ publicacion, onComprar }) => {
+export const PublicacionCard: React.FC<Props> = ({ publicacion, onComprar, yaTieneSolicitud = false }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
@@ -22,7 +23,7 @@ export const PublicacionCard: React.FC<Props> = ({ publicacion, onComprar }) => 
     <Card sx={{
       borderRadius: 3, height: '100%',
       bgcolor: 'background.paper',
-      border: `1px solid ${theme.palette.divider}`,
+      border: `1px solid ${yaTieneSolicitud ? '#F59E0B' : theme.palette.divider}`,
       boxShadow: 'none',
       transition: 'border-color 0.2s',
       '&:hover': { borderColor: '#F59E0B' },
@@ -95,15 +96,35 @@ export const PublicacionCard: React.FC<Props> = ({ publicacion, onComprar }) => 
 
         {/* Accion */}
         {!esMia && (
-          <Button
-            fullWidth
-            variant="contained"
-            startIcon={<ShoppingCart size={16} />}
-            onClick={() => onComprar(publicacion)}
-            sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' }, borderRadius: 2 }}
-          >
-            {t('market.card.comprar')}
-          </Button>
+          <>
+            {yaTieneSolicitud ? (
+              <Box sx={{
+                p: 1.5, borderRadius: 2, textAlign: 'center',
+                bgcolor: 'rgba(245,158,11,0.08)',
+                border: '1px solid rgba(245,158,11,0.3)',
+              }}>
+                <Stack direction="row" alignItems="center" justifyContent="center" gap={1}>
+                  <Clock size={14} color="#B45309" />
+                  <Typography variant="body2" fontWeight={600} sx={{ color: '#B45309' }}>
+                    Solicitud enviada
+                  </Typography>
+                </Stack>
+                <Typography variant="caption" color="text.secondary">
+                  Revisá tu inbox para ver el estado
+                </Typography>
+              </Box>
+            ) : (
+              <Button
+                fullWidth
+                variant="contained"
+                startIcon={<ShoppingCart size={16} />}
+                onClick={() => onComprar(publicacion)}
+                sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' }, borderRadius: 2 }}
+              >
+                Enviar solicitud de compra
+              </Button>
+            )}
+          </>
         )}
 
         {esMia && (

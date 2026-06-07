@@ -14,6 +14,9 @@ import type { Publicacion } from '../types/market.types';
 import { useNavigate } from 'react-router-dom';
 import { MessageSquare, ShoppingBag } from 'lucide-react';
 import { useMensajesNoLeidos } from '../hooks/useChatTransaccion';
+import { useTransacciones } from '../hooks/useTransacciones';
+import { useAuthStore } from '../../../app/store/auth.store';
+
 
 export const MarketPage: React.FC = () => {
   const theme = useTheme();
@@ -28,12 +31,24 @@ const totalNoLeidos = noLeidos.reduce((acc, item) => acc + Number(item.cantidad)
   const [search, setSearch] = useState('');
   const [publicacionSeleccionada, setPublicacionSeleccionada] = useState<Publicacion | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+// en el componente, después de usePublicaciones:
+const { data: misTransacciones = [] } = useTransacciones();
+const user = useAuthStore((s) => s.user);
+
 
   const filtradas = publicaciones.filter((p) =>
     p.nombre_material.toLowerCase().includes(search.toLowerCase()) ||
     p.vendedor_nombre.toLowerCase().includes(search.toLowerCase())
   );
-
+  
+  // función helper
+  const yaTieneSolicitud = (publicacion_id: number): boolean => {
+    return misTransacciones.some(
+      (tx) => tx.publicacion_id === publicacion_id &&
+              tx.comprador_id === user?.id &&
+              tx.estado === 'pendiente'
+    );
+  };
   const handleComprar = (publicacion: Publicacion) => {
     setPublicacionSeleccionada(publicacion);
     setModalOpen(true);
@@ -91,11 +106,15 @@ actions={
           </Stack>
 
           <Grid container spacing={2}>
-            {filtradas.map((pub) => (
-              <Grid key={pub.id} size={{ xs: 12, md: 6, lg: 4 }}>
-                <PublicacionCard publicacion={pub} onComprar={handleComprar} />
-              </Grid>
-            ))}
+{filtradas.map((pub) => (
+  <Grid key={pub.id} size={{ xs: 12, md: 6, lg: 4 }}>
+    <PublicacionCard
+      publicacion={pub}
+      onComprar={handleComprar}
+      yaTieneSolicitud={yaTieneSolicitud(pub.id)}
+    />
+  </Grid>
+))}
           </Grid>
         </>
       )}
