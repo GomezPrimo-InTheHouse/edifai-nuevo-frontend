@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box, Button, Card, CardContent, Chip,
   Grid, Stack, Typography, useMediaQuery, useTheme,
@@ -20,11 +20,22 @@ export const MisComprasPage: React.FC = () => {
   const notify = useNotify();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { data: compras = [], isLoading, isError, refetch } = useMisCompras();
+const { data: compras = [], isLoading, isError, refetch } = useMisCompras();
   const agregarMutation = useAgregarCompraAlInventario();
   const agregarStockMutation = useAgregarStockExistente();
 
-  const [agregados, setAgregados] = useState<Set<number>>(new Set());
+const [agregados, setAgregados] = useState<Set<number>>(() => {
+  return new Set<number>();
+});
+
+// Sincronizar cuando cargan las compras
+useEffect(() => {
+  const yaAgregados = compras
+    .filter((c) => c.agregado_al_inventario)
+    .map((c) => c.id);
+  setAgregados(new Set(yaAgregados));
+}, [compras]);
+
   const [modalConfirmacion, setModalConfirmacion] = useState<{
     open: boolean;
     transaccion_id: number;

@@ -26,6 +26,7 @@ export interface Transaccion {
   total: number;
   estado: 'pendiente' | 'confirmada' | 'cancelada';
   archivada: boolean;
+  agregado_al_inventario: boolean; // ← nuevo
   nombre_material: string;
   unidad: string;
   comprador_nombre: string;
