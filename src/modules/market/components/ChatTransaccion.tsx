@@ -78,53 +78,109 @@ export const ChatTransaccion: React.FC<ChatTransaccionProps> = ({
   };
 
   const renderMensaje = (msg: any) => {
-    const esMio = msg.remitente_id === miId;
-    // const esComprobante = msg.mensaje.includes('adjuntó un comprobante');
-    const esValidacion = msg.mensaje.startsWith('✅') || msg.mensaje.startsWith('⚠️');
+  const esMio = msg.remitente_id === miId;
+  const esValidacion = msg.mensaje.startsWith('✅') || msg.mensaje.startsWith('⚠️');
 
-    return (
-      <Box key={msg.id} sx={{
-        display: 'flex',
-        justifyContent: esMio ? 'flex-end' : 'flex-start',
+  // Detectar si el mensaje contiene una URL de comprobante
+  const urlRegex = /(https:\/\/[^\s]+supabase[^\s]+)/;
+  const urlMatch = msg.mensaje.match(urlRegex);
+  const tieneImagen = Boolean(urlMatch);
+  const imagenUrl = urlMatch?.[0] ?? null;
+
+  // Texto sin la URL
+  const textoSinUrl = tieneImagen
+    ? msg.mensaje.replace(urlRegex, '').replace('🔗', '').trim()
+    : msg.mensaje;
+
+  return (
+    <Box key={msg.id} sx={{
+      display: 'flex',
+      justifyContent: esMio ? 'flex-end' : 'flex-start',
+    }}>
+      <Box sx={{
+        maxWidth: '75%',
+        px: 2, py: 1,
+        borderRadius: esMio ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+        bgcolor: esValidacion
+          ? msg.mensaje.startsWith('✅')
+            ? 'rgba(22,163,74,0.12)'
+            : 'rgba(245,158,11,0.12)'
+          : esMio
+            ? '#F59E0B'
+            : theme.palette.action.hover,
+        color: esValidacion
+          ? msg.mensaje.startsWith('✅') ? '#16A34A' : '#B45309'
+          : esMio ? '#0F172A' : theme.palette.text.primary,
+        border: esValidacion
+          ? msg.mensaje.startsWith('✅')
+            ? '1px solid rgba(22,163,74,0.3)'
+            : '1px solid rgba(245,158,11,0.3)'
+          : 'none',
       }}>
-        <Box sx={{
-          maxWidth: '75%',
-          px: 2, py: 1,
-          borderRadius: esMio ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-          bgcolor: esValidacion
-            ? msg.mensaje.startsWith('✅')
-              ? 'rgba(22,163,74,0.12)'
-              : 'rgba(245,158,11,0.12)'
-            : esMio
-              ? '#F59E0B'
-              : theme.palette.action.hover,
-          color: esValidacion
-            ? msg.mensaje.startsWith('✅') ? '#16A34A' : '#B45309'
-            : esMio ? '#0F172A' : theme.palette.text.primary,
-          border: esValidacion
-            ? msg.mensaje.startsWith('✅')
-              ? '1px solid rgba(22,163,74,0.3)'
-              : '1px solid rgba(245,158,11,0.3)'
-            : 'none',
+        {!esMio && !esValidacion && (
+          <Typography variant="caption" fontWeight={700} sx={{ display: 'block', mb: 0.25 }}>
+            {msg.remitente_nombre}
+          </Typography>
+        )}
+
+        {/* Texto del mensaje */}
+        <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
+          {textoSinUrl}
+        </Typography>
+
+        {/* Miniatura del comprobante */}
+        {tieneImagen && imagenUrl && (
+          <Box sx={{ mt: 1 }}>
+            <Box
+              component="img"
+              src={imagenUrl}
+              alt="Comprobante de pago"
+              sx={{
+                width: '100%',
+                maxWidth: 220,
+                borderRadius: 2,
+                cursor: 'pointer',
+                border: `2px solid ${theme.palette.divider}`,
+                display: 'block',
+                objectFit: 'cover',
+                maxHeight: 160,
+                '&:hover': { opacity: 0.85 },
+              }}
+              onClick={() => window.open(imagenUrl, '_blank')}
+            />
+            <Box
+              component="a"
+              href={imagenUrl}
+              download="comprobante.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                mt: 0.75,
+                fontSize: 11,
+                color: esMio ? '#0F172A' : theme.palette.text.secondary,
+                textDecoration: 'none',
+                opacity: 0.8,
+                '&:hover': { opacity: 1, textDecoration: 'underline' },
+              }}
+            >
+              ⬇ Descargar comprobante
+            </Box>
+          </Box>
+        )}
+
+        <Typography variant="caption" sx={{
+          display: 'block', textAlign: 'right', mt: 0.5,
+          opacity: 0.7, fontSize: 10,
         }}>
-          {!esMio && !esValidacion && (
-            <Typography variant="caption" fontWeight={700} sx={{ display: 'block', mb: 0.25 }}>
-              {msg.remitente_nombre}
-            </Typography>
-          )}
-          <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
-            {msg.mensaje}
-          </Typography>
-          <Typography variant="caption" sx={{
-            display: 'block', textAlign: 'right', mt: 0.25,
-            opacity: 0.7, fontSize: 10,
-          }}>
-            {new Date(msg.created_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
-          </Typography>
-        </Box>
+          {new Date(msg.created_at).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+        </Typography>
       </Box>
-    );
-  };
+    </Box>
+  );
+};
 
   return (
     <Box sx={{
