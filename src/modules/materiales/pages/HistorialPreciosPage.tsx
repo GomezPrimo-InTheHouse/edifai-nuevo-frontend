@@ -15,7 +15,7 @@ import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { EmptyState } from '../../../shared/components/EmptyState/EmptyState';
 import { useHistorialIncrementos } from '../hooks/useHistorialIncrementos';
-import { useMaterialesList } from '../hooks/useMateriales';
+import { useMaterialesListAll } from '../hooks/useMateriales';
 
 function formatDate(value: string) {
     return new Date(value).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -27,7 +27,7 @@ export const HistorialPreciosPage: React.FC = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const { data: historial = [], isLoading } = useHistorialIncrementos();
-    const { data: materiales = [] } = useMaterialesList();
+    const { data: materiales = [] } = useMaterialesListAll();
     const [materialFiltro, setMaterialFiltro] = useState<number | ''>('');
 
     const historialFiltrado = materialFiltro

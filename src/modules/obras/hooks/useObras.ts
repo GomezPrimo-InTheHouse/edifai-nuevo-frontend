@@ -98,3 +98,13 @@ export function useArchivarObra() {
     },
   });
 }
+
+export function useObrasListAll() {
+  return useQuery({
+    queryKey: [...obrasQueryKeys.all, 'all'],
+    queryFn: async () => {
+      const res = await obraApi.getAll(1, 1000);
+      return res.data ?? [];
+    },
+  });
+}

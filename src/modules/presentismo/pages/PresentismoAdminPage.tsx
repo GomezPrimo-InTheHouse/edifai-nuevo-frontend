@@ -19,7 +19,7 @@ import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { presentismoApi } from '../../../services/api/presentismo.api';
-import { useObrasList } from '../../obras/hooks/useObras';
+import { useObrasListAll } from '../../obras/hooks/useObras';
 
 const hoy = new Date();
 const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
@@ -72,7 +72,7 @@ const DIAS = [
   t('presentismo_admin.dias_semana.sab'),
 ];
 
-  const { data: obras = [] } = useObrasList();
+  const { data: obras = [] } = useObrasListAll();
 
   const { data: stats, isLoading: loadingStats } = useQuery({
     queryKey: ['presentismo-estadisticas', fechaDesde, fechaHasta, obraFiltro],
