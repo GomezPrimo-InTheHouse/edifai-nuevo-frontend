@@ -5,9 +5,29 @@ import type { CreateMaterialPayload, Material, UpdateMaterialPayload } from '../
 const baseUrl = `${env.materialesApiUrl}/materiales`;
 
 export const materialApi = {
-  async getAll(): Promise<Material[]> {
-    const response = await httpClient.get<{ success: boolean; data: Material[] }>(`${baseUrl}/getAll`);
-    return response.data.data;
+  async getAll(page = 1, limit = 50): Promise<{
+    data: Material[];
+    pagination: {
+      total: number;
+      totalPages: number;
+      page: number;
+      limit: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+  }> {
+    const response = await httpClient.get<{ success: boolean } & {
+      data: Material[];
+      pagination: {
+        total: number;
+        totalPages: number;
+        page: number;
+        limit: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+      };
+    }>(`${baseUrl}/getAll?page=${page}&limit=${limit}`);
+    return { data: response.data.data, pagination: response.data.pagination };
   },
 
   async getById(id: number | string): Promise<Material> {

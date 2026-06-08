@@ -7,8 +7,11 @@ export const materialesQueryKeys = {
   detail: (id: number | string) => ['materiales', id] as const,
 };
 
-export function useMaterialesList() {
-  return useQuery({ queryKey: materialesQueryKeys.all, queryFn: () => materialApi.getAll() });
+export function useMaterialesList(page = 1, limit = 50) {
+  return useQuery({
+    queryKey: [...materialesQueryKeys.all, page, limit],
+    queryFn: () => materialApi.getAll(page, limit),
+  });
 }
 
 export function useMaterialDetail(id: number | string) {

@@ -359,7 +359,13 @@ export const MaterialesListPage = () => {
   const { t } = useTranslation();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { data, isLoading, isError, refetch } = useMaterialesList();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(50);
+
+  const { data: response, isLoading, isError, refetch } = useMaterialesList(page, limit);
+  const data = response?.data ?? [];
+  const pagination = response?.pagination;
+
   const { data: tipos = [] } = useTiposMaterialList();
   const { data: estadisticas } = useEstadisticasMateriales();
   const { data: misPublicaciones = [] } = useMisPublicaciones();
@@ -679,6 +685,41 @@ export const MaterialesListPage = () => {
 
       <TipoMaterialModal open={tipoModalOpen} onClose={() => setTipoModalOpen(false)} />
       <AjustePreciosModal open={ajusteModalOpen} onClose={() => setAjusteModalOpen(false)} />
+
+      {pagination && pagination.totalPages > 1 && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2,
+            mt: 3,
+            pb: 2,
+          }}
+        >
+          <Button
+            variant="outlined"
+            size="small"
+            disabled={!pagination.hasPrev}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            sx={{ borderRadius: 2 }}
+          >
+            ← Anterior
+          </Button>
+          <Typography variant="body2" color="text.secondary">
+            Página {pagination.page} de {pagination.totalPages} — {pagination.total} registros
+          </Typography>
+          <Button
+            variant="outlined"
+            size="small"
+            disabled={!pagination.hasNext}
+            onClick={() => setPage((p) => p + 1)}
+            sx={{ borderRadius: 2 }}
+          >
+            Siguiente →
+          </Button>
+        </Box>
+      )}
 
       {materialAPublicar && (
         <PublicarMaterialModal

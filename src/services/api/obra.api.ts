@@ -5,9 +5,30 @@ import type { CreateObraPayload, Obra, UpdateObraPayload } from '../../modules/o
 const obraBaseUrl = `${env.obraApiUrl}/obra`;
 
 export const obraApi = {
-  async getAll(): Promise<Obra[]> {
-    const response = await httpClient.get<{ success: boolean; obras: Obra[] }>(`${obraBaseUrl}/getAll`);
-    return response.data.obras;
+  async getAll(page = 1, limit = 50): Promise<{
+    data: Obra[];
+    pagination: {
+      total: number;
+      totalPages: number;
+      page: number;
+      limit: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+  }> {
+    const response = await httpClient.get<{ success: boolean } & {
+      data: Obra[];
+      pagination: {
+        total: number;
+        totalPages: number;
+        page: number;
+        limit: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+      };
+    }>(`${obraBaseUrl}/getAll?page=${page}&limit=${limit}`);
+
+    return { data: response.data.data, pagination: response.data.pagination };
   },
 
   async getAllArchivadas(): Promise<Obra[]> {
