@@ -69,3 +69,11 @@ export interface MensajesNoLeidos {
   transaccion_id: number;
   cantidad: number;
 }
+
+export interface MaterialSimilar {
+  id: number;
+  nombre: string;
+  stock_actual: number;
+  unidad: string;
+  precio_unitario: number;
+}

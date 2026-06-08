@@ -101,9 +101,16 @@ async getMisCompras(): Promise<Transaccion[]> {
   return res.data.data;
 },
 
-async agregarCompraAlInventario(transaccion_id: number): Promise<void> {
-  await httpClient.post(`${baseUrl}/compras/inventario/${transaccion_id}`);
+
+async agregarStockMaterialExistente(transaccion_id: number, material_id: number): Promise<void> {
+  await httpClient.post(`${baseUrl}/compras/inventario/${transaccion_id}/stock/${material_id}`);
 },
 
+async agregarCompraAlInventario(transaccion_id: number, forzar = false): Promise<any> {
+  const res = await httpClient.post(
+    `${baseUrl}/compras/inventario/${transaccion_id}${forzar ? '?forzar=true' : ''}`
+  );
+  return res.data;
+},
 
 };

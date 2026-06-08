@@ -21,3 +21,15 @@ export function useAgregarCompraAlInventario() {
     },
   });
 }
+
+export function useAgregarStockExistente() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ transaccion_id, material_id }: { transaccion_id: number; material_id: number }) =>
+      marketApi.agregarStockMaterialExistente(transaccion_id, material_id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: materialesQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: misComprasQueryKey });
+    },
+  });
+}

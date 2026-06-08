@@ -9,8 +9,10 @@ import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
-import { useMisCompras, useAgregarCompraAlInventario } from '../hooks/useMisCompras';
+import { useMisCompras, useAgregarCompraAlInventario, useAgregarStockExistente } from '../hooks/useMisCompras';
 import { useNotify } from '../../../shared/hooks/useNotify';
+import { ConfirmacionInventarioModal } from '../components/ConfirmacionInventarioModal';
+import type { MaterialSimilar, Transaccion } from '../types/market.types';
 
 export const MisComprasPage: React.FC = () => {
   const theme = useTheme();
@@ -20,15 +22,63 @@ export const MisComprasPage: React.FC = () => {
 
   const { data: compras = [], isLoading, isError, refetch } = useMisCompras();
   const agregarMutation = useAgregarCompraAlInventario();
-  const [agregados, setAgregados] = useState<Set<number>>(new Set());
+  const agregarStockMutation = useAgregarStockExistente();
 
-  const handleAgregar = async (transaccion_id: number) => {
+  const [agregados, setAgregados] = useState<Set<number>>(new Set());
+  const [modalConfirmacion, setModalConfirmacion] = useState<{
+    open: boolean;
+    transaccion_id: number;
+    similares: MaterialSimilar[];
+    nombre: string;
+    cantidad: number;
+    unidad: string;
+  } | null>(null);
+
+  const handleAgregar = async (compra: Transaccion) => {
     try {
-      await agregarMutation.mutateAsync(transaccion_id);
-      setAgregados((prev) => new Set([...prev, transaccion_id]));
+      const result = await agregarMutation.mutateAsync(compra.id);
+      if ((result as any)?.requiere_confirmacion) {
+        setModalConfirmacion({
+          open: true,
+          transaccion_id: compra.id,
+          similares: (result as any).similares,
+          nombre: compra.nombre_material,
+          cantidad: Number(compra.cantidad_comprada),
+          unidad: compra.unidad,
+        });
+        return;
+      }
+      setAgregados((prev) => new Set([...prev, compra.id]));
       notify.success('Material agregado a tu inventario correctamente.');
     } catch (error: any) {
       notify.error(error?.response?.data?.message || 'No se pudo agregar al inventario.');
+    }
+  };
+
+  const handleAgregarStock = async (material_id: number) => {
+    if (!modalConfirmacion) return;
+    try {
+      await agregarStockMutation.mutateAsync({
+        transaccion_id: modalConfirmacion.transaccion_id,
+        material_id,
+      });
+      setAgregados((prev) => new Set([...prev, modalConfirmacion.transaccion_id]));
+      setModalConfirmacion(null);
+      notify.success('Stock actualizado correctamente.');
+    } catch (error: any) {
+      notify.error(error?.response?.data?.message || 'No se pudo actualizar el stock.');
+    }
+  };
+
+  const handleCrearNuevo = async () => {
+    if (!modalConfirmacion) return;
+    try {
+      await agregarMutation.mutateAsync(modalConfirmacion.transaccion_id, true as any);
+      setAgregados((prev) => new Set([...prev, modalConfirmacion.transaccion_id]));
+      setModalConfirmacion(null);
+      notify.success('Material nuevo creado en tu inventario.');
+    } catch (error: any) {
+      notify.error(error?.response?.data?.message || 'No se pudo crear el material.');
     }
   };
 
@@ -45,6 +95,7 @@ export const MisComprasPage: React.FC = () => {
             variant="outlined"
             startIcon={<ArrowLeft size={16} />}
             onClick={() => navigate('/market')}
+            sx={{ minWidth: 0, px: isMobile ? 1.25 : 2 }}
           >
             {isMobile ? '' : 'Volver al Market'}
           </Button>
@@ -125,8 +176,8 @@ export const MisComprasPage: React.FC = () => {
                     <Button
                       fullWidth
                       variant={yaAgregado ? 'outlined' : 'contained'}
-                      startIcon={<Plus size={16} />}
-                      onClick={() => handleAgregar(compra.id)}
+                      startIcon={yaAgregado ? undefined : <Plus size={16} />}
+                      onClick={() => handleAgregar(compra)}
                       disabled={yaAgregado || agregarMutation.isPending}
                       sx={{
                         mt: 'auto',
@@ -144,6 +195,20 @@ export const MisComprasPage: React.FC = () => {
             );
           })}
         </Grid>
+      )}
+
+      {modalConfirmacion && (
+        <ConfirmacionInventarioModal
+          open={modalConfirmacion.open}
+          onClose={() => setModalConfirmacion(null)}
+          similares={modalConfirmacion.similares}
+          nombreMaterial={modalConfirmacion.nombre}
+          cantidad={modalConfirmacion.cantidad}
+          unidad={modalConfirmacion.unidad}
+          onAgregarStock={handleAgregarStock}
+          onCrearNuevo={handleCrearNuevo}
+          cargando={agregarStockMutation.isPending || agregarMutation.isPending}
+        />
       )}
     </AppLayout>
   );
