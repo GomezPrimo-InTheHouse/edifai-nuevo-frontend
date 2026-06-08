@@ -8,7 +8,7 @@ export function useInbox() {
   return useQuery({
     queryKey: inboxQueryKey,
     queryFn: () => marketApi.getInbox(false),
-    refetchInterval: 10000,
+    refetchInterval: 8000,
   });
 }
 

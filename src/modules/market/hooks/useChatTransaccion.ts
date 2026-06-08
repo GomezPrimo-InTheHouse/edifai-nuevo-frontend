@@ -7,7 +7,8 @@ export function useChatTransaccion(transaccion_id: number) {
     queryKey: marketQueryKeys.mensajes(transaccion_id),
     queryFn: () => marketApi.getMensajes(transaccion_id),
     enabled: Boolean(transaccion_id),
-    refetchInterval: 5000, // polling cada 5s como fallback al SSE
+    refetchInterval: 3000,
+    staleTime: 0,
   });
 }
 

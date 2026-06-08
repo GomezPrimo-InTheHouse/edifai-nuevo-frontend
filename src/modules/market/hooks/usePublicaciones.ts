@@ -13,5 +13,6 @@ export function usePublicaciones() {
   return useQuery({
     queryKey: marketQueryKeys.publicaciones,
     queryFn: () => marketApi.getPublicaciones(),
+    refetchInterval: 15000,
   });
 }

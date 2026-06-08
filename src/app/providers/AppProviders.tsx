@@ -9,7 +9,14 @@ import '../traduction/i18n';
 import { useTranslation } from 'react-i18next';
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 1, staleTime: 1000 * 60 * 5 } },
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 0,                    // siempre considerar datos desactualizados
+      refetchOnWindowFocus: true,       // refetch al volver a la pestaña
+      refetchOnReconnect: true,         // refetch al reconectar internet
+    },
+  },
 });
 
 function ThemedApp({ children }: { children: React.ReactNode }) {
