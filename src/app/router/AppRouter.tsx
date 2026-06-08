@@ -222,6 +222,7 @@ import { GastosImprevistosPage } from '../../modules/gastosImprevistos/pages/gas
 import { MarketPage } from '../../modules/market/pages/MarketPage';
 import { MisPublicacionesPage } from '../../modules/market/pages/MisPublicacionesPage';
 import { InboxPage } from '../../modules/market/pages/InboxPage';
+import { MisComprasPage } from '../../modules/market/pages/MisComprasPage';
 
 const ROLES_ADMIN     = [1, 3, 4, 6];
 const ROLES_ADMIN_ALL = [1, 3, 4, 6, 9];
@@ -303,6 +304,8 @@ export const AppRouter = () => {
         <Route path="/market" element={<MarketPage />} />
         <Route path="/market/mis-publicaciones" element={<MisPublicacionesPage />} />
         <Route path="/market/inbox" element={<InboxPage />} />
+        <Route path="/market/mis-compras" element={<MisComprasPage />} />
+
 
       </Route>
 

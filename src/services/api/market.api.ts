@@ -73,7 +73,7 @@ export const marketApi = {
   );
   return res.data.data;
   },
-  
+
   async subirComprobante(transaccion_id: number, file: File): Promise<{
   success: boolean;
   validado: boolean;
@@ -95,6 +95,14 @@ export const marketApi = {
     { headers: { 'Content-Type': 'multipart/form-data' } }
   );
   return res.data;
+},
+async getMisCompras(): Promise<Transaccion[]> {
+  const res = await httpClient.get<{ success: boolean; data: Transaccion[] }>(`${baseUrl}/compras/mis`);
+  return res.data.data;
+},
+
+async agregarCompraAlInventario(transaccion_id: number): Promise<void> {
+  await httpClient.post(`${baseUrl}/compras/inventario/${transaccion_id}`);
 },
 
 
