@@ -34,53 +34,62 @@ export const MisComprasPage: React.FC = () => {
     unidad: string;
   } | null>(null);
 
-  const handleAgregar = async (compra: Transaccion) => {
-    try {
-      const result = await agregarMutation.mutateAsync(compra.id);
-      if ((result as any)?.requiere_confirmacion) {
-        setModalConfirmacion({
-          open: true,
-          transaccion_id: compra.id,
-          similares: (result as any).similares,
-          nombre: compra.nombre_material,
-          cantidad: Number(compra.cantidad_comprada),
-          unidad: compra.unidad,
-        });
-        return;
-      }
-      setAgregados((prev) => new Set([...prev, compra.id]));
-      notify.success('Material agregado a tu inventario correctamente.');
-    } catch (error: any) {
-      notify.error(error?.response?.data?.message || 'No se pudo agregar al inventario.');
+ const handleAgregar = async (compra: Transaccion) => {
+  const confirmed = await notify.confirm({
+    title: '¿Agregar al inventario?',
+    message: `Se agregará "${compra.nombre_material}" (${Number(compra.cantidad_comprada).toLocaleString('es-AR')} ${compra.unidad}) a tu inventario de materiales. Lo encontrarás en el módulo Materiales con el badge "Market".`,
+    confirmLabel: 'Agregar al inventario',
+    severity: 'warning',
+  });
+
+  if (!confirmed) return;
+
+  try {
+    const result = await agregarMutation.mutateAsync(compra.id);
+    if ((result as any)?.requiere_confirmacion) {
+      setModalConfirmacion({
+        open: true,
+        transaccion_id: compra.id,
+        similares: (result as any).similares,
+        nombre: compra.nombre_material,
+        cantidad: Number(compra.cantidad_comprada),
+        unidad: compra.unidad,
+      });
+      return;
     }
-  };
+    setAgregados((prev) => new Set([...prev, compra.id]));
+    notify.success(`✅ "${compra.nombre_material}" agregado a tu inventario. Lo encontrás en Materiales → filtro "Market".`);
+  } catch (error: any) {
+    notify.error(error?.response?.data?.message || 'No se pudo agregar al inventario.');
+  }
+};
 
   const handleAgregarStock = async (material_id: number) => {
-    if (!modalConfirmacion) return;
-    try {
-      await agregarStockMutation.mutateAsync({
-        transaccion_id: modalConfirmacion.transaccion_id,
-        material_id,
-      });
-      setAgregados((prev) => new Set([...prev, modalConfirmacion.transaccion_id]));
-      setModalConfirmacion(null);
-      notify.success('Stock actualizado correctamente.');
-    } catch (error: any) {
-      notify.error(error?.response?.data?.message || 'No se pudo actualizar el stock.');
-    }
-  };
+  if (!modalConfirmacion) return;
+  try {
+    await agregarStockMutation.mutateAsync({
+      transaccion_id: modalConfirmacion.transaccion_id,
+      material_id,
+    });
+    setAgregados((prev) => new Set([...prev, modalConfirmacion.transaccion_id]));
+    setModalConfirmacion(null);
+    notify.success(`✅ Stock de "${modalConfirmacion.nombre}" actualizado en tu inventario. Lo encontrás en Materiales.`);
+  } catch (error: any) {
+    notify.error(error?.response?.data?.message || 'No se pudo actualizar el stock.');
+  }
+};
 
   const handleCrearNuevo = async () => {
-    if (!modalConfirmacion) return;
-    try {
-      await agregarMutation.mutateAsync(modalConfirmacion.transaccion_id, true as any);
-      setAgregados((prev) => new Set([...prev, modalConfirmacion.transaccion_id]));
-      setModalConfirmacion(null);
-      notify.success('Material nuevo creado en tu inventario.');
-    } catch (error: any) {
-      notify.error(error?.response?.data?.message || 'No se pudo crear el material.');
-    }
-  };
+  if (!modalConfirmacion) return;
+  try {
+    await agregarMutation.mutateAsync(modalConfirmacion.transaccion_id, true as any);
+    setAgregados((prev) => new Set([...prev, modalConfirmacion.transaccion_id]));
+    setModalConfirmacion(null);
+    notify.success(`✅ "${modalConfirmacion.nombre}" creado como material nuevo en tu inventario. Lo encontrás en Materiales.`);
+  } catch (error: any) {
+    notify.error(error?.response?.data?.message || 'No se pudo crear el material.');
+  }
+};
 
   if (isLoading) return <AppLayout><LoadingState message="Cargando compras..." /></AppLayout>;
   if (isError) return <AppLayout><ErrorState title="Error" message="No se pudieron cargar las compras." onRetry={refetch} /></AppLayout>;
