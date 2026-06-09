@@ -14,10 +14,10 @@ export const obrasQueryKeys = {
   estadosObra: ['estados', 'obra'] as const,
 };
 
-export function useObrasList(page = 1, limit = 50) {
+export function useObrasList() {
   return useQuery({
-    queryKey: [...obrasQueryKeys.all, page, limit],
-    queryFn: () => obraApi.getAll(page, limit),
+    queryKey: obrasQueryKeys.all,
+    queryFn: () => obraApi.getAll(),
   });
 }
 
