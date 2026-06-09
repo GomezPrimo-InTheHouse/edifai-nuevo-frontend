@@ -25,6 +25,7 @@ import { useNotify } from '../../../shared/hooks/useNotify';
 import { AvancesLabor } from '../components/AvancesLabor';
 import { useAuthStore } from '../../../app/store/auth.store';
 import { useLocation } from 'react-router-dom';
+import { LaborPresupuestosPanel } from '../components/LaboresPresupuestosPanel';
 
 const ROLES_ADMIN = [1, 3, 4, 6, 9];
 
@@ -315,9 +316,17 @@ export const LaborDetailPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      {labor.obra_id && (
-        <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
-      )}
+    {labor.obra_id && (
+  <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
+)}
+
+{labor.modo === 'cotizacion' && (
+  <LaborPresupuestosPanel
+    labor_id={laborId}
+    estado_id={labor.estado_id}
+    onPresupuestoConfirmado={refetch}
+  />
+)}
     </AppLayout>
   );
 };
