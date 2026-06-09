@@ -5,7 +5,7 @@
 //   Table, TableHead, TableRow, TableCell, TableBody, Typography, Paper,
 // } from '@mui/material';
 // import { Plus, Search, Trash2, X } from 'lucide-react';
-// import { useMaterialesList } from '../../materiales/hooks/useMateriales';
+// import { useMaterialesListAll } from '../../materiales/hooks/useMateriales';
 // import { useAddMaterialToPresupuesto } from '../hooks/usePresupuestoMateriales';
 // import { NuevoMaterialRapidoModal } from './NuevoMaterialRapidoModal';
 // import { useNotify } from '../../../shared/hooks/useNotify';
@@ -23,7 +23,7 @@
 //   const [lista, setLista] = useState<MaterialRow[]>([]);
 //   const [nuevoMaterialOpen, setNuevoMaterialOpen] = useState(false);
 
-//   const { data: materiales = [] } = useMaterialesList();
+//   const { data: materiales = [] } = useMaterialesListAll();
 //   const addMutation = useAddMaterialToPresupuesto(presupuestoId);
 
 //   const materialesFiltrados = materiales.filter((m) =>
@@ -198,7 +198,7 @@ import {
 } from '@mui/material';
 import { Plus, Search, Trash2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useMaterialesList } from '../../materiales/hooks/useMateriales';
+import { useMaterialesListAll } from '../../materiales/hooks/useMateriales';
 import { useAddMaterialToPresupuesto } from '../hooks/usePresupuestoMateriales';
 import { NuevoMaterialRapidoModal } from './NuevoMaterialRapidoModal';
 import { useNotify } from '../../../shared/hooks/useNotify';
@@ -219,7 +219,7 @@ export const AgregarMaterialModal: React.FC<Props> = ({ open, onClose, presupues
   const [lista, setLista] = useState<MaterialRow[]>([]);
   const [nuevoMaterialOpen, setNuevoMaterialOpen] = useState(false);
 
-  const { data: materiales = [] } = useMaterialesList();
+  const { data: materiales = [] } = useMaterialesListAll();
   const addMutation = useAddMaterialToPresupuesto(presupuestoId);
 
   const materialesFiltrados = materiales.filter((m) =>

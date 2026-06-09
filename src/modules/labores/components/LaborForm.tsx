@@ -8,7 +8,7 @@
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { laborSchema, type LaborSchemaValues } from '../schemas/labor.schema';
 // import type { Labor, LaborFormValues } from '../types/labor.types';
-// import { useObrasList } from '../../obras/hooks/useObras';
+// import { useObrasListAll } from '../../obras/hooks/useObras';
 // import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 // import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
 // import { usePagosByTrabajador } from '../../pagos/hooks/usePagos';
@@ -83,7 +83,7 @@
 //     defaultValues: toFormDefaults(initialData, obraIdFijo),
 //   });
 
-//   const { data: obras = [] } = useObrasList();
+//   const { data: obras = [] } = useObrasListAll();
 //   const { data: todosLosTrabajadores = [] } = useTrabajadoresList();
 //   const { data: especialidades = [] } = useEspecialidadesList();
 //   const { data: labores = [] } = useLaboresList();
@@ -404,7 +404,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { laborSchema, type LaborSchemaValues } from '../schemas/labor.schema';
 import type { Labor, LaborFormValues } from '../types/labor.types';
-import { useObrasList } from '../../obras/hooks/useObras';
+import { useObrasListAll } from '../../obras/hooks/useObras';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
 import { usePagosByTrabajador } from '../../pagos/hooks/usePagos';
@@ -482,7 +482,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
     defaultValues: toFormDefaults(initialData, obraIdFijo),
   });
 
-  const { data: obras = [] } = useObrasList();
+  const { data: obras = [] } = useObrasListAll();
   const { data: todosLosTrabajadores = [] } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const { data: labores = [] } = useLaboresList();
