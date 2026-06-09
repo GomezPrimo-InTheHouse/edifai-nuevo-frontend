@@ -19,7 +19,7 @@ import { LaborEstadoChip } from '../components/LaborEstadoChip';
 import { LaborCardMobile } from '../components/LaborCardMobile';
 import { TrabajadoresAsignados } from '../components/TrabajadoresAsignados';
 import { useDeleteLabor, useLaboresList, useLaboresArchivadas, useMisLabores } from '../hooks/useLabores';
-import { useObrasListAll } from '../../obras/hooks/useObras';
+import { useObrasList } from '../../obras/hooks/useObras';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
 import { estadoApi } from '../../../services/api/estado.api';
@@ -60,7 +60,7 @@ export const LaboresListPage = () => {
   const isError = esWorker ? errorWorker : errorAdmin;
   const refetch = esWorker ? refetchWorker : refetchAdmin;
 
-  const { data: obras = [] } = useObrasListAll();
+  const { data: obras = [] } = useObrasList();
   const { data: trabajadores = [] } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const deleteMutation = useDeleteLabor();

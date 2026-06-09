@@ -10,7 +10,7 @@
 // import type { Presupuesto, PresupuestoFormValues } from '../types/presupuesto.types';
 // import { useLaboresList } from '../../labores/hooks/useLabores';
 // import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
-// import { useObrasListAll } from '../../obras/hooks/useObras';
+// import { useObrasList } from '../../obras/hooks/useObras';
 // import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 
 // interface Props {
@@ -304,7 +304,7 @@ import { presupuestoSchema, type PresupuestoSchemaValues } from '../schemas/pres
 import type { Presupuesto, PresupuestoFormValues } from '../types/presupuesto.types';
 import { useLaboresList } from '../../labores/hooks/useLabores';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
-import { useObrasListAll } from '../../obras/hooks/useObras';
+import { useObrasList } from '../../obras/hooks/useObras';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 
 interface Props {
@@ -353,7 +353,7 @@ export function PresupuestoForm({ initialData, onSubmit, isSubmitting = false, h
   });
 
   const { data: labores = [] }      = useLaboresList();
-  const { data: obras = [] } = useObrasListAll();
+  const { data: obras = [] }        = useObrasList();
   const { data: trabajadores = [] } = useTrabajadoresList();
   const { data: todosEstados = [] } = useEstadosGenerales();
   const estados = todosEstados.filter((e) => e.ambito === 'presupuesto');

@@ -17,7 +17,7 @@ import { LoadingState } from '../../../shared/components/LoadingState/LoadingSta
 import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { LaborEstadoChip } from '../components/LaborEstadoChip';
 import { useCambiarEstadoLabor, useLaborDetail } from '../hooks/useLabores';
-import { useObrasListAll } from '../../obras/hooks/useObras';
+import { useObrasList } from '../../obras/hooks/useObras';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
 import { estadoApi } from '../../../services/api/estado.api';
@@ -59,7 +59,7 @@ export const LaborDetailPage: React.FC = () => {
   const esAdmin = ROLES_ADMIN.includes(user?.rol_id ?? 0);
 
   const { data: labor, isLoading, isError, refetch } = useLaborDetail(laborId);
-  const { data: obras = [] } = useObrasListAll();
+  const { data: obras        = [] } = useObrasList();
   const { data: trabajadores = [] } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const cambiarEstadoMutation = useCambiarEstadoLabor();
