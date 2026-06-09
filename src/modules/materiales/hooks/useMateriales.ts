@@ -64,13 +64,3 @@ export function useEstadisticasMateriales() {
     queryFn: () => materialApi.getEstadisticas(),
   });
 }
-
-export function useMaterialesListAll() {
-  return useQuery({
-    queryKey: [...materialesQueryKeys.all, 'all'],
-    queryFn: async () => {
-      const res = await materialApi.getAll(1, 1000);
-      return res.data ?? [];
-    },
-  });
-}
