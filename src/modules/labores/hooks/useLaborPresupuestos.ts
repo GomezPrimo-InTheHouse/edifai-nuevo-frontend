@@ -102,6 +102,7 @@ export function useSeleccionarPresupuesto(labor_id: number) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: laborPresupuestosQueryKeys.byLabor(labor_id) });
       queryClient.invalidateQueries({ queryKey: ['labores'] });
+      queryClient.invalidateQueries({ queryKey: ['presupuestos'] });
     },
   });
 }

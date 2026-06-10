@@ -27,9 +27,13 @@ export const laborPresupuestosApi = {
     return res.data.data;
   },
 
-  async seleccionar(id: number): Promise<void> {
-    await httpClient.put(`${base}/labor-presupuestos/${id}/seleccionar`, {});
-  },
+  async seleccionar(id: number): Promise<{ es_proveedor_externo: boolean; proveedor_nombre: string | null }> {
+  const res = await httpClient.put<{
+    success: boolean;
+    data: { es_proveedor_externo: boolean; proveedor_nombre: string | null };
+  }>(`${base}/labor-presupuestos/${id}/seleccionar`, {});
+  return res.data.data;
+},
 
   async remove(id: number): Promise<void> {
     await httpClient.delete(`${base}/labor-presupuestos/${id}`);
