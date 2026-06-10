@@ -69,6 +69,14 @@ export const LaborDetailPage: React.FC = () => {
     queryKey: ['estados', 'labor'],
     queryFn: () => estadoApi.getByAmbito('labor'),
   });
+  React.useEffect(() => {
+    if (labor?.nombre && !location.state?.breadcrumbLabel) {
+      window.history.replaceState(
+        { ...location.state, breadcrumbLabel: labor.nombre },
+        ''
+      );
+    }
+  }, [labor?.nombre]);
 
   if (isLoading) return <LoadingState message={t('labores.detail.loading')} />;
   if (isError) return <ErrorState title="Error" message={t('labores.detail.error')} onRetry={refetch} />;
@@ -83,14 +91,6 @@ export const LaborDetailPage: React.FC = () => {
   const puntos = trabajador?.puntos ?? 0;
   const asistenciaPct = Number(trabajador?.porcentaje_asistencia_mes ?? 0);
 
-  React.useEffect(() => {
-    if (labor?.nombre && !location.state?.breadcrumbLabel) {
-      window.history.replaceState(
-        { ...location.state, breadcrumbLabel: labor.nombre },
-        ''
-      );
-    }
-  }, [labor?.nombre]);
 
   const handleCambiarEstado = async (estado_id: number) => {
     try {
