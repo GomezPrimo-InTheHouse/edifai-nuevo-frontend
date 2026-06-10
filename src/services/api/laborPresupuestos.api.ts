@@ -5,6 +5,8 @@ import type {
   CreateLaborPresupuestoPayload,
   ProveedorExterno,
   CreateProveedorExternoPayload,
+  UnidadMedida,
+  AnalizarDocumentoResponse,
 } from '../../modules/labores/types/labor.types';
 
 const base = env.laboresApiUrl;
@@ -31,6 +33,25 @@ export const laborPresupuestosApi = {
 
   async remove(id: number): Promise<void> {
     await httpClient.delete(`${base}/labor-presupuestos/${id}`);
+  },
+
+  async getUnidades(): Promise<UnidadMedida[]> {
+    const res = await httpClient.get<{ success: boolean; data: UnidadMedida[] }>(
+      `${base}/labor-presupuestos/unidades-medida`
+    );
+    return res.data.data;
+  },
+
+  async analizarDocumento(payload: {
+    imagen_base64?: string;
+    media_type?: string;
+    texto_libre?: string;
+  }): Promise<AnalizarDocumentoResponse> {
+    const res = await httpClient.post<{ success: boolean; data: AnalizarDocumentoResponse }>(
+      `${base}/labor-presupuestos/analizar-documento`,
+      payload
+    );
+    return res.data.data;
   },
 };
 

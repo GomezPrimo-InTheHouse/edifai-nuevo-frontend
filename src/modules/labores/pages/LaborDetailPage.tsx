@@ -36,9 +36,9 @@ const PROGRESO_MAP: Record<string, number> = {
 
 function getProgressColor(progreso: number): string {
   if (progreso === 100) return '#16A34A';
-  if (progreso >= 75)  return '#2563EB';
-  if (progreso >= 50)  return '#F59E0B';
-  if (progreso >= 25)  return '#EA580C';
+  if (progreso >= 75) return '#2563EB';
+  if (progreso >= 50) return '#F59E0B';
+  if (progreso >= 25) return '#EA580C';
   return '#94A3B8';
 }
 
@@ -49,48 +49,48 @@ function formatDate(value?: string | null): string {
 
 export const LaborDetailPage: React.FC = () => {
   const location = useLocation();
-  const navigate  = useNavigate();
-  const { id }    = useParams<{ id: string }>();
-  const laborId   = Number(id);
-  const notify    = useNotify();
-  const theme     = useTheme();
-  const { t }     = useTranslation();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const laborId = Number(id);
+  const notify = useNotify();
+  const theme = useTheme();
+  const { t } = useTranslation();
 
-  const user    = useAuthStore((s) => s.user);
+  const user = useAuthStore((s) => s.user);
   const esAdmin = ROLES_ADMIN.includes(user?.rol_id ?? 0);
 
   const { data: labor, isLoading, isError, refetch } = useLaborDetail(laborId);
-  const { data: obras        = [] } = useObrasList();
+  const { data: obras = [] } = useObrasList();
   const { data: trabajadores = [] } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const cambiarEstadoMutation = useCambiarEstadoLabor();
 
   const { data: estadosLabor = [] } = useQuery({
     queryKey: ['estados', 'labor'],
-    queryFn:  () => estadoApi.getByAmbito('labor'),
+    queryFn: () => estadoApi.getByAmbito('labor'),
   });
 
   if (isLoading) return <LoadingState message={t('labores.detail.loading')} />;
-  if (isError)   return <ErrorState title="Error" message={t('labores.detail.error')} onRetry={refetch} />;
-  if (!labor)    return <ErrorState title={t('labores.detail.no_encontrada')} message={t('labores.detail.no_encontrada_msg')} />;
+  if (isError) return <ErrorState title="Error" message={t('labores.detail.error')} onRetry={refetch} />;
+  if (!labor) return <ErrorState title={t('labores.detail.no_encontrada')} message={t('labores.detail.no_encontrada_msg')} />;
 
-  const obra              = obras.find(o => o.id === labor.obra_id);
-  const trabajador        = trabajadores.find(t => t.id === labor.trabajador_id);
+  const obra = obras.find(o => o.id === labor.obra_id);
+  const trabajador = trabajadores.find(t => t.id === labor.trabajador_id);
   const especialidadNombre = especialidades.find(e => e.id === trabajador?.especialidad_id)?.nombre;
-  const estadoNombre      = estadosLabor.find(e => e.id === labor.estado_id)?.nombre;
-  const progreso          = estadoNombre ? (PROGRESO_MAP[estadoNombre] ?? 0) : 0;
-  const progressColor     = getProgressColor(progreso);
-  const puntos            = trabajador?.puntos ?? 0;
-  const asistenciaPct     = Number(trabajador?.porcentaje_asistencia_mes ?? 0);
+  const estadoNombre = estadosLabor.find(e => e.id === labor.estado_id)?.nombre;
+  const progreso = estadoNombre ? (PROGRESO_MAP[estadoNombre] ?? 0) : 0;
+  const progressColor = getProgressColor(progreso);
+  const puntos = trabajador?.puntos ?? 0;
+  const asistenciaPct = Number(trabajador?.porcentaje_asistencia_mes ?? 0);
 
   React.useEffect(() => {
-  if (labor?.nombre && !location.state?.breadcrumbLabel) {
-    window.history.replaceState(
-      { ...location.state, breadcrumbLabel: labor.nombre },
-      ''
-    );
-  }
-}, [labor?.nombre]);
+    if (labor?.nombre && !location.state?.breadcrumbLabel) {
+      window.history.replaceState(
+        { ...location.state, breadcrumbLabel: labor.nombre },
+        ''
+      );
+    }
+  }, [labor?.nombre]);
 
   const handleCambiarEstado = async (estado_id: number) => {
     try {
@@ -102,8 +102,8 @@ export const LaborDetailPage: React.FC = () => {
   };
 
   // ── Tokens de tema ────────────────────────────────────────────
-  const cardBorder  = `1px solid ${theme.palette.divider}`;
-  const infoBoxSx   = {
+  const cardBorder = `1px solid ${theme.palette.divider}`;
+  const infoBoxSx = {
     p: 2, borderRadius: 2,
     bgcolor: theme.palette.action.hover,
     border: cardBorder,
@@ -199,7 +199,7 @@ export const LaborDetailPage: React.FC = () => {
                           sx={{
                             fontWeight: 700, fontSize: 11,
                             bgcolor: asistenciaPct >= 80 ? '#F0FDF4' : asistenciaPct >= 50 ? '#FFFBEB' : '#FEF2F2',
-                            color:   asistenciaPct >= 80 ? '#15803D' : asistenciaPct >= 50 ? '#B45309' : '#DC2626',
+                            color: asistenciaPct >= 80 ? '#15803D' : asistenciaPct >= 50 ? '#B45309' : '#DC2626',
                           }} />
                       </Stack>
                     </Stack>
@@ -228,9 +228,9 @@ export const LaborDetailPage: React.FC = () => {
                 <Grid container spacing={2}>
                   {[
                     { label: t('labores.detail.inicio_estimado'), value: formatDate(labor.fecha_inicio_estimada) },
-                    { label: t('labores.detail.fin_estimado'),    value: formatDate(labor.fecha_fin_estimada) },
-                    { label: t('labores.detail.inicio_real'),     value: formatDate(labor.fecha_inicio_real) },
-                    { label: t('labores.detail.fin_real'),        value: formatDate(labor.fecha_fin_real) },
+                    { label: t('labores.detail.fin_estimado'), value: formatDate(labor.fecha_fin_estimada) },
+                    { label: t('labores.detail.inicio_real'), value: formatDate(labor.fecha_inicio_real) },
+                    { label: t('labores.detail.fin_real'), value: formatDate(labor.fecha_fin_real) },
                   ].map((item) => (
                     <Grid key={item.label} size={{ xs: 6 }}>
                       <Box sx={infoBoxSx}>
@@ -298,7 +298,7 @@ export const LaborDetailPage: React.FC = () => {
               {/* Metadata */}
               <Stack spacing={2}>
                 {[
-                  { label: t('labores.detail.creada'),     value: formatDate(labor.created_at) },
+                  { label: t('labores.detail.creada'), value: formatDate(labor.created_at) },
                   { label: t('labores.detail.actualizada'), value: formatDate(labor.updated_at) },
                 ].map((item) => (
                   <Box key={item.label}>
@@ -316,17 +316,18 @@ export const LaborDetailPage: React.FC = () => {
         </Grid>
       </Grid>
 
-    {labor.obra_id && (
-  <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
-)}
+      {labor.obra_id && (
+        <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} />
+      )}
 
-{labor.modo === 'cotizacion' && (
-  <LaborPresupuestosPanel
-    labor_id={laborId}
-    estado_id={labor.estado_id}
-    onPresupuestoConfirmado={refetch}
-  />
-)}
+      {labor.modo === 'cotizacion' && (
+        <LaborPresupuestosPanel
+          labor_id={laborId}
+          estado_id={labor.estado_id}
+          labor={labor}
+          onPresupuestoConfirmado={refetch}
+        />
+      )}
     </AppLayout>
   );
 };
