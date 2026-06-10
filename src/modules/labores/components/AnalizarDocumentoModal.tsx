@@ -122,7 +122,7 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
 
                 // 1. Crear labor
                 const labor = await laborApi.create({
-                    nombre: sug.descripcion,
+                    nombre: sug.descripcion.substring(0, 490),
                     descripcion: sug.descripcion,
                     obra_id,
                     modo: 'cotizacion',
