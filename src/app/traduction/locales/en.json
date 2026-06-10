@@ -320,6 +320,7 @@
   "cargando": "Loading budgets...",
   "empty": "No budgets loaded. Add the first one.",
   "modal_titulo": "Add budget",
+  
   "tipo_proveedor": "Provider type",
   "tipo_trabajador": "Registered worker",
   "tipo_externo": "External provider",
@@ -367,6 +368,7 @@
     "obra": "Project",
     "descripcion": "Description",
     "trabajador": "Assigned lead worker",
+    "trabajador_asignado_cotizacion": "Assigned worker (optional)",
     "sin_asignar": "Unassigned",
     "estado": "Task status",
     "seleccionar": "Select",

@@ -317,6 +317,7 @@
   "labor_form": {
     "nombre": "Nombre de la labor",
     "obra": "Obra",
+    "trabajador_asignado_cotizacion": "Trabajador asignado (opcional)",
     "descripcion": "Descripción",
     "trabajador": "Trabajador jefe asignado",
     "sin_asignar": "Sin asignar",

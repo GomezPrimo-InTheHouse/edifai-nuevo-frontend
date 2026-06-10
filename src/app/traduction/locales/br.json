@@ -324,6 +324,7 @@
     "seleccionar": "Selecionar",
     "progreso": "Progresso da tarefa",
     "inicio_estimado": "Início estimado",
+    "trabajador_asignado_cotizacion": "Trabalhador atribuído (opcional)",
     "fin_estimado": "Fim estimado",
     "inicio_real": "Início real",
     "fin_real": "Fim real",
