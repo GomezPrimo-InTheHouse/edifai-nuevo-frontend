@@ -15,6 +15,8 @@ export const LaborCreatePage: React.FC = () => {
   const createMutation = useCreateLabor();
 
 const handleSubmit = async (values: LaborFormValues) => {
+    console.log('VALUES:', JSON.stringify(values)); // ← 
+
   const payload = {
     ...values,
     trabajador_id: values.trabajador_id === '' ? null : values.trabajador_id,
