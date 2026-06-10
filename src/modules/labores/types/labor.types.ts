@@ -33,6 +33,8 @@ export interface LaborFormValues {
   fecha_inicio_real: string;
   fecha_fin_real: string;
   usuario_creador_id: number;
+    modo: 'rapido' | 'cotizacion';  // ← agregar
+
 }
 
 export interface CreateLaborPayload {
