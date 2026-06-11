@@ -4,11 +4,20 @@ export interface Presupuesto {
   descripcion?: string | null;
   labor_id: number;
   obra_id?: number | null;
+  obra_nombre?: string | null;
   estado_id?: number | null;
   total_estimado?: number | null;
   costo_mano_obra?: number | null;
+  precio_unitario?: number | null;
+  cantidad?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
+  // campos del JOIN
+  trabajador_id?: number | null;
+  jefe_nombre?: string | null;
+  jefe_apellido?: string | null;
+  jefe_especialidad?: string | null;
+  equipo?: PresupuestoMiembro[];
 }
 
 export interface PresupuestoFormValues {
@@ -18,6 +27,8 @@ export interface PresupuestoFormValues {
   obra_id: number | '';
   estado_id: number | '';
   costo_mano_obra: number | '';
+  precio_unitario: number | '';
+  cantidad: number | '';
 }
 
 export interface CreatePresupuestoPayload {
@@ -27,6 +38,8 @@ export interface CreatePresupuestoPayload {
   obra_id?: number | null;
   estado_id?: number | null;
   costo_mano_obra?: number | null;
+  precio_unitario?: number | null;
+  cantidad?: number | null;
 }
 
 export interface PresupuestoMaterial {
@@ -47,26 +60,6 @@ export interface PresupuestoMiembro {
   especialidad?: string | null;
 }
 
-export interface Presupuesto {
-  id: number;
-  nombre?: string | null;
-  descripcion?: string | null;
-  labor_id: number;
-  obra_id?: number | null;
-  obra_nombre?: string | null;
-  estado_id?: number | null;
-  total_estimado?: number | null;
-  costo_mano_obra?: number | null;
-  created_at?: string | null;
-  updated_at?: string | null;
-  // campos del JOIN
-  trabajador_id?: number | null;
-  jefe_nombre?: string | null;
-  jefe_apellido?: string | null;
-  jefe_especialidad?: string | null;
-  equipo?: PresupuestoMiembro[];
-}
-
 export interface PresupuestoContextoPago {
   presupuesto: {
     id: number;
@@ -74,6 +67,8 @@ export interface PresupuestoContextoPago {
     descripcion?: string | null;
     costo_mano_obra?: number | null;
     total_estimado?: number | null;
+    precio_unitario?: number | null;
+    cantidad?: number | null;
     estado_id?: number | null;
   };
   labor: {
