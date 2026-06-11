@@ -429,6 +429,8 @@
   "error_registro": "Error registering labors."
 },
   "labor_form": {
+    "modo_bloqueado_presupuestos": "Mode cannot be changed because the labor has loaded budgets.",
+"modo_bloqueado_sin_asignar": "Mode cannot be changed while the labor is Unassigned.",
     "nombre": "Task name",
     "obra": "Project",
     "descripcion": "Description",

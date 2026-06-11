@@ -316,6 +316,8 @@
     }
   },
   "labor_form": {
+    "modo_bloqueado_presupuestos": "O modo não pode ser alterado porque a labor possui orçamentos carregados.",
+"modo_bloqueado_sin_asignar": "O modo não pode ser alterado enquanto a labor estiver Sem atribuição.",
     "nombre": "Nome da tarefa",
     "obra": "Obra",
     "descripcion": "Descrição",

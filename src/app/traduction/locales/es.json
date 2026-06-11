@@ -316,6 +316,8 @@
 }
   },
   "labor_form": {
+    "modo_bloqueado_presupuestos": "El modo no puede cambiarse porque la labor tiene presupuestos cargados.",
+"modo_bloqueado_sin_asignar": "El modo no puede cambiarse mientras la labor está Sin asignar.",
     "nombre": "Nombre de la labor",
     "obra": "Obra",
     "unidad": "Unidad de medida",
