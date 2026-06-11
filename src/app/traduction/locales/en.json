@@ -392,6 +392,7 @@
   "proveedor_requerido": "Select a provider."
 },
 "analizar_doc": {
+  "cotizante_global_titulo": "Document bidder (applies to all labors)",
   "editable_hint": "Fields are editable before confirming",
   "titulo": "Import labors from document",
   "tab_archivo": "PDF or image",

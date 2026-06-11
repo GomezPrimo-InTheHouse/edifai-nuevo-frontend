@@ -433,6 +433,7 @@
   "proveedor_requerido": "Selecione um fornecedor."
 },
 "analizar_doc": {
+  "cotizante_global_titulo": "Cotizante do documento (aplica-se a todas as labores)",
   "editable_hint": "Os campos são editáveis antes de confirmar",
   "titulo": "Importar labores do documento",
   "tab_archivo": "PDF ou imagem",

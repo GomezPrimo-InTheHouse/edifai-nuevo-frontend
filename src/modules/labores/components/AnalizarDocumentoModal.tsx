@@ -7,9 +7,8 @@ import {
 } from '@mui/material';
 import { FileText, Upload, X, Sparkles, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useAnalizarDocumento } from '../hooks/useLaborPresupuestos';
+import { useAnalizarDocumento, useCreateProveedorExterno, useProveedoresExternos } from '../hooks/useLaborPresupuestos';
 import { useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
-import { useProveedoresExternos, useCreateProveedorExterno } from '../hooks/useLaborPresupuestos';
 import { laborApi } from '../../../services/api/labor.api';
 import { laborPresupuestosApi } from '../../../services/api/laborPresupuestos.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
@@ -32,16 +31,21 @@ interface FilaCotizante {
   nuevo_nombre: string;
 }
 
-// Sugerencia editable — extiende LaborSugerencia con campos editables
 interface SugerenciaEditable extends LaborSugerencia {
   descripcion_completa?: string | null;
-  // campos editables en tabla
   _nombre_edit: string;
   _unidad_edit: string;
   _cantidad_edit: string;
   _precio_unitario_edit: string;
   _precio_total_edit: string;
 }
+
+type CotizanteGlobal = {
+  tipo: TipoCotizante;
+  trabajador_id: number | '';
+  proveedor_id: number | '';
+  nuevo_nombre: string;
+};
 
 const defaultCotizante = (): FilaCotizante => ({
   tipo: 'externo_nuevo',
@@ -64,6 +68,7 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
   const [textoLibre, setTextoLibre] = useState('');
   const [sugerencias, setSugerencias] = useState<SugerenciaEditable[]>([]);
   const [cotizantes, setCotizantes] = useState<FilaCotizante[]>([]);
+  const [cotizanteGlobal, setCotizanteGlobal] = useState<CotizanteGlobal | null>(null);
   const [confirmando, setConfirmando] = useState(false);
   const [fase, setFase] = useState<'input' | 'revision'>('input');
 
@@ -80,6 +85,7 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
     setTextoLibre('');
     setSugerencias([]);
     setCotizantes([]);
+    setCotizanteGlobal(null);
     setFase('input');
     onClose();
   };
@@ -107,11 +113,21 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
         _precio_total_edit: l.presupuesto?.precio_total != null ? String(l.presupuesto.precio_total) : '',
       })));
 
-      setCotizantes(resultado.labores.map(() => {
-        const c = defaultCotizante();
-        if (resultado.cotizante_global) c.nuevo_nombre = resultado.cotizante_global;
-        return c;
-      }));
+      if (resultado.cotizante_global) {
+        // Hay cotizante único para todo el documento → campo global
+        setCotizanteGlobal({
+          tipo: 'externo_nuevo',
+          trabajador_id: '',
+          proveedor_id: '',
+          nuevo_nombre: resultado.cotizante_global,
+        });
+        setCotizantes(resultado.labores.map(() => defaultCotizante()));
+      } else {
+        // Sin cotizante global → cada fila tiene su propio selector
+        setCotizanteGlobal(null);
+        setCotizantes(resultado.labores.map(() => defaultCotizante()));
+      }
+
       setFase('revision');
     } catch {
       notify.error(t('analizar_doc.error_analisis'));
@@ -130,6 +146,31 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
     setCotizantes((prev) => prev.map((c, i) => i === idx ? { ...c, ...patch } : c));
   };
 
+  // Resolver cotizante para una fila — usa global si existe
+  const resolverCotizante = async (cot: FilaCotizante): Promise<{ trabajador_id: number | null; proveedor_externo_id: number | null }> => {
+    let trabajador_id: number | null = null;
+    let proveedor_externo_id: number | null = null;
+
+    if (cot.tipo === 'trabajador' && cot.trabajador_id) {
+      trabajador_id = Number(cot.trabajador_id);
+    } else if (cot.tipo === 'externo_existente' && cot.proveedor_id) {
+      proveedor_externo_id = Number(cot.proveedor_id);
+    } else if (cot.tipo === 'externo_nuevo' && cot.nuevo_nombre.trim()) {
+      // Buscar si ya existe para no duplicar
+      const existente = proveedores.find(
+        (p) => p.nombre.toLowerCase() === cot.nuevo_nombre.trim().toLowerCase()
+      );
+      if (existente) {
+        proveedor_externo_id = existente.id;
+      } else {
+        const nuevo = await createProveedor.mutateAsync({ nombre: cot.nuevo_nombre.trim() });
+        proveedor_externo_id = nuevo.id;
+      }
+    }
+
+    return { trabajador_id, proveedor_externo_id };
+  };
+
   const handleConfirmar = async () => {
     const seleccionadas = sugerencias.filter((s) => s.seleccionada);
     if (seleccionadas.length === 0) {
@@ -138,16 +179,36 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
     }
 
     setConfirmando(true);
+
+    // Si hay cotizante global tipo externo_nuevo, crearlo UNA sola vez
+    let proveedorGlobalId: number | null = null;
+    let trabajadorGlobalId: number | null = null;
+
+    if (cotizanteGlobal) {
+      if (cotizanteGlobal.tipo === 'trabajador' && cotizanteGlobal.trabajador_id) {
+        trabajadorGlobalId = Number(cotizanteGlobal.trabajador_id);
+      } else if (cotizanteGlobal.tipo === 'externo_existente' && cotizanteGlobal.proveedor_id) {
+        proveedorGlobalId = Number(cotizanteGlobal.proveedor_id);
+      } else if (cotizanteGlobal.tipo === 'externo_nuevo' && cotizanteGlobal.nuevo_nombre.trim()) {
+        const existente = proveedores.find(
+          (p) => p.nombre.toLowerCase() === cotizanteGlobal.nuevo_nombre.trim().toLowerCase()
+        );
+        if (existente) {
+          proveedorGlobalId = existente.id;
+        } else {
+          const nuevo = await createProveedor.mutateAsync({ nombre: cotizanteGlobal.nuevo_nombre.trim() });
+          proveedorGlobalId = nuevo.id;
+        }
+      }
+    }
+
     try {
       for (let i = 0; i < sugerencias.length; i++) {
         const sug = sugerencias[i];
         if (!sug.seleccionada) continue;
-        const cot = cotizantes[i];
 
-        // Usar valores editados
         const nombreFinal = sug._nombre_edit.trim() || sug.descripcion;
         const cantidadFinal = sug._cantidad_edit ? Number(sug._cantidad_edit) : (sug.cantidad ?? undefined);
-        // const unidadFinal = sug._unidad_edit || sug.unidad_simbolo;
 
         const labor = await laborApi.create({
           nombre: nombreFinal.substring(0, 490),
@@ -162,20 +223,19 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
           const precioUnitario = sug._precio_unitario_edit
             ? Number(sug._precio_unitario_edit)
             : (sug.presupuesto.precio_unitario ?? 0);
-        //   const precioTotal = sug._precio_total_edit
-        //     ? Number(sug._precio_total_edit)
-        //     : (sug.presupuesto.precio_total ?? undefined);
 
           let trabajador_id: number | null = null;
           let proveedor_externo_id: number | null = null;
 
-          if (cot.tipo === 'trabajador' && cot.trabajador_id) {
-            trabajador_id = Number(cot.trabajador_id);
-          } else if (cot.tipo === 'externo_existente' && cot.proveedor_id) {
-            proveedor_externo_id = Number(cot.proveedor_id);
-          } else if (cot.tipo === 'externo_nuevo' && cot.nuevo_nombre.trim()) {
-            const nuevo = await createProveedor.mutateAsync({ nombre: cot.nuevo_nombre.trim() });
-            proveedor_externo_id = nuevo.id;
+          if (cotizanteGlobal) {
+            // Usar IDs ya resueltos del global
+            trabajador_id = trabajadorGlobalId;
+            proveedor_externo_id = proveedorGlobalId;
+          } else {
+            // Resolver cotizante individual
+            const resuelto = await resolverCotizante(cotizantes[i]);
+            trabajador_id = resuelto.trabajador_id;
+            proveedor_externo_id = resuelto.proveedor_externo_id;
           }
 
           if (trabajador_id || proveedor_externo_id) {
@@ -315,6 +375,67 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
               </Button>
             </Stack>
 
+            {/* ── Cotizante global ── */}
+            {cotizanteGlobal !== null && (
+              <Box sx={{ p: 2, borderRadius: 2, border: cardBorder, bgcolor: theme.palette.action.hover }}>
+                <Typography variant="body2" fontWeight={700} color="text.primary" sx={{ mb: 1.5 }}>
+                  {t('analizar_doc.cotizante_global_titulo')}
+                </Typography>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="flex-start">
+                  <TextField
+                    select size="small" sx={{ minWidth: 220 }}
+                    value={cotizanteGlobal.tipo}
+                    onChange={(e) => setCotizanteGlobal((prev) =>
+                      prev ? { ...prev, tipo: e.target.value as TipoCotizante } : prev
+                    )}
+                  >
+                    <MenuItem value="externo_nuevo">{t('analizar_doc.cotizante_nuevo')}</MenuItem>
+                    <MenuItem value="externo_existente">{t('analizar_doc.cotizante_externo')}</MenuItem>
+                    <MenuItem value="trabajador">{t('analizar_doc.cotizante_trabajador')}</MenuItem>
+                  </TextField>
+
+                  {cotizanteGlobal.tipo === 'externo_nuevo' && (
+                    <TextField
+                      size="small" sx={{ minWidth: 250 }}
+                      label={t('analizar_doc.nombre_cotizante')}
+                      value={cotizanteGlobal.nuevo_nombre}
+                      onChange={(e) => setCotizanteGlobal((prev) =>
+                        prev ? { ...prev, nuevo_nombre: e.target.value } : prev
+                      )}
+                    />
+                  )}
+                  {cotizanteGlobal.tipo === 'externo_existente' && (
+                    <TextField
+                      select size="small" sx={{ minWidth: 250 }}
+                      value={cotizanteGlobal.proveedor_id}
+                      onChange={(e) => setCotizanteGlobal((prev) =>
+                        prev ? { ...prev, proveedor_id: Number(e.target.value) } : prev
+                      )}
+                    >
+                      <MenuItem value="">{t('analizar_doc.seleccionar')}</MenuItem>
+                      {proveedores.map((p) => (
+                        <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                  {cotizanteGlobal.tipo === 'trabajador' && (
+                    <TextField
+                      select size="small" sx={{ minWidth: 250 }}
+                      value={cotizanteGlobal.trabajador_id}
+                      onChange={(e) => setCotizanteGlobal((prev) =>
+                        prev ? { ...prev, trabajador_id: Number(e.target.value) } : prev
+                      )}
+                    >
+                      <MenuItem value="">{t('analizar_doc.seleccionar')}</MenuItem>
+                      {jefes.map((tr) => (
+                        <MenuItem key={tr.id} value={tr.id}>{tr.nombre} {tr.apellido}</MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                </Stack>
+              </Box>
+            )}
+
             <Box sx={{ overflowX: 'auto' }}>
               <Table size="small">
                 <TableHead>
@@ -325,7 +446,9 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                     <TableCell sx={{ fontWeight: 700, minWidth: 90 }}>{t('analizar_doc.col_cantidad')}</TableCell>
                     <TableCell sx={{ fontWeight: 700, minWidth: 120 }}>{t('analizar_doc.col_precio_unitario')}</TableCell>
                     <TableCell sx={{ fontWeight: 700, minWidth: 120 }}>{t('analizar_doc.col_precio_total')}</TableCell>
-                    <TableCell sx={{ fontWeight: 700, minWidth: 220 }}>{t('analizar_doc.col_cotizante')}</TableCell>
+                    {!cotizanteGlobal && (
+                      <TableCell sx={{ fontWeight: 700, minWidth: 220 }}>{t('analizar_doc.col_cotizante')}</TableCell>
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -344,7 +467,6 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                           <Checkbox checked={sug.seleccionada} onChange={() => toggleSeleccion(idx)} />
                         </TableCell>
 
-                        {/* Nombre editable */}
                         <TableCell>
                           <TextField
                             size="small" fullWidth
@@ -356,7 +478,6 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                           />
                         </TableCell>
 
-                        {/* Unidad editable */}
                         <TableCell>
                           <TextField
                             select size="small" fullWidth
@@ -369,7 +490,6 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                           </TextField>
                         </TableCell>
 
-                        {/* Cantidad editable */}
                         <TableCell>
                           <TextField
                             size="small" fullWidth type="number"
@@ -381,7 +501,6 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                           />
                         </TableCell>
 
-                        {/* Precio unitario editable */}
                         <TableCell>
                           <TextField
                             size="small" fullWidth type="number"
@@ -393,7 +512,6 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                           />
                         </TableCell>
 
-                        {/* Precio total editable */}
                         <TableCell>
                           <TextField
                             size="small" fullWidth type="number"
@@ -405,57 +523,59 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
                           />
                         </TableCell>
 
-                        {/* Cotizante */}
-                        <TableCell>
-                          {sug.presupuesto && sug.seleccionada && (
-                            <Stack spacing={1}>
-                              <TextField
-                                select size="small" fullWidth
-                                value={cot.tipo}
-                                onChange={(e) => updateCotizante(idx, { tipo: e.target.value as TipoCotizante })}
-                              >
-                                <MenuItem value="externo_nuevo">{t('analizar_doc.cotizante_nuevo')}</MenuItem>
-                                <MenuItem value="externo_existente">{t('analizar_doc.cotizante_externo')}</MenuItem>
-                                <MenuItem value="trabajador">{t('analizar_doc.cotizante_trabajador')}</MenuItem>
-                              </TextField>
-                              {cot.tipo === 'externo_nuevo' && (
+                        {/* Cotizante por fila — solo si no hay global */}
+                        {!cotizanteGlobal && (
+                          <TableCell>
+                            {sug.presupuesto && sug.seleccionada && (
+                              <Stack spacing={1}>
                                 <TextField
-                                  size="small" fullWidth
-                                  label={t('analizar_doc.nombre_cotizante')}
-                                  value={cot.nuevo_nombre}
-                                  onChange={(e) => updateCotizante(idx, { nuevo_nombre: e.target.value })}
-                                />
-                              )}
-                              {cot.tipo === 'externo_existente' && (
-                                <TextField select size="small" fullWidth
-                                  value={cot.proveedor_id}
-                                  onChange={(e) => updateCotizante(idx, { proveedor_id: Number(e.target.value) })}
+                                  select size="small" fullWidth
+                                  value={cot.tipo}
+                                  onChange={(e) => updateCotizante(idx, { tipo: e.target.value as TipoCotizante })}
                                 >
-                                  <MenuItem value="">{t('analizar_doc.seleccionar')}</MenuItem>
-                                  {proveedores.map((p) => (
-                                    <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>
-                                  ))}
+                                  <MenuItem value="externo_nuevo">{t('analizar_doc.cotizante_nuevo')}</MenuItem>
+                                  <MenuItem value="externo_existente">{t('analizar_doc.cotizante_externo')}</MenuItem>
+                                  <MenuItem value="trabajador">{t('analizar_doc.cotizante_trabajador')}</MenuItem>
                                 </TextField>
-                              )}
-                              {cot.tipo === 'trabajador' && (
-                                <TextField select size="small" fullWidth
-                                  value={cot.trabajador_id}
-                                  onChange={(e) => updateCotizante(idx, { trabajador_id: Number(e.target.value) })}
-                                >
-                                  <MenuItem value="">{t('analizar_doc.seleccionar')}</MenuItem>
-                                  {jefes.map((tr) => (
-                                    <MenuItem key={tr.id} value={tr.id}>{tr.nombre} {tr.apellido}</MenuItem>
-                                  ))}
-                                </TextField>
-                              )}
-                            </Stack>
-                          )}
-                          {!sug.presupuesto && (
-                            <Typography variant="caption" color="text.disabled">
-                              {t('analizar_doc.sin_presupuesto')}
-                            </Typography>
-                          )}
-                        </TableCell>
+                                {cot.tipo === 'externo_nuevo' && (
+                                  <TextField
+                                    size="small" fullWidth
+                                    label={t('analizar_doc.nombre_cotizante')}
+                                    value={cot.nuevo_nombre}
+                                    onChange={(e) => updateCotizante(idx, { nuevo_nombre: e.target.value })}
+                                  />
+                                )}
+                                {cot.tipo === 'externo_existente' && (
+                                  <TextField select size="small" fullWidth
+                                    value={cot.proveedor_id}
+                                    onChange={(e) => updateCotizante(idx, { proveedor_id: Number(e.target.value) })}
+                                  >
+                                    <MenuItem value="">{t('analizar_doc.seleccionar')}</MenuItem>
+                                    {proveedores.map((p) => (
+                                      <MenuItem key={p.id} value={p.id}>{p.nombre}</MenuItem>
+                                    ))}
+                                  </TextField>
+                                )}
+                                {cot.tipo === 'trabajador' && (
+                                  <TextField select size="small" fullWidth
+                                    value={cot.trabajador_id}
+                                    onChange={(e) => updateCotizante(idx, { trabajador_id: Number(e.target.value) })}
+                                  >
+                                    <MenuItem value="">{t('analizar_doc.seleccionar')}</MenuItem>
+                                    {jefes.map((tr) => (
+                                      <MenuItem key={tr.id} value={tr.id}>{tr.nombre} {tr.apellido}</MenuItem>
+                                    ))}
+                                  </TextField>
+                                )}
+                              </Stack>
+                            )}
+                            {!sug.presupuesto && (
+                              <Typography variant="caption" color="text.disabled">
+                                {t('analizar_doc.sin_presupuesto')}
+                              </Typography>
+                            )}
+                          </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
@@ -463,7 +583,6 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, obra_id, onClose
               </Table>
             </Box>
 
-            {/* Resumen */}
             <Box sx={{ p: 2, borderRadius: 2, border: cardBorder, bgcolor: theme.palette.action.hover }}>
               <Typography variant="body2" fontWeight={700} color="text.primary" sx={{ mb: 0.5 }}>
                 {t('analizar_doc.resumen_titulo')}
