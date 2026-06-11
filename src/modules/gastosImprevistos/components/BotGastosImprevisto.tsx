@@ -609,65 +609,104 @@ export const BotGastoImprevisto: React.FC<BotGastoImprevistoProps> = ({
 
   // ── Claude — interpretar texto ────────────────────────────────
   const interpretarConClaude = async (textoNuevo: string) => {
-    setProcesando(true);
-    setEtapa('interpretando');
-    const nuevoHistorial = [...historial, textoNuevo];
-    setHistorial(nuevoHistorial);
+  setProcesando(true);
+  setEtapa('interpretando');
+  const nuevoHistorial = [...historial, textoNuevo];
+  setHistorial(nuevoHistorial);
 
-    const prompt = `Sos un asistente de gestión de obras de construcción argentino.
-El usuario está registrando un gasto imprevisto en múltiples mensajes de voz.
-Extraé los campos que puedas y combinalos con los ya extraídos.
+  const hoy = new Date().toISOString().split('T')[0];
+  const ayer = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
-CAMPOS YA EXTRAÍDOS:
-${JSON.stringify(campos, null, 2)}
+  const prompt = [
+    'Sos un asistente experto en gestión de obras de construcción argentina.',
+    'Tu tarea es extraer campos de un gasto imprevisto de obra a partir de texto de voz, imágenes de tickets/facturas, o ambos combinados.',
+    '',
+    'CAMPOS YA EXTRAÍDOS (no los pierdas, solo actualizá si hay corrección explícita):',
+    JSON.stringify(campos, null, 2),
+    '',
+    'HISTORIAL DE MENSAJES DEL USUARIO:',
+    nuevoHistorial.map((m, i) => `Mensaje ${i + 1}: "${m}"`).join('\n'),
+    '',
+    'DATOS DISPONIBLES EN EL SISTEMA:',
+    'Obras: ' + JSON.stringify(obras.map(o => ({ id: o.id, nombre: o.nombre }))),
+    'Especialidades: ' + JSON.stringify(especialidades.map(e => ({ id: e.id, nombre: e.nombre }))),
+    'Formas de pago: ' + JSON.stringify(formasPago.map(f => ({ id: f.id, nombre: f.nombre }))),
+    'Trabajadores: ' + JSON.stringify(trabajadores.map(t => ({ id: t.id, nombre: t.nombre + ' ' + t.apellido }))),
+    '',
+    'REGLAS DE EXTRACCIÓN:',
+    '',
+    'OBRA:',
+    '- Buscá coincidencia por nombre (parcial o fonética) con las obras disponibles.',
+    '- Devolvé obra_id con el id encontrado.',
+    '',
+    'ESPECIALIDAD (inferencia inteligente):',
+    '- Inferí la especialidad según el tipo de gasto o material mencionado.',
+    '- Ejemplos: cemento/ladrillo/revoque/hormigón → albañilería; pintura/látex/esmalte → pintura; cable/tablero/disyuntor → electricidad; caño/válvula/grifo → plomería; madera/puerta/ventana → carpintería; cerámico/porcelanato → colocación.',
+    '- Si el usuario menciona explícitamente una especialidad, priorizá eso.',
+    '- Devolvé especialidad_id con el id más cercano de la lista disponible.',
+    '',
+    'DESCRIPCIÓN:',
+    '- Generá una descripción clara y concisa del gasto en 1-2 oraciones.',
+    '- Incluí qué se compró o pagó y para qué obra o trabajo si se menciona.',
+    '',
+    'PAGADO POR:',
+    '- Primero buscá coincidencia con los trabajadores registrados (por nombre, apellido o apodo).',
+    '- Si encontrás coincidencia, devolvé pagado_por_trabajador_id con el id.',
+    '- Si el nombre NO está en la lista, devolvé pagado_por_nombre_libre con el nombre.',
+    '- Nunca devuelvas ambos a la vez.',
+    '',
+    'MONTO:',
+    '- Extraé el número sin símbolos ni puntos de miles.',
+    '- "dos mil quinientos" → 2500. "1.500 pesos" → 1500.',
+    '- Si hay IVA mencionado, calculá el total con IVA.',
+    '',
+    'FORMAS DE PAGO:',
+    '- Array de { forma_pago_id, monto }.',
+    '- Si dice "50% efectivo 50% transferencia" y el monto es 2000 → dos objetos con 1000 cada uno.',
+    '- Si solo menciona una forma sin porcentaje, asignale el monto total.',
+    '',
+    'FECHA:',
+    '- Formato YYYY-MM-DD.',
+    '- "ayer" → ' + ayer + '. "hoy" o sin mención → ' + hoy + '.',
+    '- Calculá fechas relativas correctamente según hoy.',
+    '',
+    'IMPORTANTE:',
+    '- Devolvé SOLO el JSON con los campos que cambian o se agregan.',
+    '- No incluyas campos que ya están correctos y no cambian.',
+    '- Si el usuario corrige un campo, actualizalo.',
+    '- Si no podés determinar un campo con certeza, no lo incluyas.',
+    '- Sin markdown, sin explicaciones, solo JSON puro.',
+    '',
+    'Campos posibles: obra_id, especialidad_id, descripcion, monto, fecha, pagado_por_trabajador_id, pagado_por_nombre_libre, formas_pago: [{ forma_pago_id, monto }]',
+  ].join('\n');
 
-HISTORIAL:
-${nuevoHistorial.map((m, i) => `Mensaje ${i + 1}: "${m}"`).join('\n')}
-
-DATOS DISPONIBLES:
-Obras: ${JSON.stringify(obras.map(o => ({ id: o.id, nombre: o.nombre })))}
-Especialidades: ${JSON.stringify(especialidades.map(e => ({ id: e.id, nombre: e.nombre })))}
-Formas de pago: ${JSON.stringify(formasPago.map(f => ({ id: f.id, nombre: f.nombre })))}
-Trabajadores: ${JSON.stringify(trabajadores.map(t => ({ id: t.id, nombre: `${t.nombre} ${t.apellido}` })))}
-
-REGLAS:
-- Si el usuario menciona una obra, buscá el id más cercano
-- Si menciona un pagador que no está en la lista, guardalo en "pagado_por_nombre_libre"
-- Si el usuario corrige un campo, actualizalo
-- formas_pago: array de { forma_pago_id, monto } — puede haber más de una. Si el usuario dice "50% efectivo 50% cheque", calculá los montos según el monto total
-- Si no podés determinar un campo, no lo incluyas
-- fecha: formato YYYY-MM-DD, default hoy ${new Date().toISOString().split('T')[0]}
-- monto: número sin símbolos
-
-Devolvé SOLO JSON con los campos que cambian o se agregan. Sin markdown.`;
-
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5',
-          max_tokens: 600,
-          messages: [{ role: 'user', content: prompt }],
-        }),
-      });
-      const data    = await res.json();
-      const rawText = data.content?.[0]?.text ?? '';
-      const clean   = rawText.replace(/```json|```/g, '').trim();
-      const parsed  = JSON.parse(clean);
-      setCampos(prev => ({ ...prev, ...parsed }));
-    } catch {
-      setError('No se pudo interpretar el mensaje. Intentá de nuevo.');
-    } finally {
-      setProcesando(false);
-      setEtapa(null);
-    }
-  };
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 600,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    const data    = await res.json();
+    const rawText = data.content?.[0]?.text ?? '';
+    const clean   = rawText.replace(/```json|```/g, '').trim();
+    const parsed  = JSON.parse(clean);
+    setCampos(prev => ({ ...prev, ...parsed }));
+  } catch {
+    setError('No se pudo interpretar el mensaje. Intentá de nuevo.');
+  } finally {
+    setProcesando(false);
+    setEtapa(null);
+  }
+};
 
   // ── Upload + análisis ticket ──────────────────────────────────
   const handleTicketChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
