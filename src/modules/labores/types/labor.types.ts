@@ -287,6 +287,8 @@ export interface LaborSugerencia {
   unidad_id: number | null;
   cantidad: number | null;
   seleccionada: boolean;
+  descripcion_completa?: string | null;
+
   presupuesto: LaborSugerenciaPresupuesto | null;
 }
 

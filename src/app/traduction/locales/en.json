@@ -237,6 +237,25 @@
       "guardar": "Save project"
     }
   },
+  "registrar_trabajador": {
+  "titulo": "Register worker",
+  "aviso_titulo": "External provider without account",
+  "aviso_desc": "To correctly assign this labor, you can register the provider as a worker. Email and password are optional — without them they won't have system access.",
+  "nombre": "First name",
+  "apellido": "Last name",
+  "dni": "ID number",
+  "telefono": "Phone",
+  "especialidad": "Specialty",
+  "sin_especialidad": "No specialty",
+  "acceso_opcional": "System access (optional)",
+  "email": "Email",
+  "password": "Password",
+  "cancelar": "Cancel",
+  "registrar": "Register worker",
+  "guardando": "Registering...",
+  "creado_ok": "Worker registered successfully.",
+  "error_crear": "Could not register the worker."
+},
   "labores": {
     "title": "Tasks",
     "subtitle": "Task and labor management by project.",
@@ -373,6 +392,7 @@
   "proveedor_requerido": "Select a provider."
 },
 "analizar_doc": {
+  "editable_hint": "Fields are editable before confirming",
   "titulo": "Import labors from document",
   "tab_archivo": "PDF or image",
   "tab_texto": "Free text",

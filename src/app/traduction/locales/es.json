@@ -414,7 +414,27 @@
   "trabajador_requerido": "Seleccioná un trabajador.",
   "proveedor_requerido": "Seleccioná un proveedor."
 },
+"registrar_trabajador": {
+  "titulo": "Registrar trabajador",
+  "aviso_titulo": "Proveedor externo sin cuenta",
+  "aviso_desc": "Para asignar esta labor correctamente, podés registrar al proveedor como trabajador. El email y contraseña son opcionales — sin ellos no tendrá acceso al sistema.",
+  "nombre": "Nombre",
+  "apellido": "Apellido",
+  "dni": "DNI",
+  "telefono": "Teléfono",
+  "especialidad": "Especialidad",
+  "sin_especialidad": "Sin especialidad",
+  "acceso_opcional": "Acceso al sistema (opcional)",
+  "email": "Email",
+  "password": "Contraseña",
+  "cancelar": "Cancelar",
+  "registrar": "Registrar trabajador",
+  "guardando": "Registrando...",
+  "creado_ok": "Trabajador registrado correctamente.",
+  "error_crear": "No se pudo registrar el trabajador."
+},
 "analizar_doc": {
+  "editable_hint": "Los campos son editables antes de confirmar",
   "titulo": "Importar labores desde documento",
   "tab_archivo": "PDF o imagen",
   "tab_texto": "Texto libre",

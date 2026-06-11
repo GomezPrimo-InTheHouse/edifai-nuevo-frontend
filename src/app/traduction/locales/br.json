@@ -357,6 +357,25 @@
 "cotizacion_info_titulo": "Labor em modo cotação",
 "cotizacion_info_desc": "A labor será criada sem trabalhador atribuído. Você poderá carregar orçamentos de trabalhadores ou fornecedores externos e confirmar o vencedor no detalhe da labor."
   },
+  "registrar_trabajador": {
+  "titulo": "Registrar trabalhador",
+  "aviso_titulo": "Fornecedor externo sem conta",
+  "aviso_desc": "Para atribuir corretamente esta labor, você pode registrar o fornecedor como trabalhador. Email e senha são opcionais — sem eles não terão acesso ao sistema.",
+  "nombre": "Nome",
+  "apellido": "Sobrenome",
+  "dni": "CPF/RG",
+  "telefono": "Telefone",
+  "especialidad": "Especialidade",
+  "sin_especialidad": "Sem especialidade",
+  "acceso_opcional": "Acesso ao sistema (opcional)",
+  "email": "Email",
+  "password": "Senha",
+  "cancelar": "Cancelar",
+  "registrar": "Registrar trabalhador",
+  "guardando": "Registrando...",
+  "creado_ok": "Trabalhador registrado com sucesso.",
+  "error_crear": "Não foi possível registrar o trabalhador."
+},
   "labor_presupuestos": {
     "col_precio_unitario": "Preço unit.",
 "col_cantidad": "Quantidade",
@@ -414,6 +433,7 @@
   "proveedor_requerido": "Selecione um fornecedor."
 },
 "analizar_doc": {
+  "editable_hint": "Os campos são editáveis antes de confirmar",
   "titulo": "Importar labores do documento",
   "tab_archivo": "PDF ou imagem",
   "tab_texto": "Texto livre",
