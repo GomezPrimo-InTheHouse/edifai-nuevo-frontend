@@ -64,7 +64,7 @@ function toFormDefaults(initialData?: Labor | null, obraIdFijo?: number): LaborS
     estado_id: initialData?.estado_id ?? '',
     modo: (initialData?.modo as 'rapido' | 'cotizacion') ?? 'rapido',
     unidad_id: initialData?.unidad_id ?? '',
-    cantidad: initialData?.cantidad ?? '',
+cantidad: initialData?.cantidad ? Math.round(Number(initialData.cantidad)) : '',
     fecha_inicio_estimada: toDateInput(initialData?.fecha_inicio_estimada),
     fecha_fin_estimada: toDateInput(initialData?.fecha_fin_estimada),
     fecha_inicio_real: toDateInput(initialData?.fecha_inicio_real),
@@ -251,7 +251,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 fullWidth type="number"
                 label={t('labor_form.cantidad')}
                 value={field.value}
-                inputProps={{ min: 0, step: 0.01 }}
+                inputProps={{ min: 0, step: 1 }}
                 onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
               />
             )} />

@@ -8,8 +8,8 @@ export const laborSchema = z.object({
   especialidad_id: z.union([z.number(), z.literal('')]).optional(),
   estado_id: z.union([z.number(), z.literal('')]).optional(),
   modo: z.enum(['rapido', 'cotizacion']).default('rapido'),
-  unidad_id: z.union([z.number(), z.literal('')]).optional(),   // ← nuevo
-  cantidad: z.union([z.number(), z.literal('')]).optional(),     // ← nuevo
+ unidad_id: z.union([z.number(), z.literal('')]).optional(),
+cantidad: z.union([z.number().int(), z.literal('')]).optional(),
   fecha_inicio_estimada: z.string().optional().or(z.literal('')),
   fecha_fin_estimada: z.string().optional().or(z.literal('')),
   fecha_inicio_real: z.string().optional().or(z.literal('')),
