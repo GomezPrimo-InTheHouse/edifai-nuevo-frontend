@@ -238,10 +238,11 @@
     }
   },
   "registrar_trabajador": {
+    "no_por_ahora": "Not now",
+  "aviso_titulo": "External provider without system account",
+  "aviso_desc": "The budget has already been confirmed. You can register the provider as a worker to assign labors and track them, but it's not required.",
   "titulo": "Register worker",
-  "aviso_titulo": "External provider without account",
-  "aviso_desc": "To correctly assign this labor, you can register the provider as a worker. Email and password are optional — without them they won't have system access.",
-  "nombre": "First name",
+   "nombre": "First name",
   "apellido": "Last name",
   "dni": "ID number",
   "telefono": "Phone",
@@ -335,6 +336,7 @@
     }
   },
   "labor_presupuestos": {
+      "trabajador_registrado_ok": "Worker registered successfully.",
     "col_precio_unitario": "Unit price",
 "col_cantidad": "Quantity",
 "col_precio_total": "Total",

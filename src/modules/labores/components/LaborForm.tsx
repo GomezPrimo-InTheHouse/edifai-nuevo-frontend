@@ -1,12 +1,10 @@
-
-
 import { useEffect } from 'react';
 import {
   Box, Button, Card, CardContent, Chip, Divider, Grid, LinearProgress,
   MenuItem, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup,
   Typography, useTheme,
 } from '@mui/material';
-import { User, CreditCard, Phone, Briefcase, Star, CalendarCheck, Zap, ClipboardList } from 'lucide-react';
+import { User, CreditCard, Phone, Briefcase, Star, CalendarCheck, Zap, ClipboardList, Lock } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -18,10 +16,12 @@ import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidade
 import { usePagosByTrabajador } from '../../pagos/hooks/usePagos';
 import { usePresupuestosList } from '../../presupuestos/hooks/usePresupuestos';
 import { useLaboresList } from '../hooks/useLabores';
-import { useUnidadesMedida } from '../hooks/useLaborPresupuestos';
+import { useUnidadesMedida, useLaborPresupuestos } from '../hooks/useLaborPresupuestos';
 import { PagoEstadoChip } from '../../pagos/components/PagoEstadoChip';
 import { estadoApi } from '../../../services/api/estado.api';
 import { useQuery } from '@tanstack/react-query';
+
+const ESTADO_SIN_ASIGNAR = 29;
 
 interface LaborFormProps {
   initialData?: Labor | null;
@@ -64,7 +64,7 @@ function toFormDefaults(initialData?: Labor | null, obraIdFijo?: number): LaborS
     estado_id: initialData?.estado_id ?? '',
     modo: (initialData?.modo as 'rapido' | 'cotizacion') ?? 'rapido',
     unidad_id: initialData?.unidad_id ?? '',
-cantidad: initialData?.cantidad ? Math.round(Number(initialData.cantidad)) : '',
+    cantidad: initialData?.cantidad ? Math.round(Number(initialData.cantidad)) : '',
     fecha_inicio_estimada: toDateInput(initialData?.fecha_inicio_estimada),
     fecha_fin_estimada: toDateInput(initialData?.fecha_fin_estimada),
     fecha_inicio_real: toDateInput(initialData?.fecha_inicio_real),
@@ -95,15 +95,22 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
     defaultValues: toFormDefaults(initialData, obraIdFijo),
   });
 
-  console.log('FORM ERRORS:', errors);
-
-
   const { data: obras = [] } = useObrasList();
   const { data: todosLosTrabajadores = [] } = useTrabajadoresList();
   const { data: especialidades = [] } = useEspecialidadesList();
   const { data: labores = [] } = useLaboresList();
   const { data: todosPresupuestos = [] } = usePresupuestosList();
   const { data: unidades = [] } = useUnidadesMedida();
+
+  // ── Presupuestos existentes — para bloqueos en edición ────────
+  const { data: presupuestosExistentes = [] } = useLaborPresupuestos(
+    initialData?.id ?? 0
+  );
+  const modoBloquado = esEdicion && (
+    initialData?.estado_id === ESTADO_SIN_ASIGNAR ||
+    presupuestosExistentes.length > 0
+  );
+  const obraBloquada = !!obraIdFijo || (esEdicion && presupuestosExistentes.length > 0);
 
   const { data: estadosLabor = [] } = useQuery({
     queryKey: ['estados', 'labor'],
@@ -174,17 +181,17 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
         <ToggleButtonGroup
           exclusive
           value={field.value}
-          onChange={(_, val) => { if (val) field.onChange(val); }}
-          sx={{ width: '100%' }}
+          onChange={(_, val) => { if (val && !modoBloquado) field.onChange(val); }}
+          sx={{ width: '100%', opacity: modoBloquado ? 0.7 : 1 }}
         >
-          <ToggleButton value="rapido" sx={{ flex: 1, gap: 1, py: 1.5 }}>
+          <ToggleButton value="rapido" sx={{ flex: 1, gap: 1, py: 1.5 }} disabled={modoBloquado}>
             <Zap size={16} />
             <Box textAlign="left">
               <Typography variant="body2" fontWeight={700}>{t('labor_form.modo_rapido')}</Typography>
               <Typography variant="caption" color="text.secondary">{t('labor_form.modo_rapido_desc')}</Typography>
             </Box>
           </ToggleButton>
-          <ToggleButton value="cotizacion" sx={{ flex: 1, gap: 1, py: 1.5 }}>
+          <ToggleButton value="cotizacion" sx={{ flex: 1, gap: 1, py: 1.5 }} disabled={modoBloquado}>
             <ClipboardList size={16} />
             <Box textAlign="left">
               <Typography variant="body2" fontWeight={700}>{t('labor_form.modo_cotizacion')}</Typography>
@@ -193,6 +200,16 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
           </ToggleButton>
         </ToggleButtonGroup>
       )} />
+      {modoBloquado && (
+        <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 0.75 }}>
+          <Lock size={11} color={theme.palette.text.disabled} />
+          <Typography variant="caption" color="text.disabled">
+            {presupuestosExistentes.length > 0
+              ? t('labor_form.modo_bloqueado_presupuestos')
+              : t('labor_form.modo_bloqueado_sin_asignar')}
+          </Typography>
+        </Stack>
+      )}
       <Divider sx={{ mt: 2 }} />
     </Grid>
   );
@@ -206,19 +223,29 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
 
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="nombre" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth label={t('labor_form.nombre')} error={!!errors.nombre} helperText={errors.nombre?.message ?? ''} />
+              <TextField {...field} fullWidth label={t('labor_form.nombre')}
+                error={!!errors.nombre} helperText={errors.nombre?.message ?? ''} />
             )} />
           </Grid>
 
+          {/* Obra — bloqueada si tiene presupuestos */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="obra_id" control={control} render={({ field }) => (
               <TextField select fullWidth label={t('labor_form.obra')} value={field.value}
                 onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
-                disabled={!!obraIdFijo}>
+                disabled={obraBloquada}>
                 <MenuItem value="">{t('labor_form.seleccionar')}</MenuItem>
                 {obras.map((o) => <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>)}
               </TextField>
             )} />
+            {esEdicion && presupuestosExistentes.length > 0 && (
+              <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 0.5 }}>
+                <Lock size={11} color={theme.palette.text.disabled} />
+                <Typography variant="caption" color="text.disabled">
+                  {t('labor_form.obra_bloqueada')}
+                </Typography>
+              </Stack>
+            )}
           </Grid>
 
           <Grid size={{ xs: 12 }}>
@@ -227,19 +254,14 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             )} />
           </Grid>
 
-          {/* Unidad y cantidad — siempre visibles, opcionales */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="unidad_id" control={control} render={({ field }) => (
-              <TextField
-                select fullWidth label={t('labor_form.unidad')}
+              <TextField select fullWidth label={t('labor_form.unidad')}
                 value={field.value}
-                onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
-              >
+                onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}>
                 <MenuItem value="">{t('labor_form.sin_unidad')}</MenuItem>
                 {unidades.map((u) => (
-                  <MenuItem key={u.id} value={u.id}>
-                    {u.nombre} ({u.simbolo})
-                  </MenuItem>
+                  <MenuItem key={u.id} value={u.id}>{u.nombre} ({u.simbolo})</MenuItem>
                 ))}
               </TextField>
             )} />
@@ -263,7 +285,9 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
               <Controller name="trabajador_id" control={control} render={({ field }) => (
                 <TextField
                   select fullWidth
-                  label={modoSeleccionado === 'cotizacion' ? t('labor_form.trabajador_asignado_cotizacion') : t('labor_form.trabajador')}
+                  label={modoSeleccionado === 'cotizacion'
+                    ? t('labor_form.trabajador_asignado_cotizacion')
+                    : t('labor_form.trabajador')}
                   value={field.value}
                   error={!!errors.trabajador_id}
                   helperText={errors.trabajador_id?.message ?? ''}
@@ -354,12 +378,14 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
 
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="fecha_inicio_estimada" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth type="date" label={t('labor_form.inicio_estimado')} InputLabelProps={{ shrink: true }} />
+              <TextField {...field} fullWidth type="date" label={t('labor_form.inicio_estimado')}
+                InputLabelProps={{ shrink: true }} />
             )} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <Controller name="fecha_fin_estimada" control={control} render={({ field }) => (
-              <TextField {...field} fullWidth type="date" label={t('labor_form.fin_estimado')} InputLabelProps={{ shrink: true }} />
+              <TextField {...field} fullWidth type="date" label={t('labor_form.fin_estimado')}
+                InputLabelProps={{ shrink: true }} />
             )} />
           </Grid>
 
@@ -367,12 +393,14 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             <>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Controller name="fecha_inicio_real" control={control} render={({ field }) => (
-                  <TextField {...field} fullWidth type="date" label={t('labor_form.inicio_real')} InputLabelProps={{ shrink: true }} />
+                  <TextField {...field} fullWidth type="date" label={t('labor_form.inicio_real')}
+                    InputLabelProps={{ shrink: true }} />
                 )} />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Controller name="fecha_fin_real" control={control} render={({ field }) => (
-                  <TextField {...field} fullWidth type="date" label={t('labor_form.fin_real')} InputLabelProps={{ shrink: true }} />
+                  <TextField {...field} fullWidth type="date" label={t('labor_form.fin_real')}
+                    InputLabelProps={{ shrink: true }} />
                 )} />
               </Grid>
             </>

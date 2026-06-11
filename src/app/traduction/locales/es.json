@@ -361,6 +361,7 @@
     
   },
   "labor_presupuestos": {
+      "trabajador_registrado_ok": "Trabajador registrado correctamente.",
     "col_precio_unitario": "Precio unit.",
 "col_cantidad": "Cantidad",
 "col_precio_total": "Total",
@@ -417,9 +418,10 @@
   "proveedor_requerido": "Seleccioná un proveedor."
 },
 "registrar_trabajador": {
+    "no_por_ahora": "No por ahora",
+  "aviso_titulo": "Proveedor externo sin cuenta en el sistema",
+  "aviso_desc": "El presupuesto ya fue confirmado. Podés registrar al proveedor como trabajador para asignarle labores y hacer seguimiento, pero no es obligatorio.",
   "titulo": "Registrar trabajador",
-  "aviso_titulo": "Proveedor externo sin cuenta",
-  "aviso_desc": "Para asignar esta labor correctamente, podés registrar al proveedor como trabajador. El email y contraseña son opcionales — sin ellos no tendrá acceso al sistema.",
   "nombre": "Nombre",
   "apellido": "Apellido",
   "dni": "DNI",

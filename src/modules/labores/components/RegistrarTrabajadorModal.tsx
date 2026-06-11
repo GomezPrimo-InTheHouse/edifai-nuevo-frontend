@@ -40,7 +40,6 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
   const createTrabajador = useCreateTrabajador();
   const { data: especialidades = [] } = useEspecialidadesList();
 
-  // Parsear nombre sugerido en nombre + apellido
   const partes = (nombreSugerido ?? '').trim().split(' ');
   const nombreDefault = partes[0] ?? '';
   const apellidoDefault = partes.slice(1).join(' ') ?? '';
@@ -101,8 +100,14 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
       </DialogTitle>
       <Divider />
       <DialogContent>
-        <Stack spacing={0.5} sx={{ mb: 2.5, mt: 1, p: 1.5, borderRadius: 2, bgcolor: 'action.hover' }}>
-          <Typography variant="body2" fontWeight={600} color="text.primary">
+
+        {/* Aviso informativo — el presupuesto ya está confirmado */}
+        <Stack spacing={0.5} sx={{
+          mb: 2.5, mt: 1, p: 1.5, borderRadius: 2,
+          bgcolor: 'rgba(245,158,11,0.08)',
+          border: '1px solid rgba(245,158,11,0.3)',
+        }}>
+          <Typography variant="body2" fontWeight={700} color="text.primary">
             {t('registrar_trabajador.aviso_titulo')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
@@ -173,7 +178,7 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
 
           <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 3 }}>
             <Button variant="outlined" onClick={handleClose}>
-              {t('registrar_trabajador.cancelar')}
+              {t('registrar_trabajador.no_por_ahora')}
             </Button>
             <Button variant="contained" type="submit" disabled={createTrabajador.isPending}>
               {createTrabajador.isPending
