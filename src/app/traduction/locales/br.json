@@ -360,6 +360,15 @@
     "cotizacion_info_desc": "A labor será criada sem trabalhador atribuído. Você poderá carregar orçamentos de trabalhadores ou fornecedores externos e confirmar o vencedor no detalhe da labor."
   },
   "registrar_trabajador": {
+    "modo_nuevo": "Registrar novo",
+"modo_vincular": "Vincular existente",
+"vincular_desc": "Selecione um trabalhador já registrado no sistema. Esta vinculação será salva para futuros orçamentos deste fornecedor.",
+"seleccionar_trabajador": "Trabalhador",
+"seleccionar": "Selecionar...",
+"vincular": "Vincular trabalhador",
+"vinculando": "Vinculando...",
+"vinculado_ok": "Vinculado com {{nombre}} com sucesso.",
+"error_vincular": "Não foi possível vincular o trabalhador.",
     "no_por_ahora": "Agora não",
     "aviso_titulo": "Fornecedor externo sem conta no sistema",
     "aviso_desc": "O orçamento já foi confirmado. Você pode registrar o fornecedor como trabalhador para atribuir labores e acompanhar, mas não é obrigatório.",

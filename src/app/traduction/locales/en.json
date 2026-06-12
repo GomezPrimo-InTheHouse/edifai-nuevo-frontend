@@ -238,6 +238,15 @@
     }
   },
   "registrar_trabajador": {
+    "modo_nuevo": "Register new",
+"modo_vincular": "Link existing",
+"vincular_desc": "Select a worker already registered in the system. This link will be saved for future budgets from this provider.",
+"seleccionar_trabajador": "Worker",
+"seleccionar": "Select...",
+"vincular": "Link worker",
+"vinculando": "Linking...",
+"vinculado_ok": "Linked with {{nombre}} successfully.",
+"error_vincular": "Could not link the worker.",
     "no_por_ahora": "Not now",
     "aviso_titulo": "External provider without system account",
     "aviso_desc": "The budget has already been confirmed. You can register the provider as a worker to assign labors and track them, but it's not required.",

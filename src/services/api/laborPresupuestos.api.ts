@@ -74,4 +74,19 @@ export const proveedoresExternosApi = {
     );
     return res.data.data;
   },
+
+  async vincularTrabajador(
+    proveedor_id: number,
+    trabajador_id: number,
+    labor_id?: number
+  ): Promise<{ trabajador_id: number; trabajador_nombre: string }> {
+    const res = await httpClient.put<{
+      success: boolean;
+      data: { trabajador_id: number; trabajador_nombre: string };
+    }>(`${base}/proveedores-externos/${proveedor_id}/vincular-trabajador`, {
+      trabajador_id,
+      labor_id,
+    });
+    return res.data.data;
+  },
 };

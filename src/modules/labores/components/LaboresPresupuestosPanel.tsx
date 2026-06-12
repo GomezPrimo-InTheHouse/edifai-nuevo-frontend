@@ -49,6 +49,7 @@ export const LaborPresupuestosPanel: React.FC<Props> = ({ labor_id, estado_id, l
   const [modalOpen, setModalOpen] = useState(false);
   const [registrarOpen, setRegistrarOpen] = useState(false);
   const [proveedorNombre, setProveedorNombre] = useState<string | null>(null);
+const [proveedorExternoId, setProveedorExternoId] = useState<number | null>(null);
 
   const { data: presupuestos = [], isLoading } = useLaborPresupuestos(labor_id);
   const { data: unidades = [] } = useUnidadesMedida();
@@ -68,6 +69,8 @@ export const LaborPresupuestosPanel: React.FC<Props> = ({ labor_id, estado_id, l
     // Solo abrir modal si es proveedor externo Y no tiene trabajador ya asignado
     if (result?.es_proveedor_externo && !presupuesto.trabajador_id) {
       setProveedorNombre(result.proveedor_nombre ?? null);
+        setProveedorExternoId(presupuesto.proveedor_externo_id ?? null);
+
       setRegistrarOpen(true);
     }
   } catch {
@@ -218,15 +221,18 @@ export const LaborPresupuestosPanel: React.FC<Props> = ({ labor_id, estado_id, l
         onClose={() => setModalOpen(false)}
       />
 
-      <RegistrarTrabajadorModal
-        open={registrarOpen}
-        nombreSugerido={proveedorNombre}
-        onClose={() => setRegistrarOpen(false)}
-        onTrabajadorCreado={() => {
-          setRegistrarOpen(false);
-          onPresupuestoConfirmado?.();
-        }}
-      />
+<RegistrarTrabajadorModal
+  open={registrarOpen}
+  nombreSugerido={proveedorNombre}
+  proveedorExternoId={proveedorExternoId}
+  laborId={labor_id}
+  onClose={() => setRegistrarOpen(false)}
+  onTrabajadorCreado={() => {
+    setRegistrarOpen(false);
+    notify.success(t('labor_presupuestos.trabajador_registrado_ok'));
+    onPresupuestoConfirmado?.();
+  }}
+/>
     </>
   );
 };

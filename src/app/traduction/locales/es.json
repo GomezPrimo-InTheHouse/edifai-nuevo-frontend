@@ -417,6 +417,15 @@
     "proveedor_requerido": "Seleccioná un proveedor."
   },
   "registrar_trabajador": {
+    "modo_nuevo": "Registrar nuevo",
+"modo_vincular": "Vincular existente",
+"vincular_desc": "Seleccioná un trabajador ya registrado en el sistema. Esta vinculación quedará guardada para futuros presupuestos de este proveedor.",
+"seleccionar_trabajador": "Trabajador",
+"seleccionar": "Seleccionar...",
+"vincular": "Vincular trabajador",
+"vinculando": "Vinculando...",
+"vinculado_ok": "Vinculado con {{nombre}} correctamente.",
+"error_vincular": "No se pudo vincular el trabajador.",
     "no_por_ahora": "No por ahora",
     "aviso_titulo": "Proveedor externo sin cuenta en el sistema",
     "aviso_desc": "El presupuesto ya fue confirmado. Podés registrar al proveedor como trabajador para asignarle labores y hacer seguimiento, pero no es obligatorio.",
