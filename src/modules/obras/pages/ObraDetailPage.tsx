@@ -1,12 +1,12 @@
 
 
-// import React, { useEffect, useRef } from 'react';
+// import React, { useEffect, useRef, useState } from 'react';
 // import { useNavigate, useParams } from 'react-router-dom';
 // import {
 //   Box, Button, Card, CardContent, Divider, Grid,
 //   Stack, Typography,
 // } from '@mui/material';
-// import { ArrowLeft, MapPin, FileText, Calendar, Hammer, Pencil, Clock, CheckCircle2, Building2 } from 'lucide-react';
+// import { ArrowLeft, MapPin, FileText, Calendar, Hammer, Pencil, Clock, CheckCircle2, Building2, FileSearch } from 'lucide-react';
 // import { useTranslation } from 'react-i18next';
 // import L from 'leaflet';
 // import 'leaflet/dist/leaflet.css';
@@ -20,9 +20,8 @@
 // import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 // import { useObraDetail, useEstadosObraOptions, useTiposObraOptions } from '../hooks/useObras';
 // import { LaboresDeObra } from '../components/LaboresDeObra';
+// import { AnalizarDocumentoModal } from '../../labores/components/AnalizarDocumentoModal';
 
-// // Fix ícono Leaflet con bundlers
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // delete (L.Icon.Default.prototype as any)._getIconUrl;
 // L.Icon.Default.mergeOptions({
 //   iconUrl:       markerIcon,
@@ -124,12 +123,8 @@
 //     <Box
 //       ref={mapContainerRef}
 //       sx={{
-//         height: 240,
-//         width: '100%',
-//         borderRadius: 2,
-//         overflow: 'hidden',
-//         border: '1px solid #E2E8F0',
-//         mt: 2,
+//         height: 240, width: '100%', borderRadius: 2,
+//         overflow: 'hidden', border: '1px solid #E2E8F0', mt: 2,
 //       }}
 //     />
 //   );
@@ -140,6 +135,8 @@
 //   const navigate = useNavigate();
 //   const { id } = useParams<{ id: string }>();
 //   const obraId = Number(id);
+
+//   const [analizarOpen, setAnalizarOpen] = useState(false);
 
 //   const { data: obra, isLoading, isError, refetch } = useObraDetail(obraId);
 //   const { data: estados   = [] } = useEstadosObraOptions();
@@ -262,18 +259,27 @@
 //             {/* Labores */}
 //             <Card sx={{ borderRadius: 3, boxShadow: 'none', border: '1px solid #E2E8F0' }}>
 //               <CardContent sx={{ p: 3 }}>
-//                 <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
-//                   <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-//                     <Hammer size={18} color="#FFFFFF" />
-//                   </Box>
-//                   <Box>
-//                     <Typography variant="h6" fontWeight={800} sx={{ color: '#0F172A', lineHeight: 1 }}>
-//                       {t('obras.detail.labores')}
-//                     </Typography>
-//                     <Typography variant="caption" sx={{ color: '#94A3B8' }}>
-//                       {t('obras.detail.labores_sub')}
-//                     </Typography>
-//                   </Box>
+//                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 3 }}>
+//                   <Stack direction="row" alignItems="center" spacing={1.5}>
+//                     <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#0F172A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+//                       <Hammer size={18} color="#FFFFFF" />
+//                     </Box>
+//                     <Box>
+//                       <Typography variant="h6" fontWeight={800} sx={{ color: '#0F172A', lineHeight: 1 }}>
+//                         {t('obras.detail.labores')}
+//                       </Typography>
+//                       <Typography variant="caption" sx={{ color: '#94A3B8' }}>
+//                         {t('obras.detail.labores_sub')}
+//                       </Typography>
+//                     </Box>
+//                   </Stack>
+//                   <Button
+//                     variant="outlined" size="small"
+//                     startIcon={<FileSearch size={14} />}
+//                     onClick={() => setAnalizarOpen(true)}
+//                   >
+//                     {t('obras.detail.importar_documento')}
+//                   </Button>
 //                 </Stack>
 //                 <Divider sx={{ mb: 3 }} />
 //                 <LaboresDeObra obraId={obraId} />
@@ -366,6 +372,13 @@
 //         </Grid>
 
 //       </Grid>
+
+//       <AnalizarDocumentoModal
+//         open={analizarOpen}
+//         obra_id={obraId}
+//         onClose={() => setAnalizarOpen(false)}
+//       />
+
 //     </AppLayout>
 //   );
 // };
@@ -373,16 +386,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Box, Button, Card, CardContent, Divider, Grid,
+  Box, Button, Card, CardContent, CircularProgress, Divider, Grid,
   Stack, Typography,
 } from '@mui/material';
-import { ArrowLeft, MapPin, FileText, Calendar, Hammer, Pencil, Clock, CheckCircle2, Building2, FileSearch } from 'lucide-react';
+import {
+  ArrowLeft, MapPin, FileText, Calendar, Hammer, Pencil,
+  Clock, CheckCircle2, Building2, FileSearch, FileDown, FileSpreadsheet,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon   from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import * as XLSX from 'xlsx';
 
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
@@ -391,6 +408,13 @@ import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { useObraDetail, useEstadosObraOptions, useTiposObraOptions } from '../hooks/useObras';
 import { LaboresDeObra } from '../components/LaboresDeObra';
 import { AnalizarDocumentoModal } from '../../labores/components/AnalizarDocumentoModal';
+import { useLaborsByObra } from '../../labores/hooks/useLabores';
+import { usePresupuestosList } from '../../presupuestos/hooks/usePresupuestos';
+import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
+import { presupuestoMaterialApi } from '../../../services/api/presupuestoMaterial.api';
+import { generarPdfDetalleObra } from '../../../services/pdf/obraDetallePdf';
+import type { ObraExportData } from '../../../services/pdf/obraDetallePdf';
+import { useNotify } from '../../../shared/hooks/useNotify';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -503,14 +527,19 @@ function ObraMapa({ latitud, longitud, nombre }: ObraMapaProps) {
 export const ObraDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const notify = useNotify();
   const { id } = useParams<{ id: string }>();
   const obraId = Number(id);
 
   const [analizarOpen, setAnalizarOpen] = useState(false);
+  const [exportando, setExportando] = useState(false);
 
   const { data: obra, isLoading, isError, refetch } = useObraDetail(obraId);
   const { data: estados   = [] } = useEstadosObraOptions();
   const { data: tiposObra = [] } = useTiposObraOptions();
+  const { data: laboresObra = [] } = useLaborsByObra(obraId);
+  const { data: presupuestos = [] } = usePresupuestosList();
+  const { data: todosEstados = [] } = useEstadosGenerales();
 
   if (isLoading) return <LoadingState message={t('obras.detail.loading')} />;
   if (isError)   return <ErrorState title="Error" message={t('obras.detail.error')} onRetry={refetch} />;
@@ -529,6 +558,120 @@ export const ObraDetailPage: React.FC = () => {
   const lngNum = obra.longitud != null ? Number(obra.longitud) : null;
   const tieneCoords = latNum != null && !isNaN(latNum) && lngNum != null && !isNaN(lngNum);
 
+  const buildObraExportData = async (): Promise<ObraExportData> => {
+    const estadosMap: Record<number, string> = {};
+    todosEstados.forEach((e) => { if (e.id) estadosMap[e.id] = e.nombre; });
+
+    const laboresData = await Promise.all(
+      laboresObra.map(async (labor: any) => {
+        const presupuesto = presupuestos.find((p) => p.labor_id === labor.id);
+        let materiales: any[] = [];
+
+        if (presupuesto?.id) {
+          try {
+            const mats = await presupuestoMaterialApi.getByPresupuesto(presupuesto.id);
+            materiales = mats.map((m) => ({
+              nombre: m.material_nombre ?? '-',
+              unidad: m.unidad ?? '-',
+              cantidad: Number(m.cantidad),
+              precio_unitario: Number(m.precio_unitario),
+              subtotal: Number(m.subtotal),
+            }));
+          } catch { materiales = []; }
+        }
+
+        const costoManoObra = Number(presupuesto?.costo_mano_obra ?? 0);
+        const costoMateriales = materiales.reduce((a: number, m: any) => a + m.subtotal, 0);
+
+        return {
+          id: labor.id,
+          nombre: labor.nombre,
+          estado_nombre: estadosMap[labor.estado_id] ?? '-',
+          trabajador_nombre: labor.trabajador_nombre
+            ? `${labor.trabajador_nombre} ${labor.trabajador_apellido ?? ''}`.trim()
+            : null,
+          costo_mano_obra: costoManoObra,
+          costo_materiales: costoMateriales,
+          total: costoManoObra + costoMateriales,
+          materiales,
+        };
+      })
+    );
+
+    return {
+      nombre: obra.nombre,
+      ubicacion: obra.ubicacion,
+      estado_nombre: estadoNombre,
+      fecha_inicio: obra.fecha_inicio_estimado,
+      fecha_fin: obra.fecha_fin_estimado,
+      labores: laboresData,
+    };
+  };
+
+  const handleExportarPdf = async () => {
+    setExportando(true);
+    try {
+      const data = await buildObraExportData();
+      generarPdfDetalleObra(data);
+    } catch {
+      notify.error(t('obras.detail.error_exportar'));
+    } finally {
+      setExportando(false);
+    }
+  };
+
+  const handleExportarExcel = async () => {
+    setExportando(true);
+    try {
+      const data = await buildObraExportData();
+
+      const wb = XLSX.utils.book_new();
+
+      // Hoja 1 — Resumen
+      const resumenData = [
+        ['Obra', data.nombre],
+        ['Ubicación', data.ubicacion ?? '-'],
+        ['Estado', data.estado_nombre],
+        [],
+        ['Labor', 'Estado', 'Responsable', 'Mano de obra ($)', 'Materiales ($)', 'Total ($)'],
+        ...data.labores.map((l) => [
+          l.nombre,
+          l.estado_nombre,
+          l.trabajador_nombre ?? 'Sin asignar',
+          l.costo_mano_obra,
+          l.costo_materiales,
+          l.total,
+        ]),
+        [],
+        ['TOTALES', '', '',
+          data.labores.reduce((a, l) => a + l.costo_mano_obra, 0),
+          data.labores.reduce((a, l) => a + l.costo_materiales, 0),
+          data.labores.reduce((a, l) => a + l.total, 0),
+        ],
+      ];
+      const wsResumen = XLSX.utils.aoa_to_sheet(resumenData);
+      wsResumen['!cols'] = [{ wch: 50 }, { wch: 16 }, { wch: 24 }, { wch: 18 }, { wch: 18 }, { wch: 18 }];
+      XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen');
+
+      // Hoja 2 — Materiales
+      const materialesData = [
+        ['Labor', 'Material', 'Unidad', 'Cantidad', 'Precio unitario ($)', 'Subtotal ($)'],
+        ...data.labores.flatMap((l) =>
+          l.materiales.map((m) => [l.nombre, m.nombre, m.unidad, m.cantidad, m.precio_unitario, m.subtotal])
+        ),
+      ];
+      const wsMateriales = XLSX.utils.aoa_to_sheet(materialesData);
+      wsMateriales['!cols'] = [{ wch: 50 }, { wch: 30 }, { wch: 12 }, { wch: 12 }, { wch: 20 }, { wch: 16 }];
+      XLSX.utils.book_append_sheet(wb, wsMateriales, 'Materiales');
+
+      XLSX.writeFile(wb, `obra-detalle-${data.nombre.replace(/\s+/g, '-').toLowerCase()}.xlsx`);
+    } catch {
+      notify.error(t('obras.detail.error_exportar'));
+    } finally {
+      setExportando(false);
+    }
+  };
+
   return (
     <AppLayout>
       <PageHeader
@@ -538,6 +681,22 @@ export const ObraDetailPage: React.FC = () => {
           <Stack direction="row" spacing={1}>
             <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/obras')}>
               {t('obras.acciones.volver')}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={exportando ? <CircularProgress size={16} /> : <FileDown size={16} />}
+              onClick={handleExportarPdf}
+              disabled={exportando}
+            >
+              PDF
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={exportando ? <CircularProgress size={16} /> : <FileSpreadsheet size={16} />}
+              onClick={handleExportarExcel}
+              disabled={exportando}
+            >
+              Excel
             </Button>
             <Button variant="contained" startIcon={<Pencil size={16} />} onClick={() => navigate(`/obras/${obra.id}/editar`)}>
               {t('obras.acciones.editar')}
