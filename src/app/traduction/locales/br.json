@@ -389,6 +389,11 @@
     "error_crear": "Não foi possível registrar o trabalhador."
   },
   "labor_presupuestos": {
+    "editar": "Editar",
+"cancelar_edicion": "Cancelar edição",
+"actualizado_ok": "Orçamento atualizado com sucesso.",
+"actualizado_error": "Não foi possível atualizar o orçamento.",
+"col_notas": "Notas (opcional)",
     "trabajador_registrado_ok": "Trabalhador registrado com sucesso.",
     "col_precio_unitario": "Preço unit.",
     "col_cantidad": "Quantidade",
@@ -1013,6 +1018,33 @@
       "subtotal": "Subtotal"
     }
   },
+  "material_externo": {
+  "titulo": "Novo material externo",
+  "aviso": "Este material será criado no inventário com estoque 0 e adicionado automaticamente ao orçamento.",
+  "nombre": "Nome do material",
+  "tipo": "Tipo de material",
+  "sin_tipo": "Sem tipo",
+  "unidad": "Unidade de medida",
+  "seleccionar": "Selecionar",
+  "precio_unitario": "Preço unitário ($)",
+  "cantidad": "Quantidade para o orçamento",
+  "descripcion": "Descrição (opcional)",
+  "siguiente": "Verificar",
+  "cancelar": "Cancelar",
+  "similares_aviso": "{{n}} material(is) similar(es) encontrado(s) no inventário.",
+  "similares_pregunta": "Deseja usar um dos materiais existentes ou criar um novo mesmo assim?",
+  "volver_form": "Voltar ao formulário",
+  "crear_de_todas_formas": "Criar novo mesmo assim",
+  "confirmar_aviso": "O material será criado no inventário com estoque 0 e origem externa, e adicionado ao orçamento.",
+  "resumen": "Resumo do material",
+  "estado_inicial": "Status inicial",
+  "sin_stock": "Sem estoque",
+  "volver": "Voltar",
+  "confirmar_crear": "Confirmar e adicionar",
+  "creando": "Criando...",
+  "creado_ok": "Material criado e adicionado ao orçamento.",
+  "error_crear": "Não foi possível criar o material."
+},
   "pagos": {
     "title": "Pagamentos",
     "subtitle": "Histórico de pagamentos e adiantamentos a trabalhadores.",

@@ -18,6 +18,20 @@ export const laborPresupuestosApi = {
     );
     return res.data.data;
   },
+   async update(id: number, payload: {
+  precio_unitario?: number;
+  cantidad?: number;
+  plazo_dias?: number | null;
+  calidad?: string | null;
+  garantia?: string | null;
+  notas?: string | null;
+}): Promise<LaborPresupuesto> {
+  const res = await httpClient.put<{ success: boolean; data: LaborPresupuesto }>(
+    `${base}/labor-presupuestos/${id}`,
+    payload
+  );
+  return res.data.data;
+},
 
   async create(labor_id: number, payload: CreateLaborPresupuestoPayload): Promise<LaborPresupuesto> {
     const res = await httpClient.post<{ success: boolean; data: LaborPresupuesto }>(
@@ -89,4 +103,5 @@ export const proveedoresExternosApi = {
     });
     return res.data.data;
   },
+ 
 };

@@ -345,6 +345,11 @@
     }
   },
   "labor_presupuestos": {
+    "editar": "Edit",
+"cancelar_edicion": "Cancel edit",
+"actualizado_ok": "Budget updated successfully.",
+"actualizado_error": "Could not update the budget.",
+"col_notas": "Notes (optional)",
     "trabajador_registrado_ok": "Worker registered successfully.",
     "col_precio_unitario": "Unit price",
     "col_cantidad": "Quantity",
@@ -1013,6 +1018,33 @@
       "subtotal": "Subtotal"
     }
   },
+  "material_externo": {
+  "titulo": "New external material",
+  "aviso": "This material will be created in inventory with 0 stock and automatically added to the budget.",
+  "nombre": "Material name",
+  "tipo": "Material type",
+  "sin_tipo": "No type",
+  "unidad": "Unit of measure",
+  "seleccionar": "Select",
+  "precio_unitario": "Unit price ($)",
+  "cantidad": "Quantity for budget",
+  "descripcion": "Description (optional)",
+  "siguiente": "Verify",
+  "cancelar": "Cancel",
+  "similares_aviso": "{{n}} similar material(s) found in inventory.",
+  "similares_pregunta": "Do you want to use an existing material or create a new one anyway?",
+  "volver_form": "Back to form",
+  "crear_de_todas_formas": "Create new anyway",
+  "confirmar_aviso": "The material will be created in inventory with 0 stock and external origin, and added to the budget.",
+  "resumen": "Material summary",
+  "estado_inicial": "Initial status",
+  "sin_stock": "No stock",
+  "volver": "Back",
+  "confirmar_crear": "Confirm and add",
+  "creando": "Creating...",
+  "creado_ok": "Material created and added to budget.",
+  "error_crear": "Could not create the material."
+},
   "pagos": {
     "title": "Payments",
     "subtitle": "Payment history and advances to workers.",

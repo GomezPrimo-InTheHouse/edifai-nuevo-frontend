@@ -100,3 +100,14 @@ export function useVincularProveedorTrabajador() {
     },
   });
 }
+
+export function useUpdateLaborPresupuesto(labor_id: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...payload }: { id: number; precio_unitario?: number; cantidad?: number; plazo_dias?: number | null; calidad?: string | null; garantia?: string | null; notas?: string | null }) =>
+      laborPresupuestosApi.update(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: laborPresupuestosQueryKeys.byLabor(labor_id) });
+    },
+  });
+}
