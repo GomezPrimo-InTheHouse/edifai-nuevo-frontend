@@ -56,8 +56,7 @@ export const MaterialExternoModal: React.FC<Props> = ({
     },
   });
 
-  const nombreWatch = watch('nombre');
-  const tipoWatch = watch('tipo_material_id');
+
 
   const handleClose = () => {
     reset();
