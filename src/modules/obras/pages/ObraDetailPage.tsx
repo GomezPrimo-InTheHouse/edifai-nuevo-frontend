@@ -570,13 +570,18 @@ export const ObraDetailPage: React.FC = () => {
         if (presupuesto?.id) {
           try {
             const mats = await presupuestoMaterialApi.getByPresupuesto(presupuesto.id);
-            materiales = mats.map((m) => ({
-              nombre: m.material_nombre ?? '-',
-              unidad: m.unidad ?? '-',
-              cantidad: Number(m.cantidad),
-              precio_unitario: Number(m.precio_unitario),
-              subtotal: Number(m.subtotal),
-            }));
+materiales = mats.map((m: any) => ({
+  nombre: m.material_nombre ?? '-',
+  descripcion: m.descripcion ?? null,
+  tipo: m.tipo_nombre ?? null,
+  unidad: m.unidad ?? '-',
+  cantidad: Number(m.cantidad),
+  precio_unitario: Number(m.precio_unitario),
+  subtotal: Number(m.subtotal),
+  stock_actual: m.stock_actual != null ? Number(m.stock_actual) : null,
+  origen: m.origen ?? null,
+  estado: m.estado_nombre ?? null,
+}));
           } catch { materiales = []; }
         }
 

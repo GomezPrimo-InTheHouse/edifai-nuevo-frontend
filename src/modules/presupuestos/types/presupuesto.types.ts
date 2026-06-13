@@ -50,7 +50,12 @@ export interface PresupuestoMaterial {
   precio_unitario: number;
   subtotal: number;
   material_nombre?: string;
+  descripcion?: string | null;
   unidad?: string;
+  stock_actual?: number | null;
+  origen?: string | null;
+  tipo_nombre?: string | null;
+  estado_nombre?: string | null;
 }
 
 export interface PresupuestoMiembro {
