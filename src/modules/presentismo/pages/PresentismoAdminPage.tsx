@@ -976,7 +976,43 @@ export const PresentismoAdminPage: React.FC = () => {
                           {t('presentismo_admin.asistencia_por_obra')}
                         </Typography>
                       </Stack>
-                      <Box sx={{ overflowX: 'auto' }}>
+
+                      {(stats?.por_obra ?? []).length === 0 ? (
+                        <Typography variant="body2" color="text.secondary" textAlign="center" py={3}>
+                          {t('presentismo_admin.sin_datos')}
+                        </Typography>
+                      ) : isMobile ? (
+                        /* MOBILE: cards */
+                        <Stack spacing={1.5}>
+                          {(stats?.por_obra ?? []).map((o) => (
+                            <Box key={o.obra_id} sx={{
+                              p: 1.5, borderRadius: 2,
+                              border: `1px solid ${theme.palette.divider}`,
+                              bgcolor: theme.palette.action.hover,
+                            }}>
+                              <Typography variant="body2" fontWeight={700} mb={1}>{o.obra_nombre}</Typography>
+                              <Stack direction="row" gap={1} flexWrap="wrap">
+                                <Chip
+                                  label={`${o.total_registros} reg.`}
+                                  size="small"
+                                  sx={{ fontSize: 11, fontWeight: 600 }}
+                                />
+                                <Chip
+                                  label={`${o.trabajadores_distintos} trab.`}
+                                  size="small"
+                                  sx={{ fontSize: 11, fontWeight: 600 }}
+                                />
+                                <Chip
+                                  label={`${o.dias_con_actividad} ${t('presentismo_admin.obra_tabla.dias')}`}
+                                  size="small"
+                                  sx={{ bgcolor: 'rgba(16,185,129,0.1)', color: '#065F46', fontWeight: 700, fontSize: 11 }}
+                                />
+                              </Stack>
+                            </Box>
+                          ))}
+                        </Stack>
+                      ) : (
+                        /* DESKTOP: tabla */
                         <Table size="small">
                           <TableHead>
                             <TableRow sx={{ '& th': { fontWeight: 700, fontSize: 12, color: theme.palette.text.secondary } }}>
@@ -1000,10 +1036,11 @@ export const PresentismoAdminPage: React.FC = () => {
                             ))}
                           </TableBody>
                         </Table>
-                      </Box>
+                      )}
                     </CardContent>
                   </Card>
                 </Grid>
+
               </Grid>
             </Stack>
           )}
