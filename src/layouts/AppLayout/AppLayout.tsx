@@ -164,10 +164,13 @@ const menuSections = [
   display: 'flex',
   flexDirection: 'column',
 }}>
-      <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF' }}>EdifAI</Typography>
-        <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>{t('nav.subtitulo')}</Typography>
-      </Box>
+      <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+  <img
+    src="/graficas/edifai_logo_dark_navy.svg"
+    alt="EdifAI"
+    style={{ width: '100%', maxWidth: 180, height: 'auto' }}
+  />
+</Box>
 
       <Box sx={{ px: 1.5, py: 2, flex: 1, overflowY: 'auto' }}>
         {isAdmin && (
