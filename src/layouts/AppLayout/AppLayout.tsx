@@ -18,7 +18,7 @@ import {
   AssignmentTurnedIn, ReceiptLong,
   KeyboardArrowDown, KeyboardArrowUp,
 } from '@mui/icons-material';
-import {  ShoppingBag } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -106,38 +106,38 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
 
 
 
-// Cambiar allowedRoles en menuSections:
-const menuSections = [
-  {
-    title: t('nav.secciones.general'),
-    onlyAdmin: false,
-    items: [
-      { label: t('nav.dashboard'), icon: <Dashboard />, path: '/', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
-      { label: t('nav.obras'), icon: <Construction />, path: '/obras', allowedRoles: [1, 3, 4, 6, 9] },
-      { label: t('nav.labores'), icon: <AssignmentTurnedIn />, path: '/labores', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
-      { label: t('nav.clientes'), icon: <Group />, path: '/clientes', allowedRoles: [1, 3, 4, 6, 9] },
-    ],
-  },
-  {
-    title: t('nav.secciones.operaciones'),
-    onlyAdmin: false,
-    items: [
-      { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6, 9] },
-      { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 9] },
-      { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
-      { label: t('market.title'), icon: <ShoppingBag size={20} />, path: '/market', allowedRoles: [1, 3, 4, 6, 9] },
-      { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6, 9] },
-      { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
-    ],
-  },
-  {
-    title: t('nav.secciones.sistema'),
-    onlyAdmin: true,
-    items: [
-      { label: t('nav.usuarios'), icon: <Group />, path: '/usuarios', allowedRoles: [1, 3, 4, 6, 9] },
-    ],
-  },
-];
+  // Cambiar allowedRoles en menuSections:
+  const menuSections = [
+    {
+      title: t('nav.secciones.general'),
+      onlyAdmin: false,
+      items: [
+        { label: t('nav.dashboard'), icon: <Dashboard />, path: '/', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+        { label: t('nav.obras'), icon: <Construction />, path: '/obras', allowedRoles: [1, 3, 4, 6, 9] },
+        { label: t('nav.labores'), icon: <AssignmentTurnedIn />, path: '/labores', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+        { label: t('nav.clientes'), icon: <Group />, path: '/clientes', allowedRoles: [1, 3, 4, 6, 9] },
+      ],
+    },
+    {
+      title: t('nav.secciones.operaciones'),
+      onlyAdmin: false,
+      items: [
+        { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6, 9] },
+        { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 9] },
+        { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
+        { label: t('market.title'), icon: <ShoppingBag size={20} />, path: '/market', allowedRoles: [1, 3, 4, 6, 9] },
+        { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6, 9] },
+        { label: t('nav.mi_presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo', allowedRoles: [7, 8] },
+      ],
+    },
+    {
+      title: t('nav.secciones.sistema'),
+      onlyAdmin: true,
+      items: [
+        { label: t('nav.usuarios'), icon: <Group />, path: '/usuarios', allowedRoles: [1, 3, 4, 6, 9] },
+      ],
+    },
+  ];
 
   React.useEffect(() => {
     if (user && ROLES_ADMIN.includes(user.rol_id) && !user.onboarding_completado && location.pathname !== '/onboarding') {
@@ -155,22 +155,22 @@ const menuSections = [
 
   const drawer = (
     <Box sx={{
-  height: '100%',
-  backgroundColor: '#0F172A',
-  backgroundImage: 'url(/graficas/edifai_login_bg.svg)',
-  backgroundSize: 'auto',
-  backgroundRepeat: 'repeat',
-  color: '#E2E8F0',
-  display: 'flex',
-  flexDirection: 'column',
-}}>
+      height: '100%',
+      backgroundColor: '#0F172A',
+      backgroundImage: 'url(/graficas/edifai_login_bg.svg)',
+      backgroundSize: 'auto',
+      backgroundRepeat: 'repeat',
+      color: '#E2E8F0',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
       <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-  <img
-    src="/graficas/edifai_logo_transparent.svg"
-    alt="EdifAI"
-    style={{ width: '100%', maxWidth: 180, height: 'auto' }}
-  />
-</Box>
+        <img
+          src="/graficas/edifai_logo_transparent.svg"
+          alt="EdifAI"
+          style={{ width: '100%', maxWidth: 210, height: 'auto', marginLeft: '16px' }}
+        />
+      </Box>
 
       <Box sx={{ px: 1.5, py: 2, flex: 1, overflowY: 'auto' }}>
         {isAdmin && (
