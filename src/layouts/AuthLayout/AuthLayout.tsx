@@ -10,11 +10,12 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     <Box
       sx={{
         minHeight: '100vh',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundImage: 'url(/graficas/edifai_login_bg.svg)',
-        backgroundSize: 'cover',
+        backgroundSize: '100% 100%',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         p: 2,
@@ -31,12 +32,11 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           backgroundColor: '#FFFFFF',
         }}
       >
-        {/* Logo dentro del card */}
         <Box sx={{ mb: 3, textAlign: 'center' }}>
           <img
             src="/graficas/edifai_logo_dark_navy.svg"
             alt="EdifAI"
-            style={{ width: '100%', maxWidth: 340, height: 'auto' }}
+            style={{ width: '100%', height: 'auto' }}
           />
         </Box>
 
