@@ -256,7 +256,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
   backgroundColor: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(248,250,252,0.95)',
   backdropFilter: 'blur(10px)',
   color: theme.palette.text.primary,
-  borderBottom: `1px solid ${theme.palette.divider}`,
+  borderBottom: '1px solid rgba(255,255,255,0.06)',
   boxShadow: 'none',
 }}>
         <Toolbar sx={{ minHeight: '64px !important', px: { xs: 2, md: 2 } }}>
