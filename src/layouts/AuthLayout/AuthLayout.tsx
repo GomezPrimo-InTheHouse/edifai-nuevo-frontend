@@ -7,19 +7,21 @@ interface AuthLayoutProps {
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundImage: 'url(/graficas/edifai_login_bg.svg)',
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        p: 2,
-      }}
+    
+<Box
+  sx={{
+    minHeight: '100vh',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundImage: 'url(/graficas/edifai_login_bg.svg)',
+    backgroundSize: 'auto',
+    backgroundRepeat: 'repeat',
+    backgroundColor: '#0F172A', // fallback mientras carga
+    p: 2,
+  }}
+
     >
       <Paper
         elevation={0}
