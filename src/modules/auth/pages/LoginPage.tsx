@@ -126,9 +126,7 @@ export const LoginPage: React.FC = () => {
           <Typography variant="h5" fontWeight={600} gutterBottom>
             Iniciar sesión
           </Typography>
-          <Typography variant="body2" color="text.secondary" mb={3}>
-            Sistema de gestión de obras
-          </Typography>
+  
 
           <TextField
             fullWidth

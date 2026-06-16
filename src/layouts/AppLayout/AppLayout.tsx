@@ -154,7 +154,16 @@ const menuSections = [
   }, [location.pathname]);
 
   const drawer = (
-    <Box sx={{ height: '100%', background: '#0F172A', color: '#E2E8F0', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{
+  height: '100%',
+  backgroundColor: '#0F172A',
+  backgroundImage: 'url(/graficas/edifai_login_bg.svg)',
+  backgroundSize: 'auto',
+  backgroundRepeat: 'repeat',
+  color: '#E2E8F0',
+  display: 'flex',
+  flexDirection: 'column',
+}}>
       <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.03em', color: '#FFFFFF' }}>EdifAI</Typography>
         <Typography variant="body2" sx={{ color: '#94A3B8', mt: 0.5 }}>{t('nav.subtitulo')}</Typography>
