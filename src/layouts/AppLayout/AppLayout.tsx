@@ -166,7 +166,7 @@ const menuSections = [
 }}>
       <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
   <img
-    src="/graficas/edifai_logo_dark_navy.svg"
+    src="/graficas/edifai_logo_transparent.svg"
     alt="EdifAI"
     style={{ width: '100%', maxWidth: 180, height: 'auto' }}
   />

@@ -1,0 +1,20 @@
+<svg width="580" height="220" viewBox="0 0 580 220" xmlns="http://www.w3.org/2000/svg">
+  <!-- ícono centrado en 110,110 -->
+  <g transform="translate(110,110)">
+    <!-- hex dorado -->
+    <polygon points="0,-90 77.9,-45 77.9,45 0,90 -77.9,45 -77.9,-45" fill="none" stroke="#F59E0B" stroke-width="3" stroke-linejoin="round"/>
+    <!-- hex medio -->
+    <polygon points="0,-67 58,-33.5 58,33.5 0,67 -58,33.5 -58,-33.5" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2" stroke-linejoin="round"/>
+    <!-- hex inner -->
+    <polygon points="0,-48 41.6,-24 41.6,24 0,48 -41.6,24 -41.6,-24" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- cubo top -->
+    <polygon points="0,-40 40,-20 0,0 -40,-20" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linejoin="round"/>
+    <!-- cubo left -->
+    <polygon points="-40,-20 0,0 0,40 -40,20" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linejoin="round"/>
+    <!-- cubo right -->
+    <polygon points="0,0 40,-20 40,20 0,40" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linejoin="round"/>
+  </g>
+  <!-- texto -->
+  <text x="225" y="122" font-family="sans-serif" font-size="68" font-weight="700" letter-spacing="-2" fill="white">Edif<tspan fill="#F59E0B">AI</tspan></text>
+  <text x="228" y="150" font-family="sans-serif" font-size="12" fill="rgba(148,163,184,0.8)" letter-spacing="4">GESTIÓN DE OBRAS</text>
+</svg>
