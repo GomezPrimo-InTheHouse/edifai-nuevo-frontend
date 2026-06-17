@@ -201,23 +201,21 @@ const { data: obras = [] } = useObrasList();
       <PageHeader
         title={t('gastos.title')}
         subtitle={t(gastos.length === 1 ? 'gastos.subtitle_one' : 'gastos.subtitle_other', { count: gastos.length })}
-        actions={
-          isAdmin ? (
-            <BotGastoImprevisto
-              obras={obras}
-              especialidades={especialidades}
-              formasPago={formasPago}
-              trabajadores={trabajadores}
-              onConfirmar={async (payload) => {
-                try {
-                  await crearMutation.mutateAsync(payload);
-                  notify.success(t('gastos.notify.creado'));
-                } catch { notify.error(t('gastos.notify.error_crear')); }
-              }}
-              isSubmitting={crearMutation.isPending}
-            />
-          ) : undefined
-        }
+ actions={
+  <BotGastoImprevisto
+    obras={obras}
+    especialidades={especialidades}
+    formasPago={formasPago}
+    trabajadores={trabajadores}
+    onConfirmar={async (payload) => {
+      try {
+        await crearMutation.mutateAsync(payload);
+        notify.success(t('gastos.notify.creado'));
+      } catch { notify.error(t('gastos.notify.error_crear')); }
+    }}
+    isSubmitting={crearMutation.isPending}
+  />
+}
       />
 
       {/* Tabs */}

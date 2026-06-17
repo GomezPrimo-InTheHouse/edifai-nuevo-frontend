@@ -12,10 +12,10 @@ import { useTranslation } from 'react-i18next';
 import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { dashboardApi } from '../../../services/api/dashboard.api';
 import { KpiCard, formatMoney } from '../components/DashboardShared';
-import { useCrearGastoImprevisto } from '../../gastosImprevistos/hooks/useGastosImprevistos';
-import { useFormasPagoList } from '../../pagos/hooks/useFormasPago';
-import { useNotify } from '../../../shared/hooks/useNotify';
-import { BotGastoImprevisto } from '../../gastosImprevistos/components/BotGastosImprevisto';
+// import { useCrearGastoImprevisto } from '../../gastosImprevistos/hooks/useGastosImprevistos';
+// import { useFormasPagoList } from '../../pagos/hooks/useFormasPago';
+// import { useNotify } from '../../../shared/hooks/useNotify';
+// import { BotGastoImprevisto } from '../../gastosImprevistos/components/BotGastosImprevisto';
 
 const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0, 'Labor en proceso': 25,
@@ -31,7 +31,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
   const { t }    = useTranslation();
   const theme    = useTheme();
   const navigate = useNavigate();
-  const notify   = useNotify();
+  // const notify   = useNotify();
 
   const { data, isLoading } = useQuery({
     queryKey:        ['dashboard-trabajador'],
@@ -39,25 +39,25 @@ export const DashboardTrabajadorPage: React.FC = () => {
     refetchInterval: 60000,
   });
 
-  const { data: formasPago = [] } = useFormasPagoList();
-  const crearGastoMutation        = useCrearGastoImprevisto();
+  // const { data: formasPago = [] } = useFormasPagoList();
+  // const crearGastoMutation        = useCrearGastoImprevisto();
 
   if (isLoading) return <LoadingState message={t('dashboard.loading_worker')} />;
   if (!data)     return null;
 
   const { trabajador, obra_actual, kpis, labores, dias_asistencia, ultimos_pagos, mes_actual } = data;
 
-  const trabajadorId = trabajador.id;
-  const equipo: { id: number; nombre: string; apellido: string }[] = trabajador.equipo ?? [];
+  // const trabajadorId = trabajador.id;
+  // const equipo: { id: number; nombre: string; apellido: string }[] = trabajador.equipo ?? [];
 
   // Obras disponibles extraídas de las labores activas
-  const obrasDisponibles = Array.from(
-    new Map(
-      labores
-        .filter((l: any) => l.obra_id && l.obra_nombre)
-        .map((l: any) => [l.obra_id, { id: l.obra_id, nombre: l.obra_nombre }])
-    ).values()
-  );
+  // const obrasDisponibles = Array.from(
+  //   new Map(
+  //     labores
+  //       .filter((l: any) => l.obra_id && l.obra_nombre)
+  //       .map((l: any) => [l.obra_id, { id: l.obra_id, nombre: l.obra_nombre }])
+  //   ).values()
+  // );
 
   // ── Calendario ───────────────────────────────────────────────
   const MESES = t('dashboard.meses', { returnObjects: true }) as string[];
@@ -152,7 +152,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
       </Grid>
 
       {/* ── Bot registrar gasto ── */}
-      <Box sx={{ width: '100%' }}>
+      {/* <Box sx={{ width: '100%' }}>
         <BotGastoImprevisto
           obras={obrasDisponibles as any[]}
           especialidades={
@@ -171,7 +171,7 @@ export const DashboardTrabajadorPage: React.FC = () => {
           }}
           isSubmitting={crearGastoMutation.isPending}
         />
-      </Box>
+      </Box> */}
 
       <Grid container spacing={2}>
 
