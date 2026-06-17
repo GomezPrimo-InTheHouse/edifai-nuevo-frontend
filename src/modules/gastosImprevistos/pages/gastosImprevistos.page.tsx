@@ -668,6 +668,17 @@ export const GastosImprevistosPage: React.FC = () => {
     ? trabajadores.find(tr => tr.usuario_id === user?.id) ?? null
     : null;
 
+  // Equipo del worker: él mismo + quienes tienen el mismo jefe_id
+const trabajadoresParaBot = isWorker && trabajadorLogueado
+  ? trabajadores.filter(tr =>
+      tr.id === trabajadorLogueado.id ||           // él mismo
+      tr.jefe_id === trabajadorLogueado.jefe_id && // mismo jefe
+      trabajadorLogueado.jefe_id !== null ||
+      tr.jefe_id === trabajadorLogueado.id ||      // su equipo si él es jefe
+      tr.id === trabajadorLogueado.jefe_id         // su propio jefe
+    )
+  : trabajadores;  
+
   const crearMutation = useCrearGastoImprevisto();
   const estadoMutation = useActualizarEstadoGasto();
   const eliminarMutation = useEliminarGastoImprevisto();
@@ -780,7 +791,7 @@ export const GastosImprevistosPage: React.FC = () => {
             obras={obras}
             especialidades={especialidades}
             formasPago={formasPago}
-            trabajadores={trabajadores}
+            trabajadores={trabajadoresParaBot}  // ← cambiado
             onConfirmar={async (payload) => {
               try {
                 await crearMutation.mutateAsync(payload);
