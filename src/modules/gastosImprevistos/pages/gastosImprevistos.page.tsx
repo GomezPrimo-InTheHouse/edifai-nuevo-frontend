@@ -664,20 +664,19 @@ export const GastosImprevistosPage: React.FC = () => {
   const { data: clientes = [] } = useClientesList();
 
   // Trabajador logueado — solo para workers
-  const trabajadorLogueado = isWorker
-    ? trabajadores.find(tr => tr.usuario_id === user?.id) ?? null
-    : null;
+ const trabajadorLogueado = isWorker
+  ? trabajadores.find(tr => Number(tr.usuario_id) === Number(user?.id)) ?? null
+  : null;
 
   // Equipo del worker: él mismo + quienes tienen el mismo jefe_id
 const trabajadoresParaBot = isWorker && trabajadorLogueado
   ? trabajadores.filter(tr =>
-      tr.id === trabajadorLogueado.id ||           // él mismo
-      tr.jefe_id === trabajadorLogueado.jefe_id && // mismo jefe
-      trabajadorLogueado.jefe_id !== null ||
-      tr.jefe_id === trabajadorLogueado.id ||      // su equipo si él es jefe
-      tr.id === trabajadorLogueado.jefe_id         // su propio jefe
+      tr.id === trabajadorLogueado.id ||
+      (tr.jefe_id === trabajadorLogueado.jefe_id && trabajadorLogueado.jefe_id !== null) ||
+      tr.jefe_id === trabajadorLogueado.id ||
+      tr.id === trabajadorLogueado.jefe_id
     )
-  : trabajadores;  
+  : trabajadores; 
 
   const crearMutation = useCrearGastoImprevisto();
   const estadoMutation = useActualizarEstadoGasto();
