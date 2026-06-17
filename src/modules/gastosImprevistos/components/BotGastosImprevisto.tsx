@@ -908,6 +908,11 @@ export const BotGastoImprevisto: React.FC<BotGastoImprevistoProps> = ({
 
       // Si viene pagado_por_trabajador_id lo mapeamos a pagado_por_id
       const { pagado_por_trabajador_id, pagado_por_nombre_libre, ...rest } = parsed;
+console.log('pagado_por_trabajador_id:', pagado_por_trabajador_id);
+console.log('trabajadoresDisponibles:', JSON.stringify(
+  trabajadoresDisponibles.map(t => ({ id: t.id, nombre: `${t.nombre} ${t.apellido}`}))
+));
+      
       setCampos(prev => ({
         ...prev,
         ...rest,
