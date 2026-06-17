@@ -904,6 +904,8 @@ export const BotGastoImprevisto: React.FC<BotGastoImprevistoProps> = ({
       const clean   = rawText.replace(/```json|```/g, '').trim();
       const parsed  = JSON.parse(clean);
 
+  console.log('🤖 Claude parsed:', JSON.stringify(parsed, null, 2)); // nuevoooo log
+
       // Si viene pagado_por_trabajador_id lo mapeamos a pagado_por_id
       const { pagado_por_trabajador_id, pagado_por_nombre_libre, ...rest } = parsed;
       setCampos(prev => ({
