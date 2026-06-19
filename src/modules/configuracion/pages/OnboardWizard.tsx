@@ -93,7 +93,7 @@ export const OnboardWizard: React.FC<Props> = ({ onComplete }) => {
 
   const isLast = step === STEPS.length - 1;
 
-  return (
+return (
     <Box sx={{
       position: 'fixed',
       inset: 0,
@@ -108,206 +108,205 @@ export const OnboardWizard: React.FC<Props> = ({ onComplete }) => {
       zIndex: 9999,
       p: 2,
     }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+      <Paper elevation={0} sx={{
+        width: { xs: '95vw', sm: 520 }, borderRadius: 4,
+        overflow: 'hidden', background: '#1E293B',
+      }}>
 
-        {/* Logo */}
-        <img
-          src="/graficas/edifai_logo_dark_navy.svg"
-          alt="EdifAI"
-          style={{ width: 280, maxWidth: '90vw', height: 'auto' }}
+        {/* Logo dentro del card */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 4, px: 4 }}>
+          <img
+            src="/graficas/edifai_logo_dark_navy.svg"
+            alt="EdifAI"
+            style={{ width: '100%', maxWidth: 280, height: 'auto' }}
+          />
+        </Box>
+
+        {/* Header */}
+        <Box sx={{ px: 4, pt: 3, pb: 2 }}>
+          <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 800 }}>
+            Bienvenido a EdifAI
+          </Typography>
+          <Typography sx={{ color: '#94A3B8', mt: 0.5, fontSize: 14 }}>
+            Configuremos tu experiencia en unos pasos. Podés saltear cuando quieras.
+          </Typography>
+        </Box>
+
+        {/* Step indicator */}
+        <MobileStepper
+          variant="dots"
+          steps={STEPS.length}
+          position="static"
+          activeStep={step}
+          sx={{
+            background: 'transparent', px: 4,
+            '& .MuiMobileStepper-dot': { bgcolor: '#334155' },
+            '& .MuiMobileStepper-dotActive': { bgcolor: '#F59E0B' },
+          }}
+          nextButton={null}
+          backButton={null}
         />
 
-        <Paper elevation={0} sx={{
-          width: { xs: '95vw', sm: 520 }, borderRadius: 4,
-          overflow: 'hidden', background: '#1E293B',
-        }}>
+        {/* Contenido del paso */}
+        <Box sx={{ px: 4, py: 3, minHeight: 260 }}>
+          <Fade key={step} in timeout={300}>
+            <Box>
 
-          {/* Header */}
-          <Box sx={{ px: 4, pt: 4, pb: 2 }}>
-            <Typography variant="h5" sx={{ color: '#F8FAFC', fontWeight: 800 }}>
-              Bienvenido a EdifAI
-            </Typography>
-            <Typography sx={{ color: '#94A3B8', mt: 0.5, fontSize: 14 }}>
-              Configuremos tu experiencia en unos pasos. Podés saltear cuando quieras.
-            </Typography>
-          </Box>
+              {/* PASO 1 — Idioma */}
+              {STEPS[step].key === 'idioma' && (
+                <StepWrapper title="¿En qué idioma preferís usar el sistema?" icon={<Language />}>
+                  <ToggleGroup
+                    value={prefs.idioma}
+                    onChange={(v) => set('idioma', v as Idioma)}
+                    options={[
+                      { value: 'es', label: 'Español' },
+                      { value: 'en', label: 'English' },
+                      { value: 'br', label: 'Português' },
 
-          {/* Step indicator */}
-          <MobileStepper
-            variant="dots"
-            steps={STEPS.length}
-            position="static"
-            activeStep={step}
-            sx={{
-              background: 'transparent', px: 4,
-              '& .MuiMobileStepper-dot': { bgcolor: '#334155' },
-              '& .MuiMobileStepper-dotActive': { bgcolor: '#F59E0B' },
-            }}
-            nextButton={null}
-            backButton={null}
-          />
-
-          {/* Contenido del paso */}
-          <Box sx={{ px: 4, py: 3, minHeight: 260 }}>
-            <Fade key={step} in timeout={300}>
-              <Box>
-
-                {/* PASO 1 — Idioma */}
-                {STEPS[step].key === 'idioma' && (
-                  <StepWrapper title="¿En qué idioma preferís usar el sistema?" icon={<Language />}>
-                    <ToggleGroup
-                      value={prefs.idioma}
-                      onChange={(v) => set('idioma', v as Idioma)}
-                      options={[
-                        { value: 'es', label: 'Español' },
-                        { value: 'en', label: 'English' },
-                        { value: 'br', label: 'Português' },
-
-                      ]}
-                    />
-                  </StepWrapper>
-                )}
-
-                {/* PASO 2 — Tema */}
-                {STEPS[step].key === 'tema' && (
-                  <StepWrapper title="¿Cómo preferís ver la interfaz?" icon={<DarkMode />}>
-                    <ToggleGroup
-                      value={prefs.tema}
-                      onChange={(v) => set('tema', v as Tema)}
-                      options={[
-                        { value: 'light', label: 'Claro', icon: <LightMode /> },
-                        { value: 'dark',  label: 'Oscuro', icon: <DarkMode /> },
-                      ]}
-                    />
-                  </StepWrapper>
-                )}
-
-                {/* PASO 3 — Notificaciones */}
-                {STEPS[step].key === 'notificaciones' && (
-                  <StepWrapper title="¿Querés recibir notificaciones en tiempo real?" icon={<Notifications />}>
-                    <ToggleGroup
-                      value={String(prefs.notificaciones)}
-                      onChange={(v) => set('notificaciones', v === 'true')}
-                      options={[
-                        { value: 'true',  label: 'Sí, activar', icon: <Notifications /> },
-                        { value: 'false', label: 'No por ahora', icon: <NotificationsOff /> },
-                      ]}
-                    />
-                  </StepWrapper>
-                )}
-
-                {/* PASO 4 — Moneda */}
-                {STEPS[step].key === 'moneda' && (
-                  <StepWrapper title="¿Con qué moneda trabajás habitualmente?" icon={<AttachMoney />}>
-                    <ToggleGroup
-                      value={prefs.moneda}
-                      onChange={(v) => set('moneda', v as Moneda)}
-                      options={[
-                        { value: 'ARS', label: '🇦🇷 Peso argentino' },
-                        { value: 'USD', label: '🇺🇸 Dólar' },
-                        { value: 'EUR', label: '🇪🇺 Euro' },
-                        { value: 'BRL', label: '🇧🇷 Real' },
-                      ]}
-                    />
-                  </StepWrapper>
-                )}
-
-                {/* PASO 5 — Dashboard */}
-                {STEPS[step].key === 'dashboard_vista' && (
-                  <StepWrapper title="¿Cómo preferís ver tu dashboard?" icon={<BarChart />}>
-                    <ToggleGroup
-                      value={prefs.dashboard_vista}
-                      onChange={(v) => set('dashboard_vista', v as FormatoDashboard)}
-                      options={[
-                        { value: 'resumen',   label: 'Resumen', icon: <BarChart /> },
-                        { value: 'detallado', label: 'Detallado', icon: <TableChart /> },
-                      ]}
-                    />
-                  </StepWrapper>
-                )}
-
-                {/* PASO 6 — Ubicación */}
-                {STEPS[step].key === 'ubicacion' && (
-                  <StepWrapper title="¿Dónde está ubicada tu empresa?" icon={<MyLocation />}>
-                    {detectando ? (
-                      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                        <CircularProgress sx={{ color: '#F59E0B' }} />
-                      </Box>
-                    ) : (
-                      <Box sx={{ height: 220, borderRadius: 2, overflow: 'hidden', mt: 1 }}>
-                        <MapContainer
-                          center={mapPos ? [mapPos.lat, mapPos.lng] : [-32.4, -63.2]}
-                          zoom={mapPos ? 13 : 5}
-                          style={{ height: '100%', width: '100%' }}
-                        >
-                          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                          <MapClickHandler onSelect={(lat, lng) => setMapPos({ lat, lng })} />
-                          {mapPos && <Marker position={[mapPos.lat, mapPos.lng]} />}
-                        </MapContainer>
-                      </Box>
-                    )}
-                    <Typography sx={{ color: '#64748B', fontSize: 12, mt: 1 }}>
-                      {mapPos
-                        ? `Lat: ${mapPos.lat.toFixed(4)}, Lng: ${mapPos.lng.toFixed(4)}`
-                        : 'Hacé clic en el mapa para marcar tu ubicación'}
-                    </Typography>
-                  </StepWrapper>
-                )}
-
-              </Box>
-            </Fade>
-          </Box>
-
-          {/* Footer navegación */}
-          <Box sx={{
-            px: 4, pb: 4, display: 'flex',
-            justifyContent: 'space-between', alignItems: 'center',
-          }}>
-            <Button
-              variant="text"
-              onClick={() => handleFinish(true)}
-              disabled={isPending}
-              sx={{ color: '#64748B', fontSize: 13 }}
-            >
-              Saltear todo
-            </Button>
-
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {step > 0 && (
-                <Button
-                  variant="outlined"
-                  onClick={() => setStep((s) => s - 1)}
-                  disabled={isPending}
-                  sx={{ borderColor: '#334155', color: '#94A3B8', borderRadius: 2 }}
-                >
-                  Atrás
-                </Button>
+                    ]}
+                  />
+                </StepWrapper>
               )}
 
-              {!isLast ? (
-                <Button
-                  variant="contained"
-                  endIcon={<ArrowForward />}
-                  onClick={() => setStep((s) => s + 1)}
-                  sx={{ bgcolor: '#F59E0B', color: '#0F172A', fontWeight: 700, borderRadius: 2, '&:hover': { bgcolor: '#D97706' } }}
-                >
-                  Siguiente
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  endIcon={isPending ? <CircularProgress size={16} /> : <Check />}
-                  onClick={() => handleFinish(false)}
-                  disabled={isPending}
-                  sx={{ bgcolor: '#F59E0B', color: '#0F172A', fontWeight: 700, borderRadius: 2, '&:hover': { bgcolor: '#D97706' } }}
-                >
-                  Finalizar
-                </Button>
+              {/* PASO 2 — Tema */}
+              {STEPS[step].key === 'tema' && (
+                <StepWrapper title="¿Cómo preferís ver la interfaz?" icon={<DarkMode />}>
+                  <ToggleGroup
+                    value={prefs.tema}
+                    onChange={(v) => set('tema', v as Tema)}
+                    options={[
+                      { value: 'light', label: 'Claro', icon: <LightMode /> },
+                      { value: 'dark',  label: 'Oscuro', icon: <DarkMode /> },
+                    ]}
+                  />
+                </StepWrapper>
               )}
+
+              {/* PASO 3 — Notificaciones */}
+              {STEPS[step].key === 'notificaciones' && (
+                <StepWrapper title="¿Querés recibir notificaciones en tiempo real?" icon={<Notifications />}>
+                  <ToggleGroup
+                    value={String(prefs.notificaciones)}
+                    onChange={(v) => set('notificaciones', v === 'true')}
+                    options={[
+                      { value: 'true',  label: 'Sí, activar', icon: <Notifications /> },
+                      { value: 'false', label: 'No por ahora', icon: <NotificationsOff /> },
+                    ]}
+                  />
+                </StepWrapper>
+              )}
+
+              {/* PASO 4 — Moneda */}
+              {STEPS[step].key === 'moneda' && (
+                <StepWrapper title="¿Con qué moneda trabajás habitualmente?" icon={<AttachMoney />}>
+                  <ToggleGroup
+                    value={prefs.moneda}
+                    onChange={(v) => set('moneda', v as Moneda)}
+                    options={[
+                      { value: 'ARS', label: '🇦🇷 Peso argentino' },
+                      { value: 'USD', label: '🇺🇸 Dólar' },
+                      { value: 'EUR', label: '🇪🇺 Euro' },
+                      { value: 'BRL', label: '🇧🇷 Real' },
+                    ]}
+                  />
+                </StepWrapper>
+              )}
+
+              {/* PASO 5 — Dashboard */}
+              {STEPS[step].key === 'dashboard_vista' && (
+                <StepWrapper title="¿Cómo preferís ver tu dashboard?" icon={<BarChart />}>
+                  <ToggleGroup
+                    value={prefs.dashboard_vista}
+                    onChange={(v) => set('dashboard_vista', v as FormatoDashboard)}
+                    options={[
+                      { value: 'resumen',   label: 'Resumen', icon: <BarChart /> },
+                      { value: 'detallado', label: 'Detallado', icon: <TableChart /> },
+                    ]}
+                  />
+                </StepWrapper>
+              )}
+
+              {/* PASO 6 — Ubicación */}
+              {STEPS[step].key === 'ubicacion' && (
+                <StepWrapper title="¿Dónde está ubicada tu empresa?" icon={<MyLocation />}>
+                  {detectando ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                      <CircularProgress sx={{ color: '#F59E0B' }} />
+                    </Box>
+                  ) : (
+                    <Box sx={{ height: 220, borderRadius: 2, overflow: 'hidden', mt: 1 }}>
+                      <MapContainer
+                        center={mapPos ? [mapPos.lat, mapPos.lng] : [-32.4, -63.2]}
+                        zoom={mapPos ? 13 : 5}
+                        style={{ height: '100%', width: '100%' }}
+                      >
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <MapClickHandler onSelect={(lat, lng) => setMapPos({ lat, lng })} />
+                        {mapPos && <Marker position={[mapPos.lat, mapPos.lng]} />}
+                      </MapContainer>
+                    </Box>
+                  )}
+                  <Typography sx={{ color: '#64748B', fontSize: 12, mt: 1 }}>
+                    {mapPos
+                      ? `Lat: ${mapPos.lat.toFixed(4)}, Lng: ${mapPos.lng.toFixed(4)}`
+                      : 'Hacé clic en el mapa para marcar tu ubicación'}
+                  </Typography>
+                </StepWrapper>
+              )}
+
             </Box>
+          </Fade>
+        </Box>
+
+        {/* Footer navegación */}
+        <Box sx={{
+          px: 4, pb: 4, display: 'flex',
+          justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <Button
+            variant="text"
+            onClick={() => handleFinish(true)}
+            disabled={isPending}
+            sx={{ color: '#64748B', fontSize: 13 }}
+          >
+            Saltear todo
+          </Button>
+
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {step > 0 && (
+              <Button
+                variant="outlined"
+                onClick={() => setStep((s) => s - 1)}
+                disabled={isPending}
+                sx={{ borderColor: '#334155', color: '#94A3B8', borderRadius: 2 }}
+              >
+                Atrás
+              </Button>
+            )}
+
+            {!isLast ? (
+              <Button
+                variant="contained"
+                endIcon={<ArrowForward />}
+                onClick={() => setStep((s) => s + 1)}
+                sx={{ bgcolor: '#F59E0B', color: '#0F172A', fontWeight: 700, borderRadius: 2, '&:hover': { bgcolor: '#D97706' } }}
+              >
+                Siguiente
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                endIcon={isPending ? <CircularProgress size={16} /> : <Check />}
+                onClick={() => handleFinish(false)}
+                disabled={isPending}
+                sx={{ bgcolor: '#F59E0B', color: '#0F172A', fontWeight: 700, borderRadius: 2, '&:hover': { bgcolor: '#D97706' } }}
+              >
+                Finalizar
+              </Button>
+            )}
           </Box>
-        </Paper>
-      </Box>
+        </Box>
+      </Paper>
     </Box>
   );
 };
