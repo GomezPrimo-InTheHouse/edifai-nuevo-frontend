@@ -7,6 +7,7 @@
 //   TextField, Tooltip, Typography, useMediaQuery, useTheme,
 // } from '@mui/material';
 // import { Eye, Plus, RefreshCw, Trash2 } from 'lucide-react';
+// import { useTranslation } from 'react-i18next';
 // import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 // import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 // import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
@@ -16,6 +17,8 @@
 // import { QRCodeModal } from '../components/QRCodeModal';
 // import { useDarDeBajaUsuario, useUsuariosList, useRegenerarTotp } from '../hooks/useUsuarios';
 // import { useNotify } from '../../../shared/hooks/useNotify';
+// import { useAuthStore } from '../../../app/store/auth.store';
+
 
 // function getInitials(nombre?: string, email?: string): string {
 //   if (nombre) return nombre.slice(0, 2).toUpperCase();
@@ -34,7 +37,9 @@
 //   const navigate = useNavigate();
 //   const notify = useNotify();
 //   const theme = useTheme();
+//   const { t } = useTranslation();
 //   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+//   const user = useAuthStore((s) => s.user);
 
 //   const { data, isLoading, isError, refetch } = useUsuariosList();
 //   const darDeBajaMutation = useDarDeBajaUsuario();
@@ -44,7 +49,6 @@
 //   const [filtroRol, setFiltroRol] = useState('');
 //   const [qrData, setQrData] = useState<{ qrUrl: string; email: string; totpSeed: string } | null>(null);
 
-//   // Roles únicos para el filtro
 //   const roles = useMemo(() => {
 //     if (!data) return [];
 //     const seen = new Set<string>();
@@ -65,25 +69,25 @@
 
 //   const handleDarDeBaja = async (id: number) => {
 //     const confirmed = await notify.confirm({
-//       title: '¿Dar de baja este usuario?',
-//       message: 'El usuario perderá acceso al sistema.',
-//       confirmLabel: 'Dar de baja',
+//       title: t('usuarios.confirm.baja_title'),
+//       message: t('usuarios.confirm.baja_msg'),
+//       confirmLabel: t('usuarios.confirm.baja_btn'),
 //       severity: 'error',
 //     });
 //     if (!confirmed) return;
 //     try {
 //       await darDeBajaMutation.mutateAsync(id);
-//       notify.success('Usuario dado de baja.');
+//       notify.success(t('usuarios.notify.baja_ok'));
 //     } catch (error: any) {
-//       notify.error(error?.response?.data?.message || 'No se pudo dar de baja.');
+//       notify.error(error?.response?.data?.message || t('usuarios.notify.error_baja'));
 //     }
 //   };
 
 //   const handleRegenerarTotp = async (id: number, email: string) => {
 //     const confirmed = await notify.confirm({
-//       title: '¿Regenerar TOTP?',
-//       message: `Se generará un nuevo código para ${email}. El anterior dejará de funcionar.`,
-//       confirmLabel: 'Regenerar',
+//       title: t('usuarios.confirm.totp_title'),
+//       message: t('usuarios.confirm.totp_msg', { email }),
+//       confirmLabel: t('usuarios.confirm.totp_btn'),
 //       severity: 'warning',
 //     });
 //     if (!confirmed) return;
@@ -91,7 +95,7 @@
 //       const result = await regenerarTotpMutation.mutateAsync(id);
 //       setQrData({ qrUrl: result.qrCodeDataURL, email, totpSeed: result.totp_seed });
 //     } catch (error: any) {
-//       notify.error(error?.response?.data?.message || 'No se pudo regenerar el TOTP.');
+//       notify.error(error?.response?.data?.message || t('usuarios.notify.error_totp'));
 //     }
 //   };
 
@@ -100,60 +104,61 @@
 //   return (
 //     <AppLayout>
 //       <PageHeader
-//         title="Usuarios"
-//         subtitle="Gestión de usuarios administradores del sistema."
+//         title={t('usuarios.title')}
+//         subtitle={t('usuarios.subtitle')}
 //         actions={
-//           <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/usuarios/nuevo')}>
-//             Nuevo usuario
-//           </Button>
+//           user?.rol_id !== 9 ? (
+//             <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/usuarios/nuevo')}>
+//               {t('usuarios.nuevo')}
+//             </Button>
+//           ) : undefined
 //         }
 //       />
 
-//       {/* Filtros */}
-//       <Paper sx={{ p: 2, borderRadius: 3, mb: 2 }}>
+//       <Paper sx={{ p: 2, borderRadius: 3, mb: 2, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none' }}>
 //         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
 //           <TextField
-//             fullWidth size="small" label="Buscar por nombre o email"
+//             fullWidth size="small" label={t('usuarios.buscar')}
 //             value={search} onChange={(e) => setSearch(e.target.value)}
 //           />
 //           <TextField
-//             select fullWidth size="small" label="Filtrar por rol"
+//             select fullWidth size="small" label={t('usuarios.filtro_rol')}
 //             value={filtroRol} onChange={(e) => setFiltroRol(e.target.value)}
 //           >
-//             <MenuItem value="">Todos los roles</MenuItem>
+//             <MenuItem value="">{t('usuarios.todos_roles')}</MenuItem>
 //             {roles.map((r) => (
 //               <MenuItem key={r.id} value={String(r.id)}>{r.nombre}</MenuItem>
 //             ))}
 //           </TextField>
 //           {hayFiltros && (
 //             <Button size="small" variant="outlined" onClick={() => { setSearch(''); setFiltroRol(''); }}>
-//               Limpiar
+//               {t('usuarios.limpiar')}
 //             </Button>
 //           )}
 //         </Stack>
 //       </Paper>
 
-//       {isLoading && <LoadingState message="Cargando usuarios..." />}
-//       {isError && <ErrorState title="Error" message="No se pudieron cargar los usuarios." onRetry={refetch} />}
+//       {isLoading && <LoadingState message={t('usuarios.loading')} />}
+//       {isError && <ErrorState title="Error" message={t('usuarios.error')} onRetry={refetch} />}
 //       {!isLoading && !isError && filteredData.length === 0 && (
 //         <EmptyState
-//           title="Sin usuarios"
-//           description={hayFiltros ? 'No hay resultados para los filtros aplicados.' : 'No hay usuarios registrados.'}
-//           action={!hayFiltros ? <Button variant="contained" onClick={() => navigate('/usuarios/nuevo')}>Crear primero</Button> : undefined}
+//           title={t('usuarios.empty.title')}
+//           description={hayFiltros ? t('usuarios.empty.sin_resultados') : t('usuarios.empty.desc')}
+//           action={!hayFiltros ? <Button variant="contained" onClick={() => navigate('/usuarios/nuevo')}>{t('usuarios.empty.crear')}</Button> : undefined}
 //         />
 //       )}
 
-//       {/* VISTA MÓVIL — cards */}
+//       {/* MÓVIL */}
 //       {!isLoading && !isError && filteredData.length > 0 && isMobile && (
 //         <Stack spacing={2}>
 //           {filteredData.map((u) => (
-//             <Paper key={u.id} sx={{ p: 2, borderRadius: 3, border: '1px solid var(--border)', boxShadow: 'none' }}>
+//             <Paper key={u.id} sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
 //               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-//                 <Avatar sx={{ width: 40, height: 40, bgcolor: '#0F172A', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
+//                 <Avatar sx={{ width: 40, height: 40, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
 //                   {getInitials(u.nombre, u.email)}
 //                 </Avatar>
 //                 <Box sx={{ flex: 1, minWidth: 0 }}>
-//                   <Typography variant="subtitle2" fontWeight={700} noWrap>{u.nombre}</Typography>
+//                   <Typography variant="subtitle2" fontWeight={700} noWrap color="text.primary">{u.nombre}</Typography>
 //                   <Typography variant="caption" color="text.secondary" noWrap>{u.email}</Typography>
 //                 </Box>
 //                 <UsuarioEstadoChip estado={u.estado_nombre} />
@@ -171,7 +176,7 @@
 
 //               <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
 //                 <Button size="small" startIcon={<Eye size={16} />} onClick={() => navigate(`/usuarios/${u.id}`)}>
-//                   Ver
+//                   {t('usuarios.acciones.ver')}
 //                 </Button>
 //                 <Button
 //                   size="small" color="warning"
@@ -181,11 +186,7 @@
 //                 >
 //                   TOTP
 //                 </Button>
-//                 <IconButton
-//                   color="error" size="small"
-//                   onClick={() => handleDarDeBaja(u.id)}
-//                   disabled={darDeBajaMutation.isPending}
-//                 >
+//                 <IconButton color="error" size="small" onClick={() => handleDarDeBaja(u.id)} disabled={darDeBajaMutation.isPending}>
 //                   <Trash2 size={16} />
 //                 </IconButton>
 //               </Box>
@@ -194,17 +195,17 @@
 //         </Stack>
 //       )}
 
-//       {/* VISTA DESKTOP — tabla */}
+//       {/* DESKTOP */}
 //       {!isLoading && !isError && filteredData.length > 0 && !isMobile && (
-//         <Paper sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'none' }}>
+//         <Paper sx={{ borderRadius: 3, overflow: 'hidden', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
 //           <Table>
-//             <TableHead sx={{ bgcolor: 'var(--social-bg)' }}>
+//             <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
 //               <TableRow>
-//                 <TableCell sx={{ fontWeight: 700 }}>Usuario</TableCell>
-//                 <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
-//                 <TableCell sx={{ fontWeight: 700 }}>Rol</TableCell>
-//                 <TableCell sx={{ fontWeight: 700 }}>Estado</TableCell>
-//                 <TableCell align="right" sx={{ fontWeight: 700 }}>Acciones</TableCell>
+//                 <TableCell sx={{ fontWeight: 700 }}>{t('usuarios.tabla.usuario')}</TableCell>
+//                 <TableCell sx={{ fontWeight: 700 }}>{t('usuarios.tabla.email')}</TableCell>
+//                 <TableCell sx={{ fontWeight: 700 }}>{t('usuarios.tabla.rol')}</TableCell>
+//                 <TableCell sx={{ fontWeight: 700 }}>{t('usuarios.tabla.estado')}</TableCell>
+//                 <TableCell align="right" sx={{ fontWeight: 700 }}>{t('usuarios.tabla.acciones')}</TableCell>
 //               </TableRow>
 //             </TableHead>
 //             <TableBody>
@@ -212,7 +213,7 @@
 //                 <TableRow key={u.id} hover>
 //                   <TableCell>
 //                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-//                       <Avatar sx={{ width: 32, height: 32, bgcolor: '#0F172A', fontSize: 11, fontWeight: 700 }}>
+//                       <Avatar sx={{ width: 32, height: 32, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 11, fontWeight: 700 }}>
 //                         {getInitials(u.nombre, u.email)}
 //                       </Avatar>
 //                       <Typography variant="body2" fontWeight={600}>{u.nombre}</Typography>
@@ -229,26 +230,18 @@
 //                   <TableCell><UsuarioEstadoChip estado={u.estado_nombre} /></TableCell>
 //                   <TableCell align="right">
 //                     <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
-//                       <Tooltip title="Ver detalle">
+//                       <Tooltip title={t('usuarios.acciones.ver')}>
 //                         <IconButton size="small" onClick={() => navigate(`/usuarios/${u.id}`)}>
 //                           <Eye size={18} />
 //                         </IconButton>
 //                       </Tooltip>
-//                       <Tooltip title="Regenerar TOTP">
-//                         <IconButton
-//                           size="small" color="warning"
-//                           onClick={() => handleRegenerarTotp(u.id, u.email)}
-//                           disabled={regenerarTotpMutation.isPending}
-//                         >
+//                       <Tooltip title={t('usuarios.acciones.totp')}>
+//                         <IconButton size="small" color="warning" onClick={() => handleRegenerarTotp(u.id, u.email)} disabled={regenerarTotpMutation.isPending}>
 //                           <RefreshCw size={18} />
 //                         </IconButton>
 //                       </Tooltip>
-//                       <Tooltip title="Dar de baja">
-//                         <IconButton
-//                           size="small" color="error"
-//                           onClick={() => handleDarDeBaja(u.id)}
-//                           disabled={darDeBajaMutation.isPending}
-//                         >
+//                       <Tooltip title={t('usuarios.acciones.baja')}>
+//                         <IconButton size="small" color="error" onClick={() => handleDarDeBaja(u.id)} disabled={darDeBajaMutation.isPending}>
 //                           <Trash2 size={18} />
 //                         </IconButton>
 //                       </Tooltip>
@@ -274,10 +267,10 @@
 //   );
 // };
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Avatar, Box, Button, Chip, Divider, IconButton, MenuItem, Paper,
+  Avatar, Box, Button, Chip, Divider, IconButton, MenuItem, Pagination, Paper,
   Stack, Table, TableBody, TableCell, TableHead, TableRow,
   TextField, Tooltip, Typography, useMediaQuery, useTheme,
 } from '@mui/material';
@@ -294,6 +287,7 @@ import { useDarDeBajaUsuario, useUsuariosList, useRegenerarTotp } from '../hooks
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { useAuthStore } from '../../../app/store/auth.store';
 
+const ITEMS_POR_PAGINA = 10;
 
 function getInitials(nombre?: string, email?: string): string {
   if (nombre) return nombre.slice(0, 2).toUpperCase();
@@ -322,6 +316,7 @@ export const UsuariosListPage: React.FC = () => {
 
   const [search, setSearch] = useState('');
   const [filtroRol, setFiltroRol] = useState('');
+  const [page, setPage] = useState(1);
   const [qrData, setQrData] = useState<{ qrUrl: string; email: string; totpSeed: string } | null>(null);
 
   const roles = useMemo(() => {
@@ -341,6 +336,16 @@ export const UsuariosListPage: React.FC = () => {
       return termOk && rolOk;
     });
   }, [data, search, filtroRol]);
+
+  const totalPaginas = Math.max(1, Math.ceil(filteredData.length / ITEMS_POR_PAGINA));
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * ITEMS_POR_PAGINA;
+    return filteredData.slice(start, start + ITEMS_POR_PAGINA);
+  }, [filteredData, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filtroRol]);
 
   const handleDarDeBaja = async (id: number) => {
     const confirmed = await notify.confirm({
@@ -426,7 +431,7 @@ export const UsuariosListPage: React.FC = () => {
       {/* MÓVIL */}
       {!isLoading && !isError && filteredData.length > 0 && isMobile && (
         <Stack spacing={2}>
-          {filteredData.map((u) => (
+          {paginatedData.map((u) => (
             <Paper key={u.id} sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
                 <Avatar sx={{ width: 40, height: 40, bgcolor: '#F59E0B', color: '#0F172A', fontSize: 13, fontWeight: 700, flexShrink: 0 }}>
@@ -484,7 +489,7 @@ export const UsuariosListPage: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredData.map((u) => (
+              {paginatedData.map((u) => (
                 <TableRow key={u.id} hover>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -527,6 +532,18 @@ export const UsuariosListPage: React.FC = () => {
             </TableBody>
           </Table>
         </Paper>
+      )}
+
+      {!isLoading && !isError && totalPaginas > 1 && (
+        <Stack direction="row" justifyContent="center" sx={{ mt: 3 }}>
+          <Pagination count={totalPaginas} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" />
+        </Stack>
+      )}
+
+      {!isLoading && !isError && filteredData.length > 0 && (
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1 }}>
+          {filteredData.length} resultado{filteredData.length !== 1 ? 's' : ''}
+        </Typography>
       )}
 
       {qrData && (

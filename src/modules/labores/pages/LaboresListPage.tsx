@@ -1,9 +1,7 @@
-
-
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Box, Button, Chip, IconButton, LinearProgress, MenuItem, Paper,
+  Box, Button, Chip, IconButton, LinearProgress, MenuItem, Pagination, Paper,
   Stack, Tab, Table, TableBody, TableCell, TableHead, TableRow,
   Tabs, TextField, Typography, useTheme,
 } from '@mui/material';
@@ -30,6 +28,8 @@ const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0, 'Labor en proceso': 25, 'Avanzada': 50, 'Muy avanzada': 75, 'Finalizada': 100,
 };
 
+const ITEMS_POR_PAGINA = 10;
+
 export function getProgressColor(progreso: number): string {
   if (progreso === 100) return '#16A34A';
   if (progreso >= 75) return '#2563EB';
@@ -47,6 +47,7 @@ export const LaboresListPage = () => {
   const [search, setSearch] = useState('');
   const [filtroEspecialidad, setFiltroEspecialidad] = useState('');
   const [tab, setTab] = useState(0);
+  const [page, setPage] = useState(1);
 
   const user = useAuthStore((s) => s.user);
   const esWorker = user?.rol_id === 7 || user?.rol_id === 8;
@@ -92,6 +93,17 @@ export const LaboresListPage = () => {
     );
     return result;
   }, [data, laboresArchivadas, tab, search, obraIdFiltro, filtroEspecialidad]);
+
+  const totalPaginas = Math.max(1, Math.ceil(filteredData.length / ITEMS_POR_PAGINA));
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * ITEMS_POR_PAGINA;
+    return filteredData.slice(start, start + ITEMS_POR_PAGINA);
+  }, [filteredData, page]);
+
+  // Resetear página cuando cambian los filtros
+  useEffect(() => {
+    setPage(1);
+  }, [search, filtroEspecialidad, obraIdFiltro, tab]);
 
   const laboresConTrabajador = useMemo(() => (data ?? []).filter((l) => l.trabajador_id != null), [data]);
 
@@ -211,7 +223,7 @@ export const LaboresListPage = () => {
 
                 {/* VISTA MÓVIL */}
                 <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 2 }}>
-                  {filteredData.map((l) => (
+                  {paginatedData.map((l) => (
                     <LaborCardMobile
                       key={l.id}
                       labor={l}
@@ -247,7 +259,7 @@ export const LaboresListPage = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {filteredData.map((l) => {
+                      {paginatedData.map((l) => {
                         const progreso = getProgreso(l.estado_id);
                         const color = getProgressColor(progreso);
                         const obraNombre = tab === 1 ? (l.obra_nombre ?? '-') : getObraNombre(l.obra_id);
@@ -298,6 +310,16 @@ export const LaboresListPage = () => {
                     </TableBody>
                   </Table>
                 </Paper>
+
+                {totalPaginas > 1 && (
+                  <Stack direction="row" justifyContent="center" sx={{ mt: 3 }}>
+                    <Pagination count={totalPaginas} page={page} onChange={(_, v) => setPage(v)} color="primary" shape="rounded" />
+                  </Stack>
+                )}
+
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mt: 1 }}>
+                  {filteredData.length} resultado{filteredData.length !== 1 ? 's' : ''}
+                </Typography>
               </>
             )}
 
