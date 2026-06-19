@@ -324,7 +324,9 @@
   "asistente": "Asistente",
   "pensando": "Pensando...",
   "sugerencias_titulo": "PREGUNTAS FRECUENTES",
-"seguir_preguntando": "Seguir explorando"
+"seguir_preguntando": "Seguir explorando",
+"transcribiendo": "Transcribiendo audio...",
+"exportar_pdf": "Exportar a PDF"
 },
   "labor_form": {
     "modo_bloqueado_presupuestos": "El modo no puede cambiarse porque la labor tiene presupuestos cargados.",

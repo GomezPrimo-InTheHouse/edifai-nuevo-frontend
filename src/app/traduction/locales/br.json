@@ -368,7 +368,9 @@
   "asistente": "Assistente",
   "pensando": "Pensando...",
   "sugerencias_titulo": "PERGUNTAS FREQUENTES",
-"seguir_preguntando": "Continuar explorando"
+"seguir_preguntando": "Continuar explorando",
+"transcribiendo": "Transcrevendo áudio...",
+"exportar_pdf": "Exportar para PDF"
 },
   "registrar_trabajador": {
     "modo_nuevo": "Registrar novo",

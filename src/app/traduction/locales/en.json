@@ -353,7 +353,9 @@
   "asistente": "Assistant",
   "pensando": "Thinking...",
   "sugerencias_titulo": "QUICK QUESTIONS",
-"seguir_preguntando": "Keep exploring"
+"seguir_preguntando": "Keep exploring",
+"transcribiendo": "Transcribing audio...",
+"exportar_pdf": "Export to PDF"
 },
   "labor_presupuestos": {
     "editar": "Edit",
