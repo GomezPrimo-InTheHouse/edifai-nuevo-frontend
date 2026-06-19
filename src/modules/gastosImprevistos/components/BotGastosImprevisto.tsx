@@ -246,7 +246,7 @@ export const BotGastoImprevisto: React.FC<BotGastoImprevistoProps> = ({
       'Campos posibles: obra_id, especialidad_id, descripcion, monto, fecha, pagado_por_trabajador_id, pagado_por_nombre_libre, formas_pago: [{ forma_pago_id, monto }]',
     ].join('\n');
 
-    try {
+try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method:  'POST',
         headers: {
@@ -266,18 +266,19 @@ export const BotGastoImprevisto: React.FC<BotGastoImprevistoProps> = ({
       const clean   = rawText.replace(/```json|```/g, '').trim();
       const parsed  = JSON.parse(clean);
 
-  console.log('🤖 Claude parsed:', JSON.stringify(parsed, null, 2)); // nuevoooo log
+      console.log('🤖 Claude parsed:', JSON.stringify(parsed, null, 2));
 
       // Si viene pagado_por_trabajador_id lo mapeamos a pagado_por_id
-      const { pagado_por_trabajador_id, pagado_por_nombre_libre, ...rest } = parsed;
-console.log('pagado_por_trabajador_id:', pagado_por_trabajador_id);
-console.log('trabajadoresDisponibles:', JSON.stringify(
-  trabajadoresDisponibles.map(t => ({ id: t.id, nombre: `${t.nombre} ${t.apellido}`}))
-));
-      
+      const { pagado_por_trabajador_id, pagado_por_nombre_libre, formas_pago: formasPagoNuevas, ...rest } = parsed;
+      console.log('pagado_por_trabajador_id:', pagado_por_trabajador_id);
+      console.log('trabajadoresDisponibles:', JSON.stringify(
+        trabajadoresDisponibles.map(t => ({ id: t.id, nombre: `${t.nombre} ${t.apellido}`}))
+      ));
+
       setCampos(prev => ({
         ...prev,
         ...rest,
+        ...(formasPagoNuevas && formasPagoNuevas.length > 0 ? { formas_pago: formasPagoNuevas } : {}),
         ...(pagado_por_trabajador_id ? { pagado_por_id: pagado_por_trabajador_id, pagado_por_nombre_libre: undefined } : {}),
         ...(pagado_por_nombre_libre  ? { pagado_por_nombre_libre, pagado_por_id: undefined } : {}),
       }));
