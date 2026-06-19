@@ -667,6 +667,11 @@ export const GastosImprevistosPage: React.FC = () => {
  const trabajadorLogueado = isWorker
   ? trabajadores.find(tr => Number(tr.usuario_id) === Number(user?.id)) ?? null
   : null;
+  
+  console.log('👤 user.id:', user?.id, '| isWorker:', isWorker);
+  console.log('👷 trabajadorLogueado:', trabajadorLogueado);
+  console.log('📋 trabajadores usuario_ids:', trabajadores.map(tr => ({ id: tr.id, nombre: tr.nombre, usuario_id: tr.usuario_id })));
+  
 
   // Equipo del worker: él mismo + quienes tienen el mismo jefe_id
 const trabajadoresParaBot = isWorker && trabajadorLogueado
