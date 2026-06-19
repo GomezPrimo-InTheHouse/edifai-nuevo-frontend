@@ -35,10 +35,8 @@
 // import { BotGastoImprevisto } from '../components/BotGastosImprevisto';
 // import type { Cliente } from '../../clientes/types/cliente.types';
 
-// // ── Colores gráficos ──────────────────────────────────────────
 // const CHART_COLORS = ['#F59E0B', '#3B82F6', '#10B981', '#8B5CF6', '#EF4444', '#F97316', '#06B6D4', '#EC4899'];
 
-// // ── Estado chip ──────────────────────────────────────────────
 // const ESTADO_COLOR: Record<string, 'warning' | 'info' | 'success'> = {
 //   activo: 'warning',
 //   'parcialmente pagado': 'info',
@@ -51,7 +49,6 @@
 //   return <Chip label={estadoNombre} color={color} size="small" />;
 // };
 
-// // ── Helpers ───────────────────────────────────────────────────
 // const EMPTY_FORM: CreateGastoImprevistoPayload = {
 //   obra_id: 0, especialidad_id: 0, descripcion: '', motivo: '',
 //   monto: 0, forma_pago_id: 0, pagado_por_id: undefined,
@@ -67,32 +64,48 @@
 //   return `${c.nombre}${c.apellido ? ` ${c.apellido}` : ''}`;
 // }
 
-// // ── Página ────────────────────────────────────────────────────
 // export const GastosImprevistosPage: React.FC = () => {
 //   const { t } = useTranslation();
 //   const theme = useTheme();
 //   const notify = useNotify();
 //   const { user } = useAuthStore();
 //   const isAdmin = [1, 3, 4, 6].includes(user?.rol_id ?? 0);
+//   const isWorker = [7, 8].includes(user?.rol_id ?? 0);
 
-//   // ── Data ─────────────────────────────────────────────────────
 //   const { data: gastos = [], isLoading, isError, refetch } = useGastosImprevistosList() as {
 //     data: GastoImprevisto[]; isLoading: boolean; isError: boolean; refetch: () => void;
 //   };
-// const { data: obras = [] } = useObrasList();
-
+//   const { data: obras = [] } = useObrasList();
 //   const { data: especialidades = [] } = useEspecialidadesList();
 //   const { data: formasPago = [] } = useFormasPagoList();
 //   const { data: trabajadores = [] } = useTrabajadoresList();
 //   const { data: clientes = [] } = useClientesList();
 
-//   // ── Mutations ─────────────────────────────────────────────────
+//   // Trabajador logueado — solo para workers
+//  const trabajadorLogueado = isWorker
+//   ? trabajadores.find(tr => Number(tr.usuario_id) === Number(user?.id)) ?? null
+//   : null;
+
+//   console.log('👤 user.id:', user?.id, '| isWorker:', isWorker);
+//   console.log('👷 trabajadorLogueado:', trabajadorLogueado);
+//   console.log('📋 trabajadores usuario_ids:', trabajadores.map(tr => ({ id: tr.id, nombre: tr.nombre, usuario_id: tr.usuario_id })));
+  
+
+//   // Equipo del worker: él mismo + quienes tienen el mismo jefe_id
+// const trabajadoresParaBot = isWorker && trabajadorLogueado
+//   ? trabajadores.filter(tr =>
+//       tr.id === trabajadorLogueado.id ||
+//       (tr.jefe_id === trabajadorLogueado.jefe_id && trabajadorLogueado.jefe_id !== null) ||
+//       tr.jefe_id === trabajadorLogueado.id ||
+//       tr.id === trabajadorLogueado.jefe_id
+//     )
+//   : trabajadores; 
+
 //   const crearMutation = useCrearGastoImprevisto();
 //   const estadoMutation = useActualizarEstadoGasto();
 //   const eliminarMutation = useEliminarGastoImprevisto();
 //   const deudorMutation = useActualizarDeudorGasto();
 
-//   // ── UI state ─────────────────────────────────────────────────
 //   const [tab, setTab] = useState(0);
 //   const [openCrear, setOpenCrear] = useState(false);
 //   const [openEstado, setOpenEstado] = useState<GastoImprevisto | null>(null);
@@ -100,12 +113,9 @@
 //   const [form, setForm] = useState<CreateGastoImprevistoPayload>(EMPTY_FORM);
 //   const [nuevoEstado, setNuevoEstado] = useState<number>(0);
 //   const [errors, setErrors] = useState<string[]>([]);
-
-//   // Deudor inline
 //   const [editandoDeudor, setEditandoDeudor] = useState<number | null>(null);
 //   const [deudorSeleccionado, setDeudorSeleccionado] = useState<number | ''>('');
 
-//   // ── Stats ─────────────────────────────────────────────────────
 //   const stats = useMemo(() => {
 //     const total = gastos.length;
 //     const montoTotal = gastos.reduce((acc, g) => acc + Number(g.monto), 0);
@@ -138,7 +148,6 @@
 //   if (isLoading) return <LoadingState message={t('gastos.loading')} />;
 //   if (isError) return <ErrorState title="Error" message={t('gastos.error')} onRetry={refetch} />;
 
-//   // ── Handlers ─────────────────────────────────────────────────
 //   const handleCrear = async () => {
 //     const errs: string[] = [];
 //     if (!form.obra_id) errs.push('obra_id');
@@ -190,35 +199,38 @@
 //     } catch { notify.error('Error al asignar deudor'); }
 //   };
 
-//   // ── Chart colors ──────────────────────────────────────────────
 //   const tickColor = theme.palette.text.secondary;
 //   const tooltipBg = theme.palette.background.paper;
 //   const tooltipBorder = theme.palette.divider;
 
-//   // ── Render ────────────────────────────────────────────────────
 //   return (
 //     <AppLayout>
 //       <PageHeader
 //         title={t('gastos.title')}
 //         subtitle={t(gastos.length === 1 ? 'gastos.subtitle_one' : 'gastos.subtitle_other', { count: gastos.length })}
-//  actions={
-//   <BotGastoImprevisto
-//     obras={obras}
-//     especialidades={especialidades}
-//     formasPago={formasPago}
-//     trabajadores={trabajadores}
-//     onConfirmar={async (payload) => {
-//       try {
-//         await crearMutation.mutateAsync(payload);
-//         notify.success(t('gastos.notify.creado'));
-//       } catch { notify.error(t('gastos.notify.error_crear')); }
-//     }}
-//     isSubmitting={crearMutation.isPending}
-//   />
-// }
+//         actions={
+//           <BotGastoImprevisto
+//             obras={obras}
+//             especialidades={especialidades}
+//             formasPago={formasPago}
+//             trabajadores={trabajadoresParaBot}  // ← cambiado
+//             onConfirmar={async (payload) => {
+//               try {
+//                 await crearMutation.mutateAsync(payload);
+//                 notify.success(t('gastos.notify.creado'));
+//               } catch { notify.error(t('gastos.notify.error_crear')); }
+//             }}
+//             isSubmitting={crearMutation.isPending}
+//             trabajadorLogueado={
+//               trabajadorLogueado
+//                 ? { id: trabajadorLogueado.id, nombre: trabajadorLogueado.nombre, apellido: trabajadorLogueado.apellido }
+//                 : undefined
+//             }
+//             soloEquipo={isWorker}
+//           />
+//         }
 //       />
 
-//       {/* Tabs */}
 //       <Tabs value={tab} onChange={(_, v) => setTab(v)}
 //         sx={{ mb: 3, borderBottom: `1px solid ${theme.palette.divider}` }}>
 //         <Tab label={t('gastos.tabs.listado')} />
@@ -246,8 +258,6 @@
 //                   bgcolor: 'background.paper',
 //                 }}>
 //                   <CardContent sx={{ p: 3 }}>
-
-//                     {/* Header: monto + estado + acciones */}
 //                     <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1.5 }}>
 //                       <Box>
 //                         <Typography variant="h5" fontWeight={800} color="text.primary">
@@ -271,7 +281,6 @@
 //                       )}
 //                     </Stack>
 
-//                     {/* Detalle */}
 //                     <Stack spacing={0.75}>
 //                       <Typography variant="body2" fontWeight={600} color="text.primary">
 //                         {gasto.descripcion}
@@ -279,12 +288,10 @@
 //                       <Typography variant="caption" color="text.secondary">
 //                         {gasto.motivo}
 //                       </Typography>
-
 //                       {gasto.obra_nombre && (
 //                         <Chip label={gasto.obra_nombre} size="small"
 //                           sx={{ width: 'fit-content', bgcolor: theme.palette.action.hover, color: 'text.secondary' }} />
 //                       )}
-
 //                       {gasto.especialidad_nombre && (
 //                         <Typography variant="caption" color="text.secondary">
 //                           {gasto.especialidad_nombre}
@@ -301,8 +308,7 @@
 //                       {(gasto.formas_pago ?? []).length > 0 && (
 //                         <Stack direction="row" flexWrap="wrap" gap={0.5}>
 //                           {(gasto.formas_pago ?? []).map((fp, i) => (
-//                             <Chip
-//                               key={i}
+//                             <Chip key={i}
 //                               label={`${fp.forma_pago_nombre ?? 'Pago'} $${Number(fp.monto).toLocaleString('es-AR')}`}
 //                               size="small"
 //                               sx={{ bgcolor: theme.palette.action.hover, color: 'text.secondary', fontSize: 11 }}
@@ -310,27 +316,22 @@
 //                           ))}
 //                         </Stack>
 //                       )}
-
 //                       <Typography variant="caption" color="text.disabled">
 //                         {new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
 //                       </Typography>
-
 //                       {gasto.deudor_automatico && (
 //                         <Chip label={t('gastos.deudor_automatico')} size="small" color="warning"
 //                           sx={{ width: 'fit-content' }} />
 //                       )}
 
-//                       {/* ── Deudor: asignar si no tiene ── */}
 //                       {isAdmin && !gasto.deudor_cliente_id && !gasto.deudor_usuario_id && (
 //                         <Box sx={{ mt: 0.5 }}>
 //                           {editandoDeudor === gasto.id ? (
 //                             <Stack spacing={1}>
-//                               <TextField
-//                                 select size="small" fullWidth
+//                               <TextField select size="small" fullWidth
 //                                 label="Asignar cliente deudor"
 //                                 value={deudorSeleccionado}
-//                                 onChange={(e) => setDeudorSeleccionado(e.target.value as number | '')}
-//                               >
+//                                 onChange={(e) => setDeudorSeleccionado(e.target.value as number | '')}>
 //                                 <MenuItem value="">Seleccionar cliente</MenuItem>
 //                                 {(clientes as Cliente[]).map((c) => (
 //                                   <MenuItem key={c.id} value={c.id}>
@@ -381,7 +382,6 @@
 //       {/* ── TAB 1: ESTADÍSTICAS ── */}
 //       {tab === 1 && (
 //         <Stack spacing={3}>
-//           {/* KPIs */}
 //           <Grid container spacing={2}>
 //             {[
 //               { label: t('gastos.stats.total_gastos'), value: stats.total, color: '#F59E0B', isCount: true },
@@ -404,7 +404,6 @@
 //             ))}
 //           </Grid>
 
-//           {/* Gráfico por especialidad */}
 //           <Card elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper' }}>
 //             <CardContent sx={{ p: 2.5 }}>
 //               <Typography variant="body1" fontWeight={700} sx={{ mb: 2 }}>
@@ -418,10 +417,8 @@
 //                     <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
 //                     <XAxis dataKey="nombre" tick={{ fontSize: 11, fill: tickColor }} angle={-35} textAnchor="end" interval={0} />
 //                     <YAxis tick={{ fontSize: 11, fill: tickColor }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-//                     <Tooltip
-//                       formatter={(v) => [formatMoney(Number(v)), t('gastos.tabla.monto')]}
-//                       contentStyle={{ borderRadius: 8, border: `1px solid ${tooltipBorder}`, fontSize: 13, backgroundColor: tooltipBg, color: theme.palette.text.primary }}
-//                     />
+//                     <Tooltip formatter={(v) => [formatMoney(Number(v)), t('gastos.tabla.monto')]}
+//                       contentStyle={{ borderRadius: 8, border: `1px solid ${tooltipBorder}`, fontSize: 13, backgroundColor: tooltipBg, color: theme.palette.text.primary }} />
 //                     <Bar dataKey="total" radius={[4, 4, 0, 0]}>
 //                       {stats.porEspecialidad.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
 //                     </Bar>
@@ -431,7 +428,6 @@
 //             </CardContent>
 //           </Card>
 
-//           {/* Gráfico por obra */}
 //           <Card elevation={0} sx={{ borderRadius: 3, border: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper' }}>
 //             <CardContent sx={{ p: 2.5 }}>
 //               <Typography variant="body1" fontWeight={700} sx={{ mb: 2 }}>
@@ -446,16 +442,13 @@
 //                       <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
 //                       <XAxis dataKey="nombre" tick={{ fontSize: 11, fill: tickColor }} angle={-35} textAnchor="end" interval={0} />
 //                       <YAxis tick={{ fontSize: 11, fill: tickColor }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-//                       <Tooltip
-//                         formatter={(v) => [formatMoney(Number(v)), t('gastos.tabla.monto')]}
-//                         contentStyle={{ borderRadius: 8, border: `1px solid ${tooltipBorder}`, fontSize: 13, backgroundColor: tooltipBg, color: theme.palette.text.primary }}
-//                       />
+//                       <Tooltip formatter={(v) => [formatMoney(Number(v)), t('gastos.tabla.monto')]}
+//                         contentStyle={{ borderRadius: 8, border: `1px solid ${tooltipBorder}`, fontSize: 13, backgroundColor: tooltipBg, color: theme.palette.text.primary }} />
 //                       <Bar dataKey="total" radius={[4, 4, 0, 0]}>
 //                         {stats.porObra.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
 //                       </Bar>
 //                     </BarChart>
 //                   </ResponsiveContainer>
-
 //                   <Stack spacing={1} sx={{ mt: 2 }}>
 //                     {stats.porObra.map((item, i) => (
 //                       <Stack key={item.nombre} direction="row" alignItems="center" justifyContent="space-between"
@@ -544,7 +537,6 @@
 //       </Dialog>
 
 //       {/* ── Modal Cambiar Estado ── */}
-//       {/* ── Modal Cambiar Estado ── */}
 //       <Dialog open={!!openEstado} onClose={() => setOpenEstado(null)} maxWidth="xs" fullWidth>
 //         <DialogTitle>{t('gastos.estado_modal.title')}</DialogTitle>
 //         <DialogContent>
@@ -576,7 +568,6 @@
 //           </Button>
 //         </DialogActions>
 //       </Dialog>
-
 //     </AppLayout>
 //   );
 // };
@@ -593,7 +584,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell,
 } from 'recharts';
-import { Trash2, RefreshCw, AlertCircle, Check, X } from 'lucide-react';
+import { Trash2, RefreshCw, AlertCircle, Check, X, ArrowUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
@@ -664,24 +655,19 @@ export const GastosImprevistosPage: React.FC = () => {
   const { data: clientes = [] } = useClientesList();
 
   // Trabajador logueado — solo para workers
- const trabajadorLogueado = isWorker
-  ? trabajadores.find(tr => Number(tr.usuario_id) === Number(user?.id)) ?? null
-  : null;
-  
-  console.log('👤 user.id:', user?.id, '| isWorker:', isWorker);
-  console.log('👷 trabajadorLogueado:', trabajadorLogueado);
-  console.log('📋 trabajadores usuario_ids:', trabajadores.map(tr => ({ id: tr.id, nombre: tr.nombre, usuario_id: tr.usuario_id })));
-  
+  const trabajadorLogueado = isWorker
+    ? trabajadores.find(tr => Number(tr.usuario_id) === Number(user?.id)) ?? null
+    : null;
 
   // Equipo del worker: él mismo + quienes tienen el mismo jefe_id
-const trabajadoresParaBot = isWorker && trabajadorLogueado
-  ? trabajadores.filter(tr =>
-      tr.id === trabajadorLogueado.id ||
-      (tr.jefe_id === trabajadorLogueado.jefe_id && trabajadorLogueado.jefe_id !== null) ||
-      tr.jefe_id === trabajadorLogueado.id ||
-      tr.id === trabajadorLogueado.jefe_id
-    )
-  : trabajadores; 
+  const trabajadoresParaBot = isWorker && trabajadorLogueado
+    ? trabajadores.filter(tr =>
+        tr.id === trabajadorLogueado.id ||
+        (tr.jefe_id === trabajadorLogueado.jefe_id && trabajadorLogueado.jefe_id !== null) ||
+        tr.jefe_id === trabajadorLogueado.id ||
+        tr.id === trabajadorLogueado.jefe_id
+      )
+    : trabajadores;
 
   const crearMutation = useCrearGastoImprevisto();
   const estadoMutation = useActualizarEstadoGasto();
@@ -698,14 +684,54 @@ const trabajadoresParaBot = isWorker && trabajadorLogueado
   const [editandoDeudor, setEditandoDeudor] = useState<number | null>(null);
   const [deudorSeleccionado, setDeudorSeleccionado] = useState<number | ''>('');
 
+  // ── Filtros ───────────────────────────────────────────────────
+  const [filtroObra, setFiltroObra] = useState<number | ''>('');
+  const [filtroEspecialidad, setFiltroEspecialidad] = useState<number | ''>('');
+  const [filtroFormaPago, setFiltroFormaPago] = useState<number | ''>('');
+  const [orden, setOrden] = useState<'fecha_desc' | 'monto_desc' | 'monto_asc'>('fecha_desc');
+
+  const gastosFiltrados = useMemo(() => {
+    let result = [...gastos];
+
+    if (filtroObra) {
+      result = result.filter(g => g.obra_id === filtroObra);
+    }
+    if (filtroEspecialidad) {
+      result = result.filter(g => g.especialidad_id === filtroEspecialidad);
+    }
+    if (filtroFormaPago) {
+      result = result.filter(g =>
+        (g.formas_pago ?? []).some(fp => fp.forma_pago_id === filtroFormaPago)
+      );
+    }
+
+    if (orden === 'monto_desc') {
+      result.sort((a, b) => Number(b.monto) - Number(a.monto));
+    } else if (orden === 'monto_asc') {
+      result.sort((a, b) => Number(a.monto) - Number(b.monto));
+    } else {
+      result.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+    }
+
+    return result;
+  }, [gastos, filtroObra, filtroEspecialidad, filtroFormaPago, orden]);
+
+  const hayFiltrosActivos = !!filtroObra || !!filtroEspecialidad || !!filtroFormaPago;
+  const limpiarFiltros = () => {
+    setFiltroObra('');
+    setFiltroEspecialidad('');
+    setFiltroFormaPago('');
+    setOrden('fecha_desc');
+  };
+
   const stats = useMemo(() => {
-    const total = gastos.length;
-    const montoTotal = gastos.reduce((acc, g) => acc + Number(g.monto), 0);
-    const pendiente = gastos.filter(g => g.estado_nombre === 'pendiente').reduce((acc, g) => acc + Number(g.monto), 0);
-    const saldado = gastos.filter(g => g.estado_nombre === 'saldado').reduce((acc, g) => acc + Number(g.monto), 0);
+    const total = gastosFiltrados.length;
+    const montoTotal = gastosFiltrados.reduce((acc, g) => acc + Number(g.monto), 0);
+    const pendiente = gastosFiltrados.filter(g => g.estado_nombre === 'pendiente').reduce((acc, g) => acc + Number(g.monto), 0);
+    const saldado = gastosFiltrados.filter(g => g.estado_nombre === 'saldado').reduce((acc, g) => acc + Number(g.monto), 0);
 
     const porEspecialidad = Object.values(
-      gastos.reduce((acc, g) => {
+      gastosFiltrados.reduce((acc, g) => {
         const key = g.especialidad_nombre ?? 'Sin especialidad';
         if (!acc[key]) acc[key] = { nombre: key, total: 0, cantidad: 0 };
         acc[key].total += Number(g.monto);
@@ -715,7 +741,7 @@ const trabajadoresParaBot = isWorker && trabajadorLogueado
     ).sort((a, b) => b.total - a.total);
 
     const porObra = Object.values(
-      gastos.reduce((acc, g) => {
+      gastosFiltrados.reduce((acc, g) => {
         const key = g.obra_nombre ?? 'Sin obra';
         if (!acc[key]) acc[key] = { nombre: key, total: 0, cantidad: 0 };
         acc[key].total += Number(g.monto);
@@ -725,7 +751,7 @@ const trabajadoresParaBot = isWorker && trabajadorLogueado
     ).sort((a, b) => b.total - a.total);
 
     return { total, montoTotal, pendiente, saldado, porEspecialidad, porObra };
-  }, [gastos]);
+  }, [gastosFiltrados]);
 
   if (isLoading) return <LoadingState message={t('gastos.loading')} />;
   if (isError) return <ErrorState title="Error" message={t('gastos.error')} onRetry={refetch} />;
@@ -795,7 +821,7 @@ const trabajadoresParaBot = isWorker && trabajadorLogueado
             obras={obras}
             especialidades={especialidades}
             formasPago={formasPago}
-            trabajadores={trabajadoresParaBot}  // ← cambiado
+            trabajadores={trabajadoresParaBot}
             onConfirmar={async (payload) => {
               try {
                 await crearMutation.mutateAsync(payload);
@@ -821,144 +847,191 @@ const trabajadoresParaBot = isWorker && trabajadorLogueado
 
       {/* ── TAB 0: LISTADO ── */}
       {tab === 0 && (
-        gastos.length === 0 ? (
-          <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography variant="h6" color="text.secondary">{t('gastos.sin_gastos')}</Typography>
-            {isAdmin && (
-              <Button variant="contained" sx={{ mt: 2 }} onClick={() => setOpenCrear(true)}>
-                {t('gastos.registrar_primero')}
-              </Button>
-            )}
-          </Box>
-        ) : (
-          <Grid container spacing={2}>
-            {[...gastos].sort((a, b) => Number(b.monto) - Number(a.monto)).map((gasto) => (
-              <Grid key={gasto.id} size={{ xs: 12, md: 6, lg: 4 }}>
-                <Card elevation={0} sx={{
-                  borderRadius: 3, height: '100%',
-                  border: `1px solid ${theme.palette.divider}`,
-                  bgcolor: 'background.paper',
-                }}>
-                  <CardContent sx={{ p: 3 }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1.5 }}>
-                      <Box>
-                        <Typography variant="h5" fontWeight={800} color="text.primary">
-                          {formatMoney(Number(gasto.monto))}
-                        </Typography>
-                        <Box sx={{ mt: 0.5 }}>
-                          <EstadoChip estadoNombre={gasto.estado_nombre} />
-                        </Box>
-                      </Box>
-                      {isAdmin && (
-                        <Stack direction="row" spacing={0.5}>
-                          <IconButton size="small"
-                            onClick={() => { setOpenEstado(gasto); setNuevoEstado(gasto.estado_id); }}>
-                            <RefreshCw size={16} />
-                          </IconButton>
-                          <IconButton size="small" color="error"
-                            onClick={() => setOpenEliminar(gasto.id)}>
-                            <Trash2 size={16} />
-                          </IconButton>
-                        </Stack>
-                      )}
-                    </Stack>
+        <>
+          {/* ── Barra de filtros ── */}
+          <Card elevation={0} sx={{
+            borderRadius: 3, mb: 2, p: 2,
+            border: `1px solid ${theme.palette.divider}`,
+            bgcolor: 'background.paper',
+          }}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" useFlexGap>
+              <TextField select size="small" label="Obra" sx={{ minWidth: 160 }}
+                value={filtroObra}
+                onChange={(e) => setFiltroObra(e.target.value === '' ? '' : Number(e.target.value))}>
+                <MenuItem value="">Todas</MenuItem>
+                {obras.map(o => <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>)}
+              </TextField>
 
-                    <Stack spacing={0.75}>
-                      <Typography variant="body2" fontWeight={600} color="text.primary">
-                        {gasto.descripcion}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {gasto.motivo}
-                      </Typography>
-                      {gasto.obra_nombre && (
-                        <Chip label={gasto.obra_nombre} size="small"
-                          sx={{ width: 'fit-content', bgcolor: theme.palette.action.hover, color: 'text.secondary' }} />
-                      )}
-                      {gasto.especialidad_nombre && (
-                        <Typography variant="caption" color="text.secondary">
-                          {gasto.especialidad_nombre}
-                        </Typography>
-                      )}
-                      {gasto.pagado_por_nombre && (
-                        <Stack direction="row" alignItems="center" gap={0.5}>
-                          <Typography variant="caption" color="text.disabled">Pagado por:</Typography>
-                          <Typography variant="caption" fontWeight={600} color="text.secondary">
-                            {gasto.pagado_por_nombre}
+              <TextField select size="small" label="Especialidad" sx={{ minWidth: 160 }}
+                value={filtroEspecialidad}
+                onChange={(e) => setFiltroEspecialidad(e.target.value === '' ? '' : Number(e.target.value))}>
+                <MenuItem value="">Todas</MenuItem>
+                {especialidades.map(esp => <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>)}
+              </TextField>
+
+              <TextField select size="small" label="Forma de pago" sx={{ minWidth: 160 }}
+                value={filtroFormaPago}
+                onChange={(e) => setFiltroFormaPago(e.target.value === '' ? '' : Number(e.target.value))}>
+                <MenuItem value="">Todas</MenuItem>
+                {formasPago.map(fp => <MenuItem key={fp.id} value={fp.id}>{fp.nombre}</MenuItem>)}
+              </TextField>
+
+              <TextField select size="small" label="Ordenar por" sx={{ minWidth: 180 }}
+                value={orden}
+                onChange={(e) => setOrden(e.target.value as typeof orden)}
+                InputProps={{ startAdornment: <ArrowUpDown size={14} style={{ marginRight: 6, opacity: 0.6 }} /> }}>
+                <MenuItem value="fecha_desc">Más reciente</MenuItem>
+                <MenuItem value="monto_desc">Mayor monto</MenuItem>
+                <MenuItem value="monto_asc">Menor monto</MenuItem>
+              </TextField>
+
+              {hayFiltrosActivos && (
+                <Button size="small" onClick={limpiarFiltros} sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }}>
+                  Limpiar filtros
+                </Button>
+              )}
+            </Stack>
+          </Card>
+
+          {gastosFiltrados.length === 0 ? (
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Typography variant="h6" color="text.secondary">{t('gastos.sin_gastos')}</Typography>
+              {isAdmin && (
+                <Button variant="contained" sx={{ mt: 2 }} onClick={() => setOpenCrear(true)}>
+                  {t('gastos.registrar_primero')}
+                </Button>
+              )}
+            </Box>
+          ) : (
+            <Grid container spacing={2}>
+              {gastosFiltrados.map((gasto) => (
+                <Grid key={gasto.id} size={{ xs: 12, md: 6, lg: 4 }}>
+                  <Card elevation={0} sx={{
+                    borderRadius: 3, height: '100%',
+                    border: `1px solid ${theme.palette.divider}`,
+                    bgcolor: 'background.paper',
+                  }}>
+                    <CardContent sx={{ p: 3 }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1.5 }}>
+                        <Box>
+                          <Typography variant="h5" fontWeight={800} color="text.primary">
+                            {formatMoney(Number(gasto.monto))}
                           </Typography>
-                        </Stack>
-                      )}
-                      {(gasto.formas_pago ?? []).length > 0 && (
-                        <Stack direction="row" flexWrap="wrap" gap={0.5}>
-                          {(gasto.formas_pago ?? []).map((fp, i) => (
-                            <Chip key={i}
-                              label={`${fp.forma_pago_nombre ?? 'Pago'} $${Number(fp.monto).toLocaleString('es-AR')}`}
-                              size="small"
-                              sx={{ bgcolor: theme.palette.action.hover, color: 'text.secondary', fontSize: 11 }}
-                            />
-                          ))}
-                        </Stack>
-                      )}
-                      <Typography variant="caption" color="text.disabled">
-                        {new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
-                      </Typography>
-                      {gasto.deudor_automatico && (
-                        <Chip label={t('gastos.deudor_automatico')} size="small" color="warning"
-                          sx={{ width: 'fit-content' }} />
-                      )}
-
-                      {isAdmin && !gasto.deudor_cliente_id && !gasto.deudor_usuario_id && (
-                        <Box sx={{ mt: 0.5 }}>
-                          {editandoDeudor === gasto.id ? (
-                            <Stack spacing={1}>
-                              <TextField select size="small" fullWidth
-                                label="Asignar cliente deudor"
-                                value={deudorSeleccionado}
-                                onChange={(e) => setDeudorSeleccionado(e.target.value as number | '')}>
-                                <MenuItem value="">Seleccionar cliente</MenuItem>
-                                {(clientes as Cliente[]).map((c) => (
-                                  <MenuItem key={c.id} value={c.id}>
-                                    {clienteLabel(c)}
-                                    {c.telefono && (
-                                      <Typography component="span" variant="caption"
-                                        sx={{ ml: 1, color: 'text.disabled' }}>
-                                        · {c.telefono}
-                                      </Typography>
-                                    )}
-                                  </MenuItem>
-                                ))}
-                              </TextField>
-                              <Stack direction="row" spacing={1}>
-                                <Button size="small" variant="contained" fullWidth
-                                  disabled={!deudorSeleccionado || deudorMutation.isPending}
-                                  startIcon={<Check size={14} />}
-                                  onClick={() => handleGuardarDeudor(gasto.id)}
-                                  sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' } }}>
-                                  Guardar
-                                </Button>
-                                <Button size="small" variant="outlined" fullWidth
-                                  startIcon={<X size={14} />}
-                                  onClick={() => { setEditandoDeudor(null); setDeudorSeleccionado(''); }}>
-                                  Cancelar
-                                </Button>
-                              </Stack>
-                            </Stack>
-                          ) : (
-                            <Alert severity="warning" sx={{ py: 0.5, cursor: 'pointer' }}
-                              onClick={() => { setEditandoDeudor(gasto.id); setDeudorSeleccionado(''); }}>
-                              <Typography variant="caption" fontWeight={600}>
-                                Sin deudor asignado — tocá para asignar
-                              </Typography>
-                            </Alert>
-                          )}
+                          <Box sx={{ mt: 0.5 }}>
+                            <EstadoChip estadoNombre={gasto.estado_nombre} />
+                          </Box>
                         </Box>
-                      )}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )
+                        {isAdmin && (
+                          <Stack direction="row" spacing={0.5}>
+                            <IconButton size="small"
+                              onClick={() => { setOpenEstado(gasto); setNuevoEstado(gasto.estado_id); }}>
+                              <RefreshCw size={16} />
+                            </IconButton>
+                            <IconButton size="small" color="error"
+                              onClick={() => setOpenEliminar(gasto.id)}>
+                              <Trash2 size={16} />
+                            </IconButton>
+                          </Stack>
+                        )}
+                      </Stack>
+
+                      <Stack spacing={0.75}>
+                        <Typography variant="body2" fontWeight={600} color="text.primary">
+                          {gasto.descripcion}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {gasto.motivo}
+                        </Typography>
+                        {gasto.obra_nombre && (
+                          <Chip label={gasto.obra_nombre} size="small"
+                            sx={{ width: 'fit-content', bgcolor: theme.palette.action.hover, color: 'text.secondary' }} />
+                        )}
+                        {gasto.especialidad_nombre && (
+                          <Typography variant="caption" color="text.secondary">
+                            {gasto.especialidad_nombre}
+                          </Typography>
+                        )}
+                        {gasto.pagado_por_nombre && (
+                          <Stack direction="row" alignItems="center" gap={0.5}>
+                            <Typography variant="caption" color="text.disabled">Pagado por:</Typography>
+                            <Typography variant="caption" fontWeight={600} color="text.secondary">
+                              {gasto.pagado_por_nombre}
+                            </Typography>
+                          </Stack>
+                        )}
+                        {(gasto.formas_pago ?? []).length > 0 && (
+                          <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                            {(gasto.formas_pago ?? []).map((fp, i) => (
+                              <Chip key={i}
+                                label={`${fp.forma_pago_nombre ?? 'Pago'} $${Number(fp.monto).toLocaleString('es-AR')}`}
+                                size="small"
+                                sx={{ bgcolor: theme.palette.action.hover, color: 'text.secondary', fontSize: 11 }}
+                              />
+                            ))}
+                          </Stack>
+                        )}
+                        <Typography variant="caption" color="text.disabled">
+                          {new Date(gasto.fecha).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}
+                        </Typography>
+                        {gasto.deudor_automatico && (
+                          <Chip label={t('gastos.deudor_automatico')} size="small" color="warning"
+                            sx={{ width: 'fit-content' }} />
+                        )}
+
+                        {isAdmin && !gasto.deudor_cliente_id && !gasto.deudor_usuario_id && (
+                          <Box sx={{ mt: 0.5 }}>
+                            {editandoDeudor === gasto.id ? (
+                              <Stack spacing={1}>
+                                <TextField select size="small" fullWidth
+                                  label="Asignar cliente deudor"
+                                  value={deudorSeleccionado}
+                                  onChange={(e) => setDeudorSeleccionado(e.target.value as number | '')}>
+                                  <MenuItem value="">Seleccionar cliente</MenuItem>
+                                  {(clientes as Cliente[]).map((c) => (
+                                    <MenuItem key={c.id} value={c.id}>
+                                      {clienteLabel(c)}
+                                      {c.telefono && (
+                                        <Typography component="span" variant="caption"
+                                          sx={{ ml: 1, color: 'text.disabled' }}>
+                                          · {c.telefono}
+                                        </Typography>
+                                      )}
+                                    </MenuItem>
+                                  ))}
+                                </TextField>
+                                <Stack direction="row" spacing={1}>
+                                  <Button size="small" variant="contained" fullWidth
+                                    disabled={!deudorSeleccionado || deudorMutation.isPending}
+                                    startIcon={<Check size={14} />}
+                                    onClick={() => handleGuardarDeudor(gasto.id)}
+                                    sx={{ bgcolor: '#F59E0B', color: '#0F172A', '&:hover': { bgcolor: '#D97706' } }}>
+                                    Guardar
+                                  </Button>
+                                  <Button size="small" variant="outlined" fullWidth
+                                    startIcon={<X size={14} />}
+                                    onClick={() => { setEditandoDeudor(null); setDeudorSeleccionado(''); }}>
+                                    Cancelar
+                                  </Button>
+                                </Stack>
+                              </Stack>
+                            ) : (
+                              <Alert severity="warning" sx={{ py: 0.5, cursor: 'pointer' }}
+                                onClick={() => { setEditandoDeudor(gasto.id); setDeudorSeleccionado(''); }}>
+                                <Typography variant="caption" fontWeight={600}>
+                                  Sin deudor asignado — tocá para asignar
+                                </Typography>
+                              </Alert>
+                            )}
+                          </Box>
+                        )}
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </>
       )}
 
       {/* ── TAB 1: ESTADÍSTICAS ── */}

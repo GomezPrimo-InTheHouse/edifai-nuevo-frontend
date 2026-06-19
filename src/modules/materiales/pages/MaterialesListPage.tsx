@@ -1,4 +1,5 @@
 
+
 // import { useMemo, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import {
@@ -6,7 +7,7 @@
 //   Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow,
 //   TextField, Typography, useMediaQuery, useTheme,
 // } from '@mui/material';
-// import { Eye, Pencil, Plus, Settings, Tag, TrendingUp, Package, DollarSign, Trash2 } from 'lucide-react';
+// import { Eye, Pencil, Plus, Settings, Tag, TrendingUp, Package, DollarSign, Trash2, ShoppingBag } from 'lucide-react';
 // import {
 //   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
 //   ResponsiveContainer, Cell
@@ -23,8 +24,13 @@
 // import { useDeleteMaterial, useEstadisticasMateriales, useMaterialesList } from '../hooks/useMateriales';
 // import { useTiposMaterialList } from '../hooks/useTipoMaterial';
 // import { useNotify } from '../../../shared/hooks/useNotify';
+// import { PublicarMaterialModal } from '../../market/components/PublicarMaterialModal';
+// import { useMisPublicaciones } from '../../market/hooks/useMisPublicaciones';
+// import { useAuthStore } from '../../../app/store/auth.store';
+// import type { Material } from '../types/material.types';
 
 // const PIE_COLORS = ['#F59E0B', '#0F172A', '#2563EB', '#16A34A', '#EA580C'];
+// const ROLES_MARKET = [1, 3, 4, 6, 9];
 
 // export const MaterialesListPage = () => {
 //   const navigate = useNavigate();
@@ -36,10 +42,19 @@
 //   const { data, isLoading, isError, refetch } = useMaterialesList();
 //   const { data: tipos = [] } = useTiposMaterialList();
 //   const { data: estadisticas } = useEstadisticasMateriales();
+//   const { data: misPublicaciones = [] } = useMisPublicaciones();
 //   const deleteMutation = useDeleteMaterial();
+//   const user = useAuthStore((s) => s.user);
+
 //   const [search, setSearch] = useState('');
 //   const [tipoModalOpen, setTipoModalOpen] = useState(false);
 //   const [ajusteModalOpen, setAjusteModalOpen] = useState(false);
+//   const [materialAPublicar, setMaterialAPublicar] = useState<Material | null>(null);
+
+//   const puedePublicar = ROLES_MARKET.includes(user?.rol_id ?? -1);
+
+//   const tienePublicacionActiva = (materialId: number) =>
+//     misPublicaciones.some((p) => p.material_id === materialId && p.estado === 'activa');
 
 //   const filteredData = useMemo(() => {
 //     if (!data) return [];
@@ -51,7 +66,7 @@
 //     );
 //   }, [data, search]);
 
-//   const getTipoNombre = (id?: number | null) => tipos.find((t) => t.id === id)?.nombre ?? '-';
+//   const getTipoNombre = (id?: number | null) => tipos.find((tp) => tp.id === id)?.nombre ?? '-';
 
 //   const handleDelete = async (id: number) => {
 //     const confirmed = await notify.confirm({
@@ -145,6 +160,17 @@
 //                   <Button size="small" startIcon={<Pencil size={18} />} onClick={() => navigate(`/materiales/${m.id}/editar`)}>
 //                     {t('materiales.acciones.editar')}
 //                   </Button>
+//                   {puedePublicar && (
+//                     <Button
+//                       size="small"
+//                       startIcon={<ShoppingBag size={18} />}
+//                       onClick={() => setMaterialAPublicar(m)}
+//                       disabled={tienePublicacionActiva(m.id) || Number(m.stock_actual) <= 0}
+//                       sx={{ color: tienePublicacionActiva(m.id) ? '#F59E0B' : 'inherit' }}
+//                     >
+//                       {tienePublicacionActiva(m.id) ? t('market.publicacion.ya_publicado') : t('market.publicacion.publicar')}
+//                     </Button>
+//                   )}
 //                   <IconButton color="error" size="small" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}>
 //                     <Trash2 size={18} />
 //                   </IconButton>
@@ -175,9 +201,26 @@
 //                     <TableCell><StockBadge stock={Number(m.stock_actual)} unidad={m.unidad} /></TableCell>
 //                     <TableCell align="right">
 //                       <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
-//                         <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}`)}><Eye size={18} /></IconButton>
-//                         <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}/editar`)}><Pencil size={18} /></IconButton>
-//                         <IconButton size="small" color="error" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}><Trash2 size={18} /></IconButton>
+//                         <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}`)}>
+//                           <Eye size={18} />
+//                         </IconButton>
+//                         <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}/editar`)}>
+//                           <Pencil size={18} />
+//                         </IconButton>
+//                         {puedePublicar && (
+//                           <IconButton
+//                             size="small"
+//                             onClick={() => setMaterialAPublicar(m)}
+//                             disabled={tienePublicacionActiva(m.id) || Number(m.stock_actual) <= 0}
+//                             title={tienePublicacionActiva(m.id) ? t('market.publicacion.ya_publicado') : t('market.publicacion.publicar')}
+//                             sx={{ color: tienePublicacionActiva(m.id) ? '#F59E0B' : theme.palette.text.secondary }}
+//                           >
+//                             <ShoppingBag size={18} />
+//                           </IconButton>
+//                         )}
+//                         <IconButton size="small" color="error" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}>
+//                           <Trash2 size={18} />
+//                         </IconButton>
 //                       </Stack>
 //                     </TableCell>
 //                   </TableRow>
@@ -316,6 +359,14 @@
 
 //       <TipoMaterialModal open={tipoModalOpen} onClose={() => setTipoModalOpen(false)} />
 //       <AjustePreciosModal open={ajusteModalOpen} onClose={() => setAjusteModalOpen(false)} />
+
+//       {materialAPublicar && (
+//         <PublicarMaterialModal
+//           open={Boolean(materialAPublicar)}
+//           onClose={() => setMaterialAPublicar(null)}
+//           material={materialAPublicar}
+//         />
+//       )}
 //     </AppLayout>
 //   );
 // };
@@ -324,10 +375,10 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box, Button, Card, CardContent, Chip, Divider, Grid, IconButton,
-  Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow,
-  TextField, Typography, useMediaQuery, useTheme,
+  MenuItem, Pagination, Paper, Stack, Table, TableBody, TableCell,
+  TableHead, TableRow, TextField, Typography, useMediaQuery, useTheme,
 } from '@mui/material';
-import { Eye, Pencil, Plus, Settings, Tag, TrendingUp, Package, DollarSign, Trash2, ShoppingBag } from 'lucide-react';
+import { Eye, Pencil, Plus, Settings, Tag, TrendingUp, Package, DollarSign, Trash2, ShoppingBag, ArrowUpDown } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell
@@ -351,6 +402,9 @@ import type { Material } from '../types/material.types';
 
 const PIE_COLORS = ['#F59E0B', '#0F172A', '#2563EB', '#16A34A', '#EA580C'];
 const ROLES_MARKET = [1, 3, 4, 6, 9];
+const ITEMS_POR_PAGINA = 10;
+
+type OrdenOpcion = 'nombre_asc' | 'precio_asc' | 'precio_desc' | 'stock_asc' | 'stock_desc';
 
 export const MaterialesListPage = () => {
   const navigate = useNavigate();
@@ -367,6 +421,11 @@ export const MaterialesListPage = () => {
   const user = useAuthStore((s) => s.user);
 
   const [search, setSearch] = useState('');
+  const [filtroTipo, setFiltroTipo] = useState<number | ''>('');
+  const [filtroStock, setFiltroStock] = useState<'todos' | 'critico' | 'ok'>('todos');
+  const [orden, setOrden] = useState<OrdenOpcion>('nombre_asc');
+  const [page, setPage] = useState(1);
+
   const [tipoModalOpen, setTipoModalOpen] = useState(false);
   const [ajusteModalOpen, setAjusteModalOpen] = useState(false);
   const [materialAPublicar, setMaterialAPublicar] = useState<Material | null>(null);
@@ -376,15 +435,64 @@ export const MaterialesListPage = () => {
   const tienePublicacionActiva = (materialId: number) =>
     misPublicaciones.some((p) => p.material_id === materialId && p.estado === 'activa');
 
+  const STOCK_CRITICO_UMBRAL = 10;
+
   const filteredData = useMemo(() => {
     if (!data) return [];
+    let result = [...data];
+
     const term = search.trim().toLowerCase();
-    if (!term) return data;
-    return data.filter((m) =>
-      m.nombre?.toLowerCase().includes(term) ||
-      m.descripcion?.toLowerCase().includes(term)
-    );
-  }, [data, search]);
+    if (term) {
+      result = result.filter((m) =>
+        m.nombre?.toLowerCase().includes(term) ||
+        m.descripcion?.toLowerCase().includes(term)
+      );
+    }
+
+    if (filtroTipo) {
+      result = result.filter((m) => m.tipo_material_id === filtroTipo);
+    }
+
+    if (filtroStock === 'critico') {
+      result = result.filter((m) => Number(m.stock_actual) <= STOCK_CRITICO_UMBRAL);
+    } else if (filtroStock === 'ok') {
+      result = result.filter((m) => Number(m.stock_actual) > STOCK_CRITICO_UMBRAL);
+    }
+
+    result.sort((a, b) => {
+      switch (orden) {
+        case 'precio_asc':  return Number(a.precio_unitario) - Number(b.precio_unitario);
+        case 'precio_desc': return Number(b.precio_unitario) - Number(a.precio_unitario);
+        case 'stock_asc':   return Number(a.stock_actual) - Number(b.stock_actual);
+        case 'stock_desc':  return Number(b.stock_actual) - Number(a.stock_actual);
+        default:             return (a.nombre ?? '').localeCompare(b.nombre ?? '');
+      }
+    });
+
+    return result;
+  }, [data, search, filtroTipo, filtroStock, orden]);
+
+  const totalPaginas = Math.max(1, Math.ceil(filteredData.length / ITEMS_POR_PAGINA));
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * ITEMS_POR_PAGINA;
+    return filteredData.slice(start, start + ITEMS_POR_PAGINA);
+  }, [filteredData, page]);
+
+  const hayFiltrosActivos = !!search || !!filtroTipo || filtroStock !== 'todos' || orden !== 'nombre_asc';
+
+  const limpiarFiltros = () => {
+    setSearch('');
+    setFiltroTipo('');
+    setFiltroStock('todos');
+    setOrden('nombre_asc');
+    setPage(1);
+  };
+
+  // Reset de página cuando cambian los filtros
+  const applyFilterChange = (fn: () => void) => {
+    fn();
+    setPage(1);
+  };
 
   const getTipoNombre = (id?: number | null) => tipos.find((tp) => tp.id === id)?.nombre ?? '-';
 
@@ -426,9 +534,48 @@ export const MaterialesListPage = () => {
         }
       />
 
+      {/* ── Barra de filtros ── */}
       <Paper sx={{ p: 2, borderRadius: 3, mb: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
-        <TextField fullWidth size={isMobile ? 'small' : 'medium'} label={t('materiales.buscar')}
-          value={search} onChange={(e) => setSearch(e.target.value)} />
+        <Stack spacing={1.5}>
+          <TextField
+            fullWidth size="small" label={t('materiales.buscar')}
+            value={search}
+            onChange={(e) => applyFilterChange(() => setSearch(e.target.value))}
+          />
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} flexWrap="wrap" useFlexGap>
+            <TextField select size="small" label={t('materiales.tabla.tipo')} sx={{ minWidth: 160 }}
+              value={filtroTipo}
+              onChange={(e) => applyFilterChange(() => setFiltroTipo(e.target.value === '' ? '' : Number(e.target.value)))}>
+              <MenuItem value="">Todos</MenuItem>
+              {tipos.map((tp) => <MenuItem key={tp.id} value={tp.id}>{tp.nombre}</MenuItem>)}
+            </TextField>
+
+            <TextField select size="small" label={t('materiales.tabla.stock')} sx={{ minWidth: 160 }}
+              value={filtroStock}
+              onChange={(e) => applyFilterChange(() => setFiltroStock(e.target.value as typeof filtroStock))}>
+              <MenuItem value="todos">Todos</MenuItem>
+              <MenuItem value="critico">Stock crítico</MenuItem>
+              <MenuItem value="ok">Stock ok</MenuItem>
+            </TextField>
+
+            <TextField select size="small" label="Ordenar por" sx={{ minWidth: 180 }}
+              value={orden}
+              onChange={(e) => applyFilterChange(() => setOrden(e.target.value as OrdenOpcion))}
+              InputProps={{ startAdornment: <ArrowUpDown size={14} style={{ marginRight: 6, opacity: 0.6 }} /> }}>
+              <MenuItem value="nombre_asc">Nombre (A-Z)</MenuItem>
+              <MenuItem value="precio_asc">Menor precio</MenuItem>
+              <MenuItem value="precio_desc">Mayor precio</MenuItem>
+              <MenuItem value="stock_asc">Menor stock</MenuItem>
+              <MenuItem value="stock_desc">Mayor stock</MenuItem>
+            </TextField>
+
+            {hayFiltrosActivos && (
+              <Button size="small" onClick={limpiarFiltros} sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }}>
+                Limpiar filtros
+              </Button>
+            )}
+          </Stack>
+        </Stack>
       </Paper>
 
       {isLoading && <LoadingState message={t('materiales.loading')} />}
@@ -442,113 +589,132 @@ export const MaterialesListPage = () => {
       )}
 
       {!isLoading && !isError && filteredData.length > 0 && (
-        isMobile ? (
-          <Stack spacing={2} sx={{ mb: 3 }}>
-            {filteredData.map((m) => (
-              <Paper key={m.id} sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight={800} color="text.primary">{m.nombre}</Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <Tag size={12} /> {getTipoNombre(m.tipo_material_id)}
-                    </Typography>
+        <>
+          {isMobile ? (
+            <Stack spacing={2} sx={{ mb: 2 }}>
+              {paginatedData.map((m) => (
+                <Paper key={m.id} sx={{ p: 2, borderRadius: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={800} color="text.primary">{m.nombre}</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Tag size={12} /> {getTipoNombre(m.tipo_material_id)}
+                      </Typography>
+                    </Box>
+                    <StockBadge stock={Number(m.stock_actual)} unidad={m.unidad} />
                   </Box>
-                  <StockBadge stock={Number(m.stock_actual)} unidad={m.unidad} />
-                </Box>
-                <Box sx={{
-                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2,
-                  bgcolor: theme.palette.action.hover, p: 1.5, borderRadius: 2,
-                }}>
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" display="block">{t('materiales.tabla.precio_unit')}</Typography>
-                    <Typography variant="body2" fontWeight={700} sx={{ display: 'flex', alignItems: 'center' }} color="text.primary">
-                      <DollarSign size={14} /> {Number(m.precio_unitario).toLocaleString('es-AR')}
-                    </Typography>
+                  <Box sx={{
+                    display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2,
+                    bgcolor: theme.palette.action.hover, p: 1.5, borderRadius: 2,
+                  }}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">{t('materiales.tabla.precio_unit')}</Typography>
+                      <Typography variant="body2" fontWeight={700} sx={{ display: 'flex', alignItems: 'center' }} color="text.primary">
+                        <DollarSign size={14} /> {Number(m.precio_unitario).toLocaleString('es-AR')}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">{t('materiales.tabla.unidad')}</Typography>
+                      <Typography variant="body2" fontWeight={700} sx={{ display: 'flex', alignItems: 'center' }} color="text.primary">
+                        <Package size={14} style={{ marginRight: 4 }} /> {m.unidad}
+                      </Typography>
+                    </Box>
                   </Box>
-                  <Box>
-                    <Typography variant="caption" color="text.secondary" display="block">{t('materiales.tabla.unidad')}</Typography>
-                    <Typography variant="body2" fontWeight={700} sx={{ display: 'flex', alignItems: 'center' }} color="text.primary">
-                      <Package size={14} style={{ marginRight: 4 }} /> {m.unidad}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Divider sx={{ my: 1, borderStyle: 'dashed' }} />
-                <Box sx={{ display: 'flex', justifyContent: 'space-around', pt: 1 }}>
-                  <Button size="small" startIcon={<Eye size={18} />} onClick={() => navigate(`/materiales/${m.id}`)}>
-                    {t('materiales.acciones.ver')}
-                  </Button>
-                  <Button size="small" startIcon={<Pencil size={18} />} onClick={() => navigate(`/materiales/${m.id}/editar`)}>
-                    {t('materiales.acciones.editar')}
-                  </Button>
-                  {puedePublicar && (
-                    <Button
-                      size="small"
-                      startIcon={<ShoppingBag size={18} />}
-                      onClick={() => setMaterialAPublicar(m)}
-                      disabled={tienePublicacionActiva(m.id) || Number(m.stock_actual) <= 0}
-                      sx={{ color: tienePublicacionActiva(m.id) ? '#F59E0B' : 'inherit' }}
-                    >
-                      {tienePublicacionActiva(m.id) ? t('market.publicacion.ya_publicado') : t('market.publicacion.publicar')}
+                  <Divider sx={{ my: 1, borderStyle: 'dashed' }} />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-around', pt: 1 }}>
+                    <Button size="small" startIcon={<Eye size={18} />} onClick={() => navigate(`/materiales/${m.id}`)}>
+                      {t('materiales.acciones.ver')}
                     </Button>
-                  )}
-                  <IconButton color="error" size="small" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}>
-                    <Trash2 size={18} />
-                  </IconButton>
-                </Box>
-              </Paper>
-            ))}
-          </Stack>
-        ) : (
-          <Paper sx={{ borderRadius: 3, overflow: 'hidden', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', mb: 3, bgcolor: 'background.paper' }}>
-            <Table size="small">
-              <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.nombre')}</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.tipo')}</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.unidad')}</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.precio_unit')}</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.stock')}</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 700 }}>{t('materiales.tabla.acciones')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredData.map((m) => (
-                  <TableRow key={m.id} hover>
-                    <TableCell><Typography variant="body2" fontWeight={600}>{m.nombre}</Typography></TableCell>
-                    <TableCell><Typography variant="body2">{getTipoNombre(m.tipo_material_id)}</Typography></TableCell>
-                    <TableCell><Typography variant="body2">{m.unidad}</Typography></TableCell>
-                    <TableCell><Typography variant="body2">${Number(m.precio_unitario).toLocaleString('es-AR')}</Typography></TableCell>
-                    <TableCell><StockBadge stock={Number(m.stock_actual)} unidad={m.unidad} /></TableCell>
-                    <TableCell align="right">
-                      <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
-                        <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}`)}>
-                          <Eye size={18} />
-                        </IconButton>
-                        <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}/editar`)}>
-                          <Pencil size={18} />
-                        </IconButton>
-                        {puedePublicar && (
-                          <IconButton
-                            size="small"
-                            onClick={() => setMaterialAPublicar(m)}
-                            disabled={tienePublicacionActiva(m.id) || Number(m.stock_actual) <= 0}
-                            title={tienePublicacionActiva(m.id) ? t('market.publicacion.ya_publicado') : t('market.publicacion.publicar')}
-                            sx={{ color: tienePublicacionActiva(m.id) ? '#F59E0B' : theme.palette.text.secondary }}
-                          >
-                            <ShoppingBag size={18} />
-                          </IconButton>
-                        )}
-                        <IconButton size="small" color="error" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}>
-                          <Trash2 size={18} />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
+                    <Button size="small" startIcon={<Pencil size={18} />} onClick={() => navigate(`/materiales/${m.id}/editar`)}>
+                      {t('materiales.acciones.editar')}
+                    </Button>
+                    {puedePublicar && (
+                      <Button
+                        size="small"
+                        startIcon={<ShoppingBag size={18} />}
+                        onClick={() => setMaterialAPublicar(m)}
+                        disabled={tienePublicacionActiva(m.id) || Number(m.stock_actual) <= 0}
+                        sx={{ color: tienePublicacionActiva(m.id) ? '#F59E0B' : 'inherit' }}
+                      >
+                        {tienePublicacionActiva(m.id) ? t('market.publicacion.ya_publicado') : t('market.publicacion.publicar')}
+                      </Button>
+                    )}
+                    <IconButton color="error" size="small" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}>
+                      <Trash2 size={18} />
+                    </IconButton>
+                  </Box>
+                </Paper>
+              ))}
+            </Stack>
+          ) : (
+            <Paper sx={{ borderRadius: 3, overflow: 'hidden', border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', mb: 2, bgcolor: 'background.paper' }}>
+              <Table size="small">
+                <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.nombre')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.tipo')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.unidad')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.precio_unit')}</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>{t('materiales.tabla.stock')}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{t('materiales.tabla.acciones')}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>
-        )
+                </TableHead>
+                <TableBody>
+                  {paginatedData.map((m) => (
+                    <TableRow key={m.id} hover>
+                      <TableCell><Typography variant="body2" fontWeight={600}>{m.nombre}</Typography></TableCell>
+                      <TableCell><Typography variant="body2">{getTipoNombre(m.tipo_material_id)}</Typography></TableCell>
+                      <TableCell><Typography variant="body2">{m.unidad}</Typography></TableCell>
+                      <TableCell><Typography variant="body2">${Number(m.precio_unitario).toLocaleString('es-AR')}</Typography></TableCell>
+                      <TableCell><StockBadge stock={Number(m.stock_actual)} unidad={m.unidad} /></TableCell>
+                      <TableCell align="right">
+                        <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
+                          <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}`)}>
+                            <Eye size={18} />
+                          </IconButton>
+                          <IconButton size="small" onClick={() => navigate(`/materiales/${m.id}/editar`)}>
+                            <Pencil size={18} />
+                          </IconButton>
+                          {puedePublicar && (
+                            <IconButton
+                              size="small"
+                              onClick={() => setMaterialAPublicar(m)}
+                              disabled={tienePublicacionActiva(m.id) || Number(m.stock_actual) <= 0}
+                              title={tienePublicacionActiva(m.id) ? t('market.publicacion.ya_publicado') : t('market.publicacion.publicar')}
+                              sx={{ color: tienePublicacionActiva(m.id) ? '#F59E0B' : theme.palette.text.secondary }}
+                            >
+                              <ShoppingBag size={18} />
+                            </IconButton>
+                          )}
+                          <IconButton size="small" color="error" onClick={() => handleDelete(m.id)} disabled={deleteMutation.isPending}>
+                            <Trash2 size={18} />
+                          </IconButton>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          )}
+
+          {/* ── Paginación ── */}
+          {totalPaginas > 1 && (
+            <Stack direction="row" justifyContent="center" sx={{ mb: 3 }}>
+              <Pagination
+                count={totalPaginas}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                color="primary"
+                shape="rounded"
+              />
+            </Stack>
+          )}
+
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center', mb: 3 }}>
+            {filteredData.length} resultado{filteredData.length !== 1 ? 's' : ''}
+          </Typography>
+        </>
       )}
 
       {estadisticas && (
