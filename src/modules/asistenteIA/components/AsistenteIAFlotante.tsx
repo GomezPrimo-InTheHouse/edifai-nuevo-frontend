@@ -499,7 +499,7 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
   };
 
   // ── Exportar último mensaje del asistente a PDF ──
-  const exportarPDF = (contenido: string, indice: number) => {
+  const exportarPDF = (contenido: string) => {
     const doc = new jsPDF();
     const fecha = new Date().toLocaleDateString('es-AR');
 
@@ -670,7 +670,7 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
                       <Tooltip title={t('asistente_ia.exportar_pdf')}>
                         <IconButton
                           size="small"
-                          onClick={() => exportarPDF(m.contenido, i)}
+                          onClick={() => exportarPDF(m.contenido)}
                           sx={{ mt: 0.25, width: 22, height: 22 }}
                         >
                           <FileDown size={12} color={theme.palette.text.disabled} />
