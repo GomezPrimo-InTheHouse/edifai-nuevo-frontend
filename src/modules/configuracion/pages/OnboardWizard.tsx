@@ -116,7 +116,7 @@ return (
         {/* Logo dentro del card */}
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 4, px: 4 }}>
           <img
-            src="/graficas/edifai_logo_dark_navy.svg"
+            src="/graficas/edifai_logo_transparent.svg"
             alt="EdifAI"
             style={{ width: '100%', maxWidth: 280, height: 'auto' }}
           />
