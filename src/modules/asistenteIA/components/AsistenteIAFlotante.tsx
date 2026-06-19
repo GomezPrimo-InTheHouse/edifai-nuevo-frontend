@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   Box, Paper, TextField, IconButton, Typography,
-  Stack, CircularProgress, Fab, Collapse, Divider,
+  Stack, CircularProgress, Fab, Collapse, Divider, Chip,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +10,19 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { asistenteApi, type MensajeAsistente } from '../../../services/api/asistente.api';
 
 const ROLES_ADMIN = [1, 3, 4, 6, 9];
+
+const PREGUNTAS_SUGERIDAS = [
+  '¿Cómo está el negocio hoy?',
+  '¿Qué obras están activas?',
+  '¿Hay labores atrasadas?',
+  '¿Cuánto hay pendiente de pago?',
+  '¿Qué materiales no tienen stock?',
+  '¿Cuál es la obra con más gastos imprevistos?',
+  '¿Qué trabajadores no tienen labores activas?',
+  '¿Cuánto vale el inventario de materiales?',
+  '¿Cuáles son los materiales más usados?',
+  '¿Cuál fue el mes con mayor gasto?',
+];
 
 interface AsistenteIAFlotanteProps {
   rolId: number;
@@ -25,6 +38,7 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
   const [sesionId, setSesionId] = useState<number | undefined>();
   const [mensajes, setMensajes] = useState<MensajeAsistente[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const esAdmin = ROLES_ADMIN.includes(rolId);
 
@@ -33,6 +47,11 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [mensajes]);
+
+  // foco al abrir
+  useEffect(() => {
+    if (abierto) setTimeout(() => inputRef.current?.focus(), 150);
+  }, [abierto]);
 
   const enviarMutation = useMutation({
     mutationFn: (mensaje: string) => asistenteApi.enviarMensaje(mensaje, sesionId),
@@ -52,22 +71,25 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
     },
   });
 
-  const handleEnviar = () => {
-    if (!input.trim() || enviarMutation.isPending) return;
-    enviarMutation.mutate(input.trim());
+  const handleEnviar = (texto?: string) => {
+    const msg = (texto ?? input).trim();
+    if (!msg || enviarMutation.isPending) return;
+    enviarMutation.mutate(msg);
     setInput('');
   };
 
   const handleNueva = () => {
     setSesionId(undefined);
     setMensajes([]);
+    setInput('');
   };
+
+  const hayMensajes = mensajes.length > 0;
 
   if (!esAdmin) return null;
 
   return (
     <>
-      {/* Panel flotante */}
       <Collapse
         in={abierto}
         sx={{
@@ -75,7 +97,7 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
           bottom: 88,
           right: 24,
           zIndex: 1300,
-          width: { xs: 'calc(100vw - 48px)', sm: 380 },
+          width: { xs: 'calc(100vw - 48px)', sm: 400 },
         }}
       >
         <Paper
@@ -83,14 +105,14 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            height: 480,
+            height: 520,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 3,
             overflow: 'hidden',
             bgcolor: 'background.paper',
             boxShadow: theme.palette.mode === 'dark'
               ? '0 8px 32px rgba(0,0,0,0.6)'
-              : '0 8px 32px rgba(0,0,0,0.12)',
+              : '0 8px 32px rgba(0,0,0,0.15)',
           }}
         >
           {/* Header */}
@@ -100,12 +122,15 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            flexShrink: 0,
           }}>
             <Stack direction="row" spacing={1} alignItems="center">
               <Bot size={18} color="#F59E0B" />
               <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#F8FAFC' }}>
                 {t('asistente_ia.title')}
               </Typography>
+              {/* indicador online */}
+              <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#22C55E', ml: 0.5 }} />
             </Stack>
             <Stack direction="row" spacing={0.5}>
               <IconButton size="small" onClick={handleNueva} title={t('asistente_ia.nueva_sesion')}>
@@ -120,33 +145,62 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
           <Divider />
 
           {/* Mensajes */}
-          <Box
-            ref={scrollRef}
-            sx={{ flex: 1, overflowY: 'auto', p: 2 }}
-          >
-            {mensajes.length === 0 && (
-              <Box sx={{ textAlign: 'center', mt: 4 }}>
-                <Bot size={32} color={theme.palette.text.disabled} />
-                <Typography variant="body2" color="text.secondary" mt={1}>
-                  {t('asistente_ia.empty')}
+          <Box ref={scrollRef} sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
+
+            {/* Estado vacío + preguntas sugeridas */}
+            {!hayMensajes && (
+              <Box>
+                <Box sx={{ textAlign: 'center', mb: 2.5 }}>
+                  <Bot size={28} color={theme.palette.text.disabled} />
+                  <Typography variant="body2" color="text.secondary" mt={1} fontSize={13}>
+                    {t('asistente_ia.empty')}
+                  </Typography>
+                </Box>
+
+                <Typography
+                  variant="caption"
+                  color="text.disabled"
+                  sx={{ display: 'block', mb: 1, fontWeight: 600, letterSpacing: '0.06em' }}
+                >
+                  {t('asistente_ia.sugerencias_titulo')}
                 </Typography>
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                  {PREGUNTAS_SUGERIDAS.map((pregunta) => (
+                    <Chip
+                      key={pregunta}
+                      label={pregunta}
+                      size="small"
+                      onClick={() => handleEnviar(pregunta)}
+                      disabled={enviarMutation.isPending}
+                      sx={{
+                        fontSize: 11,
+                        height: 'auto',
+                        py: 0.5,
+                        cursor: 'pointer',
+                        bgcolor: theme.palette.action.hover,
+                        border: `1px solid ${theme.palette.divider}`,
+                        '& .MuiChip-label': { whiteSpace: 'normal', lineHeight: 1.4 },
+                        '&:hover': { bgcolor: 'rgba(245,158,11,0.1)', borderColor: '#F59E0B' },
+                        transition: 'all 0.15s',
+                      }}
+                    />
+                  ))}
+                </Box>
               </Box>
             )}
 
+            {/* Mensajes */}
             <Stack spacing={1.5}>
               {mensajes.map((m, i) => (
                 <Box
                   key={i}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: m.rol === 'user' ? 'flex-end' : 'flex-start',
-                  }}
+                  sx={{ display: 'flex', justifyContent: m.rol === 'user' ? 'flex-end' : 'flex-start' }}
                 >
                   <Box
                     sx={{
                       maxWidth: '85%',
-                      px: 1.5,
-                      py: 1,
+                      px: 1.5, py: 1,
                       borderRadius: m.rol === 'user' ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
                       bgcolor: m.rol === 'user' ? '#0F172A' : theme.palette.action.hover,
                       border: `1px solid ${theme.palette.divider}`,
@@ -175,23 +229,58 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
 
               {enviarMutation.isPending && (
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', pl: 0.5 }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <CircularProgress size={14} />
-                    <Typography variant="caption" color="text.secondary">
-                      {t('asistente_ia.pensando')}
-                    </Typography>
-                  </Stack>
+                  <Box sx={{
+                    px: 1.5, py: 1,
+                    borderRadius: '12px 12px 12px 4px',
+                    bgcolor: theme.palette.action.hover,
+                    border: `1px solid ${theme.palette.divider}`,
+                  }}>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <CircularProgress size={12} sx={{ color: '#F59E0B' }} />
+                      <Typography variant="caption" color="text.secondary">
+                        {t('asistente_ia.pensando')}
+                      </Typography>
+                    </Stack>
+                  </Box>
                 </Box>
               )}
             </Stack>
+
+            {/* Sugerencias contextuales después del primer mensaje */}
+            {hayMensajes && !enviarMutation.isPending && mensajes[mensajes.length - 1]?.rol === 'assistant' && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mb: 0.75 }}>
+                  {t('asistente_ia.seguir_preguntando')}
+                </Typography>
+                <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                  {PREGUNTAS_SUGERIDAS.slice(0, 3).map((pregunta) => (
+                    <Chip
+                      key={pregunta}
+                      label={pregunta}
+                      size="small"
+                      onClick={() => handleEnviar(pregunta)}
+                      sx={{
+                        fontSize: 11,
+                        cursor: 'pointer',
+                        bgcolor: 'transparent',
+                        border: `1px solid ${theme.palette.divider}`,
+                        '&:hover': { bgcolor: 'rgba(245,158,11,0.1)', borderColor: '#F59E0B' },
+                        transition: 'all 0.15s',
+                      }}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
           </Box>
 
           <Divider />
 
           {/* Input */}
-          <Box sx={{ p: 1.5 }}>
+          <Box sx={{ p: 1.5, flexShrink: 0 }}>
             <Stack direction="row" spacing={1}>
               <TextField
+                inputRef={inputRef}
                 fullWidth
                 size="small"
                 placeholder={t('asistente_ia.placeholder')}
@@ -206,12 +295,10 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
                 disabled={enviarMutation.isPending}
                 multiline
                 maxRows={3}
-                sx={{
-                  '& .MuiOutlinedInput-root': { borderRadius: 2, fontSize: 13 },
-                }}
+                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, fontSize: 13 } }}
               />
               <IconButton
-                onClick={handleEnviar}
+                onClick={() => handleEnviar()}
                 disabled={enviarMutation.isPending || !input.trim()}
                 sx={{
                   bgcolor: '#F59E0B',

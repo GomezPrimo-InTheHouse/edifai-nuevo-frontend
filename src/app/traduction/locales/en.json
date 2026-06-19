@@ -351,7 +351,9 @@
   "placeholder": "Type your question...",
   "vos": "You",
   "asistente": "Assistant",
-  "pensando": "Thinking..."
+  "pensando": "Thinking...",
+  "sugerencias_titulo": "QUICK QUESTIONS",
+"seguir_preguntando": "Keep exploring"
 },
   "labor_presupuestos": {
     "editar": "Edit",

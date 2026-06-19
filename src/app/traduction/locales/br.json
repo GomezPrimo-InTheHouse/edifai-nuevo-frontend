@@ -366,7 +366,9 @@
   "placeholder": "Digite sua pergunta...",
   "vos": "Você",
   "asistente": "Assistente",
-  "pensando": "Pensando..."
+  "pensando": "Pensando...",
+  "sugerencias_titulo": "PERGUNTAS FREQUENTES",
+"seguir_preguntando": "Continuar explorando"
 },
   "registrar_trabajador": {
     "modo_nuevo": "Registrar novo",

@@ -322,7 +322,9 @@
   "placeholder": "Escribí tu pregunta...",
   "vos": "Vos",
   "asistente": "Asistente",
-  "pensando": "Pensando..."
+  "pensando": "Pensando...",
+  "sugerencias_titulo": "PREGUNTAS FRECUENTES",
+"seguir_preguntando": "Seguir explorando"
 },
   "labor_form": {
     "modo_bloqueado_presupuestos": "El modo no puede cambiarse porque la labor tiene presupuestos cargados.",
