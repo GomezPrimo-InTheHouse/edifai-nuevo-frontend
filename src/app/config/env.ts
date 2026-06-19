@@ -31,6 +31,7 @@ export const env = {
   notificacionesApiUrl: required('VITE_NOTIFICACIONES_API_URL'),
   dashboardApiUrl: required('VITE_DASHBOARD_API_URL'),
   clientesApiUrl: required('VITE_CLIENTES_API_URL'),
+  asistenteApiUrl: required('VITE_ASISTENTE_API_URL'),
   /**
    * Permite saltar autenticación en desarrollo
    */
