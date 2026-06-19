@@ -344,6 +344,15 @@
       "error_eliminar": "Could not delete the task."
     }
   },
+  "asistente_ia": {
+  "title": "AI Assistant",
+  "nueva_sesion": "New conversation",
+  "empty": "Ask me about your projects, work items, workers, payments or budgets",
+  "placeholder": "Type your question...",
+  "vos": "You",
+  "asistente": "Assistant",
+  "pensando": "Thinking..."
+},
   "labor_presupuestos": {
     "editar": "Edit",
 "cancelar_edicion": "Cancel edit",

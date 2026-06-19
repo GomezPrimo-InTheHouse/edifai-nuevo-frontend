@@ -315,6 +315,15 @@
       "editar": "Editar"
     }
   },
+  "asistente_ia": {
+  "title": "Asistente IA",
+  "nueva_sesion": "Nueva conversación",
+  "empty": "Preguntame sobre tus obras, labores, trabajadores, pagos o presupuestos",
+  "placeholder": "Escribí tu pregunta...",
+  "vos": "Vos",
+  "asistente": "Asistente",
+  "pensando": "Pensando..."
+},
   "labor_form": {
     "modo_bloqueado_presupuestos": "El modo no puede cambiarse porque la labor tiene presupuestos cargados.",
     "modo_bloqueado_sin_asignar": "El modo no puede cambiarse mientras la labor está Sin asignar.",

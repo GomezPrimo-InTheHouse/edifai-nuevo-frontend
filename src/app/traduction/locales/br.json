@@ -359,6 +359,15 @@
     "cotizacion_info_titulo": "Labor em modo cotação",
     "cotizacion_info_desc": "A labor será criada sem trabalhador atribuído. Você poderá carregar orçamentos de trabalhadores ou fornecedores externos e confirmar o vencedor no detalhe da labor."
   },
+  "asistente_ia": {
+  "title": "Assistente IA",
+  "nueva_sesion": "Nova conversa",
+  "empty": "Pergunte sobre suas obras, tarefas, trabalhadores, pagamentos ou orçamentos",
+  "placeholder": "Digite sua pergunta...",
+  "vos": "Você",
+  "asistente": "Assistente",
+  "pensando": "Pensando..."
+},
   "registrar_trabajador": {
     "modo_nuevo": "Registrar novo",
 "modo_vincular": "Vincular existente",

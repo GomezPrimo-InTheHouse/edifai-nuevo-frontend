@@ -13,6 +13,8 @@ import { useAuthStore } from '../../app/store/auth.store';
 import { NotificacionesPopover } from '../../components/NotificacionesPopover';
 import { AppBreadcrumbs } from '../../shared/components/AppBreadcrumbs/AppBreadcrumbs';
 import { ConfiguracionPopover } from '../../components/ConfiguracionPopover';
+// import nuevo — agregar junto a los demás imports
+import { AsistenteIAFlotante } from '../../modules/asistenteIA/components/AsistenteIAFlotante';
 import {
   Menu, Dashboard, Construction, Group, Inventory2,
   AssignmentTurnedIn, ReceiptLong,
@@ -315,6 +317,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
           {children}
         </Box>
       </Box>
+            <AsistenteIAFlotante rolId={rolId} />
+
     </Box>
   );
 };
