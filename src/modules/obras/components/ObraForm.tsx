@@ -39,7 +39,7 @@ function toFormDefaults(initialData?: Obra | null): ObraFormValues {
     longitud:              initialData?.longitud != null ? Number(initialData.longitud) : null,
     tipo_obra_id:          initialData?.tipo_obra_id          ?? '',
     estado_id:             initialData?.estado_id             ?? '',
-    cliente_id:            initialData?.cliente_id            ?? '',
+    cliente_id:            initialData?.cliente_id            ?? null,  // ← null en vez de ''
     fecha_inicio_estimado: toDateInput(initialData?.fecha_inicio_estimado),
     fecha_fin_estimado:    toDateInput(initialData?.fecha_fin_estimado),
     fecha_inicio_real:     toDateInput(initialData?.fecha_inicio_real),
@@ -92,9 +92,19 @@ export function ObraForm({
     setValue('longitud',  null);
   };
 
-  const handleFormSubmit = (values: ObraSchemaValues) => {
-    onSubmit(values as unknown as ObraFormValues);
+const handleFormSubmit = (values: ObraSchemaValues) => {
+  const sanitized = {
+    ...values,
+    cliente_id:            values.cliente_id            || null,
+    tipo_obra_id:          values.tipo_obra_id          || null,
+    estado_id:             values.estado_id             || null,
+    fecha_inicio_estimado: values.fecha_inicio_estimado || null,
+    fecha_fin_estimado:    values.fecha_fin_estimado    || null,
+    fecha_inicio_real:     values.fecha_inicio_real     || null,
+    fecha_fin_real:        values.fecha_fin_real        || null,
   };
+  onSubmit(sanitized as unknown as ObraFormValues);
+};
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3 }}>
