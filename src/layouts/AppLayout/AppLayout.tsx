@@ -15,6 +15,8 @@ import { AppBreadcrumbs } from '../../shared/components/AppBreadcrumbs/AppBreadc
 import { ConfiguracionPopover } from '../../components/ConfiguracionPopover';
 // import nuevo — agregar junto a los demás imports
 import { AsistenteIAFlotante } from '../../modules/asistenteIA/components/AsistenteIAFlotante';
+import { ResumenWidget } from '../../modules/resumen/components/ResumenWidget';
+
 import {
   Menu, Dashboard, Construction, Group, Inventory2,
   AssignmentTurnedIn, ReceiptLong,
@@ -318,6 +320,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
         </Box>
       </Box>
             <AsistenteIAFlotante rolId={rolId} />
+            <ResumenWidget rolId={rolId} />
 
     </Box>
   );

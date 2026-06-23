@@ -372,6 +372,18 @@
 "transcribiendo": "Transcrevendo áudio...",
 "exportar_pdf": "Exportar para PDF"
 },
+"resumen": {
+  "title": "Painel de acompanhamento",
+  "pendientes": "pendentes",
+  "todos": "Todos",
+  "todo_al_dia": "Tudo em dia!",
+  "todo_al_dia_sub": "Nenhum item pendente no momento.",
+  "recomendaciones_ia": "Recomendações IA",
+  "sin_recomendaciones": "Sem recomendações no momento.",
+  "refrescar": "Atualizar",
+  "descartar": "Descartar (24h)",
+  "ver_detalle": "Ver detalhe →"
+},
   "registrar_trabajador": {
     "modo_nuevo": "Registrar novo",
 "modo_vincular": "Vincular existente",

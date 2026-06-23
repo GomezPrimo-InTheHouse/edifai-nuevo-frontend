@@ -357,6 +357,18 @@
 "transcribiendo": "Transcribing audio...",
 "exportar_pdf": "Export to PDF"
 },
+"resumen": {
+  "title": "Tracking panel",
+  "pendientes": "pending",
+  "todos": "All",
+  "todo_al_dia": "All up to date!",
+  "todo_al_dia_sub": "No pending items right now.",
+  "recomendaciones_ia": "AI Recommendations",
+  "sin_recomendaciones": "No recommendations right now.",
+  "refrescar": "Refresh",
+  "descartar": "Dismiss (24h)",
+  "ver_detalle": "View detail →"
+},
   "labor_presupuestos": {
     "editar": "Edit",
 "cancelar_edicion": "Cancel edit",

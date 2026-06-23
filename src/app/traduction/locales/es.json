@@ -328,6 +328,18 @@
 "transcribiendo": "Transcribiendo audio...",
 "exportar_pdf": "Exportar a PDF"
 },
+"resumen": {
+  "title": "Panel de seguimiento",
+  "pendientes": "pendientes",
+  "todos": "Todos",
+  "todo_al_dia": "¡Todo al día!",
+  "todo_al_dia_sub": "No tenés pendientes en este momento.",
+  "recomendaciones_ia": "Recomendaciones IA",
+  "sin_recomendaciones": "Sin recomendaciones por ahora.",
+  "refrescar": "Actualizar",
+  "descartar": "Descartar (24hs)",
+  "ver_detalle": "Ver detalle →"
+},
   "labor_form": {
     "modo_bloqueado_presupuestos": "El modo no puede cambiarse porque la labor tiene presupuestos cargados.",
     "modo_bloqueado_sin_asignar": "El modo no puede cambiarse mientras la labor está Sin asignar.",
