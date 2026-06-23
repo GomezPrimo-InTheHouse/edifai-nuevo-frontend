@@ -41,4 +41,5 @@ export const resumenApi = {
     const { data } = await httpClient.patch(`${BASE}/resumen/config/${modulo}`, cambios);
     return data;
   },
+  
 };
