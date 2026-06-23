@@ -332,7 +332,7 @@ function LaborCard({ labor, onClick }: { labor: LaborDeObra; onClick: () => void
 interface Props { obraId: number; }
 
 export const LaboresDeObra: React.FC<Props> = ({ obraId }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const navigate = useNavigate();
   const { data: labores = [], isLoading } = useLaborsByObra(obraId);
 
