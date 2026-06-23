@@ -11,7 +11,7 @@ import {
   HardHat, Package, Users, RefreshCw, X, ChevronDown, ChevronRight,
   Sparkles, CheckCircle,
 } from 'lucide-react';
-import { useResumenPendientes, useRecomendacionesIA } from '../hooks/UseResumenPendientes';
+import { useResumenPendientes, useRecomendacionesIA } from '../hooks/UseResumenPendientes.tsx';
 import type { ResumenItem, ResumenCategoria, Recomendacion } from '../../../services/api/resumen.api';
 
 const ROLES_ADMIN = [1, 3, 4, 6, 9];
