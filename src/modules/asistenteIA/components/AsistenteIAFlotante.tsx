@@ -500,30 +500,162 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
 
   // ── Exportar último mensaje del asistente a PDF ──
   const exportarPDF = (contenido: string) => {
-    const doc = new jsPDF();
-    const fecha = new Date().toLocaleDateString('es-AR');
+  const doc = new jsPDF();
+  const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-    doc.setFontSize(14);
-    doc.setTextColor(15, 23, 42);
-    doc.text('EdifAI — Respuesta del Asistente IA', 14, 18);
+  // ── Header ────────────────────────────────────────────────
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, 210, 28, 'F');
+  doc.setFontSize(14);
+  doc.setTextColor(245, 158, 11);
+  doc.text('EdifAI — Asistente IA', 14, 12);
+  doc.setFontSize(9);
+  doc.setTextColor(148, 163, 184);
+  doc.text(`Generado: ${fecha}`, 14, 21);
+
+  let cursorY = 36;
+
+  const lineas = contenido.split('\n');
+
+  for (const linea of lineas) {
+    if (cursorY > 270) { doc.addPage(); cursorY = 14; }
+
+    const raw = linea.trim();
+    if (!raw) { cursorY += 3; continue; }
+
+    // ── Separador --- ─────────────────────────────────────
+    if (/^---+$/.test(raw)) {
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.3);
+      doc.line(14, cursorY, 196, cursorY);
+      cursorY += 5;
+      continue;
+    }
+
+    // ── H2 ##  ────────────────────────────────────────────
+    if (raw.startsWith('## ')) {
+      const texto = raw.replace(/^##\s+/, '').replace(/[^\x00-\x7F]/g, '').replace(/[*_`#|]/g, '').trim();
+      doc.setFillColor(30, 58, 95);
+      doc.roundedRect(14, cursorY - 1, 182, 8, 1, 1, 'F');
+      doc.setFontSize(10);
+      doc.setTextColor(245, 158, 11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(texto, 17, cursorY + 5);
+      doc.setFont('helvetica', 'normal');
+      cursorY += 12;
+      continue;
+    }
+
+    // ── H3 ### ───────────────────────────────────────────
+    if (raw.startsWith('### ')) {
+      const texto = raw.replace(/^###\s+/, '').replace(/[^\x00-\x7F]/g, '').replace(/[*_`#]/g, '').trim();
+      doc.setFontSize(10);
+      doc.setTextColor(239, 68, 68);
+      doc.setFont('helvetica', 'bold');
+      doc.text(texto, 14, cursorY);
+      doc.setFont('helvetica', 'normal');
+      cursorY += 7;
+      continue;
+    }
+
+    // ── Tabla markdown ────────────────────────────────────
+    if (raw.startsWith('|')) {
+      // Recolectar todas las filas de la tabla
+      const filasMd: string[] = [];
+      let i = lineas.indexOf(linea);
+      while (i < lineas.length && lineas[i].trim().startsWith('|')) {
+        filasMd.push(lineas[i].trim());
+        i++;
+      }
+
+      const parseFila = (f: string) =>
+        f.split('|')
+          .slice(1, -1)
+          .map(c => c.replace(/[*_`]/g, '').replace(/[^\x00-\x7F]/g, '').trim());
+
+      const separadorIdx = filasMd.findIndex(f => /^\|[\s\-|]+\|$/.test(f));
+      if (separadorIdx === -1) { cursorY += 5; continue; }
+
+      const head  = [parseFila(filasMd[0])];
+      const body  = filasMd.slice(separadorIdx + 1).map(parseFila);
+
+      if (cursorY > 240) { doc.addPage(); cursorY = 14; }
+
+      autoTable(doc, {
+        startY: cursorY,
+        head,
+        body,
+        styles:     { fontSize: 8, cellPadding: 2.5, overflow: 'linebreak' },
+        headStyles: { fillColor: [30, 58, 95], textColor: [248, 250, 252], fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        margin: { left: 14, right: 14 },
+      });
+
+      cursorY = (doc as any).lastAutoTable.finalY + 6;
+
+      // Saltar las filas de tabla ya procesadas
+      const startIdx = lineas.indexOf(linea);
+      for (let k = startIdx + 1; k < startIdx + filasMd.length; k++) {
+        lineas[k] = '';
+      }
+      continue;
+    }
+
+    // ── Bullet - ─────────────────────────────────────────
+    if (raw.startsWith('- ') || raw.startsWith('* ')) {
+      const texto = raw.slice(2).replace(/\*\*(.*?)\*\*/g, '$1').replace(/[^\x00-\x7F]/g, '').replace(/[*_`]/g, '').trim();
+      const wrapped = doc.splitTextToSize(`• ${texto}`, 174);
+      doc.setFontSize(9);
+      doc.setTextColor(51, 65, 85);
+      doc.setFont('helvetica', 'normal');
+      doc.text(wrapped, 18, cursorY);
+      cursorY += wrapped.length * 5 + 1;
+      continue;
+    }
+
+    // ── Bold completo **texto** ───────────────────────────
+    if (/^\*\*.*\*\*$/.test(raw) || raw.startsWith('**')) {
+      const texto = raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/[^\x00-\x7F]/g, '').replace(/[*_`]/g, '').trim();
+      if (!texto) continue;
+      doc.setFontSize(9);
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      const wrapped = doc.splitTextToSize(texto, 182);
+      doc.text(wrapped, 14, cursorY);
+      doc.setFont('helvetica', 'normal');
+      cursorY += wrapped.length * 5 + 2;
+      continue;
+    }
+
+    // ── Párrafo normal ────────────────────────────────────
+    const textoLimpio = raw
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/[^\x00-\x7F]/g, '')
+      .replace(/[*_`#|]/g, '')
+      .trim();
+
+    if (!textoLimpio) continue;
 
     doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
-    doc.text(`Generado el ${fecha}`, 14, 25);
+    doc.setTextColor(51, 65, 85);
+    doc.setFont('helvetica', 'normal');
+    const wrapped = doc.splitTextToSize(textoLimpio, 182);
+    doc.text(wrapped, 14, cursorY);
+    cursorY += wrapped.length * 5 + 2;
+  }
 
-    const lineas = doc.splitTextToSize(contenido, 180);
+  // ── Footer ────────────────────────────────────────────
+  const totalPaginas = (doc as any).internal.getNumberOfPages();
+  for (let p = 1; p <= totalPaginas; p++) {
+    doc.setPage(p);
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text(`EdifAI · Página ${p} de ${totalPaginas}`, 14, 290);
+    doc.text(fecha, 170, 290);
+  }
 
-    autoTable(doc, {
-      startY: 32,
-      head: [['Respuesta']],
-      body: [[lineas.join('\n')]],
-      styles: { fontSize: 10, cellPadding: 4, valign: 'top' },
-      headStyles: { fillColor: [15, 23, 42], textColor: [248, 250, 252] },
-      columnStyles: { 0: { cellWidth: 180 } },
-    });
-
-    doc.save(`asistente-edifai-${Date.now()}.pdf`);
-  };
+  doc.save(`asistente-edifai-${Date.now()}.pdf`);
+};
 
   const hayMensajes = mensajes.length > 0;
 

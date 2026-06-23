@@ -489,11 +489,11 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   ClipboardList, AlertTriangle, FileText, CreditCard, AlertCircle,
   HardHat, Package, Users, RefreshCw, X, ChevronDown, ChevronRight,
-  ChevronLeft, Sparkles, CheckCircle, FileDown,
+   Sparkles, CheckCircle, FileDown,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -504,30 +504,30 @@ const ROLES_ADMIN = [1, 3, 4, 6, 9];
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   AlertTriangle: <AlertTriangle size={14} />,
-  FileText:      <FileText      size={14} />,
-  CreditCard:    <CreditCard    size={14} />,
-  AlertCircle:   <AlertCircle   size={14} />,
-  HardHat:       <HardHat       size={14} />,
-  Package:       <Package       size={14} />,
-  Users:         <Users         size={14} />,
+  FileText: <FileText size={14} />,
+  CreditCard: <CreditCard size={14} />,
+  AlertCircle: <AlertCircle size={14} />,
+  HardHat: <HardHat size={14} />,
+  Package: <Package size={14} />,
+  Users: <Users size={14} />,
 };
 
 const SEV_COLOR: Record<string, string> = {
-  critico:     '#EF4444',
+  critico: '#EF4444',
   advertencia: '#F59E0B',
-  info:        '#3B82F6',
+  info: '#3B82F6',
 };
 
 const SEV_LABEL: Record<string, string> = {
-  critico:     'Crítico',
+  critico: 'Crítico',
   advertencia: 'Advertencia',
-  info:        'Informativo',
+  info: 'Informativo',
 };
 
 const PRIO_COLOR: Record<string, string> = {
-  alta:  '#EF4444',
+  alta: '#EF4444',
   media: '#F59E0B',
-  baja:  '#22C55E',
+  baja: '#22C55E',
 };
 
 const LS_KEY = 'edifai_resumen_descartados';
@@ -550,7 +550,7 @@ function saveDescartados(s: Set<string>) {
     const raw: Record<string, number> = {};
     s.forEach(id => { raw[id] = now; });
     localStorage.setItem(LS_KEY, JSON.stringify(raw));
-  } catch {}
+  } catch { }
 }
 
 // ── PDF Export ────────────────────────────────────────────────
@@ -559,7 +559,7 @@ function exportarPDF(
   filtro: string | null,
   modulosFiltro: ResumenCategoria[]
 ) {
-  const doc  = new jsPDF();
+  const doc = new jsPDF();
   const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const titulo = filtro
     ? `Pendientes — ${modulosFiltro.find(m => m.modulo === filtro)?.label ?? filtro}`
@@ -603,8 +603,8 @@ function exportarPDF(
         i.detalle,
         SEV_LABEL[i.severidad] ?? i.severidad,
       ]),
-      styles:      { fontSize: 8, cellPadding: 3 },
-      headStyles:  { fillColor: [r, g, b], textColor: [255, 255, 255], fontStyle: 'bold' },
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: [r, g, b], textColor: [255, 255, 255], fontStyle: 'bold' },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 55 },
@@ -614,9 +614,9 @@ function exportarPDF(
       didParseCell: (hookData) => {
         if (hookData.section === 'body' && hookData.column.index === 3) {
           const sev = cat.items[hookData.row.index]?.severidad;
-          if (sev === 'critico')     hookData.cell.styles.textColor = [239, 68,  68];
+          if (sev === 'critico') hookData.cell.styles.textColor = [239, 68, 68];
           if (sev === 'advertencia') hookData.cell.styles.textColor = [245, 158, 11];
-          if (sev === 'info')        hookData.cell.styles.textColor = [59,  130, 246];
+          if (sev === 'info') hookData.cell.styles.textColor = [59, 130, 246];
         }
       },
       margin: { left: 14, right: 14 },
@@ -643,28 +643,28 @@ function exportarPDF(
 interface ResumenWidgetProps { rolId: number; }
 
 export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
-  const theme    = useTheme();
-  const { t }    = useTranslation();
+  const theme = useTheme();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  // const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
 
-  const [abierto, setAbierto]         = useState(false);
-  const [filtro, setFiltro]           = useState<string | null>(null);
-  const [expandidos, setExpandidos]   = useState<Record<string, boolean>>({});
-  const [colapsadas, setColapsadas]   = useState<Record<string, boolean>>({});
+  const [abierto, setAbierto] = useState(false);
+  const [filtro, setFiltro] = useState<string | null>(null);
+  const [expandidos, setExpandidos] = useState<Record<string, boolean>>({});
+  const [colapsadas, setColapsadas] = useState<Record<string, boolean>>({});
   const [descartados, setDescartados] = useState<Set<string>>(loadDescartados);
-  const [iaAbierta, setIaAbierta]     = useState(false);
-  const [pulsando, setPulsando]       = useState(false);
+  const [iaAbierta, setIaAbierta] = useState(false);
+  const [pulsando, setPulsando] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState<Record<string, number>>({});
-  const [filterPage, setFilterPage]   = useState(0);
+ 
 
   const prevCriticosRef = useRef(0);
-  const touchStartX     = useRef(0);
+  const touchStartX = useRef(0);
 
   const esAdmin = ROLES_ADMIN.includes(rolId);
 
   const { data, isLoading, refetch, isRefetching } = useResumenPendientes();
-  const { data: iaData, isLoading: iaLoading }     = useRecomendacionesIA(iaAbierta && abierto);
+  const { data: iaData, isLoading: iaLoading } = useRecomendacionesIA(iaAbierta && abierto);
 
   useEffect(() => {
     if (!data) return;
@@ -675,8 +675,7 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
     prevCriticosRef.current = data.total_criticos;
   }, [data?.total_criticos]);
 
-  // Resetear página de filtros al abrir/cerrar
-  useEffect(() => { setFilterPage(0); }, [abierto]);
+ 
 
   const categoriasFiltradas = useMemo(() => {
     if (!data?.categorias) return [];
@@ -691,20 +690,20 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
 
   const totalVisible = useMemo(() =>
     categoriasFiltradas.reduce((a: number, c: ResumenCategoria) => a + c.items.length, 0),
-  [categoriasFiltradas]);
+    [categoriasFiltradas]);
 
   const modulosFiltro = useMemo(() =>
     data?.categorias?.filter((c: ResumenCategoria) =>
       c.items.filter((i: ResumenItem) => !descartados.has(i.id)).length > 0
     ) ?? [],
-  [data, descartados]);
+    [data, descartados]);
 
   // Chips paginados para desktop (4 por página)
-  const CHIPS_PER_PAGE = 4;
-  const totalPages = Math.ceil(modulosFiltro.length / CHIPS_PER_PAGE);
-  const chipsVisibles = isDesktop
-    ? modulosFiltro.slice(filterPage * CHIPS_PER_PAGE, (filterPage + 1) * CHIPS_PER_PAGE)
-    : modulosFiltro;
+  // const CHIPS_PER_PAGE = 4;
+  // const totalPages = Math.ceil(modulosFiltro.length / CHIPS_PER_PAGE);
+  // const chipsVisibles = isDesktop
+  //   ? modulosFiltro.slice(filterPage * CHIPS_PER_PAGE, (filterPage + 1) * CHIPS_PER_PAGE)
+  //   : modulosFiltro;
 
   const descartarItem = useCallback((id: string) => {
     setDescartados(prev => {
@@ -717,7 +716,7 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
   }, []);
 
   const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
-  const onTouchMove  = (e: React.TouchEvent, id: string) => {
+  const onTouchMove = (e: React.TouchEvent, id: string) => {
     const diff = e.touches[0].clientX - touchStartX.current;
     if (diff > 0) setSwipeOffset(prev => ({ ...prev, [id]: Math.min(diff, 120) }));
   };
@@ -738,16 +737,16 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
       <Collapse in={abierto} sx={{
         position: 'fixed',
         bottom: { xs: 'calc(88px + env(safe-area-inset-bottom))', sm: 88 },
-        right:  { xs: 12, sm: 88 },
-        left:   { xs: 12, sm: 'auto' },
+        right: { xs: 12, sm: 88 },
+        left: { xs: 12, sm: 'auto' },
         zIndex: 1299,
-        width:  { xs: 'auto', sm: 390 },
+        width: { xs: 'auto', sm: 390 },
       }}>
         <Paper elevation={0} sx={{
           display: 'flex', flexDirection: 'column',
-          height:    { xs: '72dvh', sm: 540 },
+          height: { xs: '72dvh', sm: 540 },
           maxHeight: { xs: '72dvh', sm: 540 },
-          border:    `1px solid ${theme.palette.divider}`,
+          border: `1px solid ${theme.palette.divider}`,
           borderRadius: 3, overflow: 'hidden',
           bgcolor: 'background.paper',
           boxShadow: theme.palette.mode === 'dark'
@@ -796,99 +795,59 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
             </Stack>
           </Box>
 
-          {/* Filter bar — desktop: paginado con flechas / mobile: scroll horizontal */}
+         
+          {/* Filter bar — scroll horizontal en todos los tamaños */}
           {!isLoading && modulosFiltro.length > 1 && (
             <Box sx={{
-              px: 1, py: 0.75, flexShrink: 0,
+              px: 1.5, py: 0.75, flexShrink: 0,
               borderBottom: `1px solid ${theme.palette.divider}`,
-              bgcolor: theme.palette.background.paper,
             }}>
-              <Stack direction="row" spacing={0.5} alignItems="center">
-                {/* Flecha izquierda — solo desktop */}
-                {isDesktop && (
-                  <IconButton
-                    size="small"
-                    onClick={() => setFilterPage(p => Math.max(0, p - 1))}
-                    disabled={filterPage === 0}
-                    sx={{ width: 22, height: 22, flexShrink: 0 }}
-                  >
-                    <ChevronLeft size={14} />
-                  </IconButton>
-                )}
-
-                {/* Chips */}
-                <Box sx={{
-                  flex: 1,
-                  display: 'flex',
-                  gap: '5px',
-                  // Mobile: scroll horizontal. Desktop: wrap estático
-                  overflowX: isDesktop ? 'visible' : 'auto',
-                  flexWrap: isDesktop ? 'wrap' : 'nowrap',
-                  // Ocultar scrollbar en mobile
-                  '&::-webkit-scrollbar': { display: 'none' },
-                  scrollbarWidth: 'none',
-                  py: 0.25,
-                }}>
-                  {/* Chip "Todos" — siempre visible */}
-                  {(!isDesktop || filterPage === 0) && (
-                    <Chip
-                      label={t('resumen.todos')} size="small"
-                      onClick={() => setFiltro(null)}
-                      sx={{
-                        fontSize: 11, height: 24, flexShrink: 0, cursor: 'pointer',
-                        bgcolor: !filtro ? '#1E3A5F' : theme.palette.action.hover,
-                        color:   !filtro ? '#F8FAFC' : 'text.secondary',
-                        border:  !filtro ? '1px solid #1E3A5F' : `1px solid ${theme.palette.divider}`,
-                      }}
-                    />
-                  )}
-                  {chipsVisibles.map((c: ResumenCategoria) => (
-                    <Chip
-                      key={c.modulo} size="small"
-                      label={
-                        <Stack direction="row" spacing={0.5} alignItems="center">
-                          <span>{c.label}</span>
-                          <Box sx={{
-                            width: 16, height: 16, borderRadius: '50%',
-                            bgcolor: c.color + '33',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 9, color: c.color, fontWeight: 700,
-                          }}>
-                            {c.items.filter((i: ResumenItem) => !descartados.has(i.id)).length}
-                          </Box>
-                        </Stack>
-                      }
-                      onClick={() => setFiltro(filtro === c.modulo ? null : c.modulo)}
-                      sx={{
-                        fontSize: 11, height: 24, flexShrink: 0, cursor: 'pointer',
-                        bgcolor: filtro === c.modulo ? c.color + '22' : theme.palette.action.hover,
-                        color:   filtro === c.modulo ? c.color : 'text.secondary',
-                        border:  `1px solid ${filtro === c.modulo ? c.color : theme.palette.divider}`,
-                        '& .MuiChip-label': { px: 1, display: 'flex', alignItems: 'center' },
-                      }}
-                    />
-                  ))}
-                </Box>
-
-                {/* Flecha derecha + contador — solo desktop */}
-                {isDesktop && (
-                  <Stack direction="row" spacing={0.25} alignItems="center" sx={{ flexShrink: 0 }}>
-                    {totalPages > 1 && (
-                      <Typography sx={{ fontSize: 9, color: 'text.disabled' }}>
-                        {filterPage + 1}/{totalPages}
-                      </Typography>
-                    )}
-                    <IconButton
-                      size="small"
-                      onClick={() => setFilterPage(p => Math.min(totalPages - 1, p + 1))}
-                      disabled={filterPage >= totalPages - 1}
-                      sx={{ width: 22, height: 22 }}
-                    >
-                      <ChevronRight size={14} />
-                    </IconButton>
-                  </Stack>
-                )}
-              </Stack>
+              <Box sx={{
+                display: 'flex',
+                gap: '5px',
+                overflowX: 'auto',
+                flexWrap: 'nowrap',
+                '&::-webkit-scrollbar': { display: 'none' },
+                scrollbarWidth: 'none',
+                py: 0.25,
+              }}>
+                <Chip
+                  label={t('resumen.todos')} size="small"
+                  onClick={() => setFiltro(null)}
+                  sx={{
+                    fontSize: 11, height: 24, flexShrink: 0, cursor: 'pointer',
+                    bgcolor: !filtro ? '#1E3A5F' : theme.palette.action.hover,
+                    color: !filtro ? '#F8FAFC' : 'text.secondary',
+                    border: !filtro ? '1px solid #1E3A5F' : `1px solid ${theme.palette.divider}`,
+                  }}
+                />
+                {modulosFiltro.map((c: ResumenCategoria) => (
+                  <Chip
+                    key={c.modulo} size="small"
+                    label={
+                      <Stack direction="row" spacing={0.5} alignItems="center">
+                        <span>{c.label}</span>
+                        <Box sx={{
+                          width: 16, height: 16, borderRadius: '50%',
+                          bgcolor: c.color + '33',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 9, color: c.color, fontWeight: 700,
+                        }}>
+                          {c.items.filter((i: ResumenItem) => !descartados.has(i.id)).length}
+                        </Box>
+                      </Stack>
+                    }
+                    onClick={() => setFiltro(filtro === c.modulo ? null : c.modulo)}
+                    sx={{
+                      fontSize: 11, height: 24, flexShrink: 0, cursor: 'pointer',
+                      bgcolor: filtro === c.modulo ? c.color + '22' : theme.palette.action.hover,
+                      color: filtro === c.modulo ? c.color : 'text.secondary',
+                      border: `1px solid ${filtro === c.modulo ? c.color : theme.palette.divider}`,
+                      '& .MuiChip-label': { px: 1, display: 'flex', alignItems: 'center' },
+                    }}
+                  />
+                ))}
+              </Box>
             </Box>
           )}
 
@@ -946,7 +905,7 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
                       </Stack>
                       {colapsadas[cat.modulo]
                         ? <ChevronRight size={13} color={theme.palette.text.disabled} />
-                        : <ChevronDown  size={13} color={theme.palette.text.disabled} />}
+                        : <ChevronDown size={13} color={theme.palette.text.disabled} />}
                     </Stack>
 
                     {/* Items */}
@@ -1004,7 +963,7 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
                                     </IconButton>
                                   </Tooltip>
                                   {expandidos[item.id]
-                                    ? <ChevronDown  size={12} color={theme.palette.text.disabled} />
+                                    ? <ChevronDown size={12} color={theme.palette.text.disabled} />
                                     : <ChevronRight size={12} color={theme.palette.text.disabled} />}
                                 </Stack>
                               </Stack>
@@ -1057,7 +1016,7 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
                 )}
               </Stack>
               {iaAbierta
-                ? <ChevronDown  size={13} color={theme.palette.text.disabled} />
+                ? <ChevronDown size={13} color={theme.palette.text.disabled} />
                 : <ChevronRight size={13} color={theme.palette.text.disabled} />}
             </Stack>
 
@@ -1101,7 +1060,7 @@ export const ResumenWidget: React.FC<ResumenWidgetProps> = ({ rolId }) => {
         sx={{
           position: 'fixed',
           bottom: { xs: 'calc(16px + env(safe-area-inset-bottom))', sm: 24 },
-          right:  { xs: 76, sm: 88 },
+          right: { xs: 76, sm: 88 },
           zIndex: 1299,
           bgcolor: '#1E3A5F', color: '#F59E0B',
           boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
