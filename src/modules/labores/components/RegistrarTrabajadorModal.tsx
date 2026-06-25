@@ -364,7 +364,7 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
         password: values.password || null,
         especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
         jefe_id: null,
-        estado_id: null,
+        estado_id: 1,
         fecha_ingreso: new Date().toISOString().split('T')[0],
         usuario_creador_id: null,
       };
