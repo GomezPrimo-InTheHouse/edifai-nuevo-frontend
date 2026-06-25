@@ -276,7 +276,6 @@
 //     </Dialog>
 //   );
 // };
-
 import React, { useState } from 'react';
 import {
   Box, Button, Dialog, DialogContent, DialogTitle, Divider,
@@ -287,10 +286,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCreateTrabajador, useTrabajadoresList } from '../../trabajadores/hooks/useTrabajadores';
 import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
 import { useVincularProveedorTrabajador } from '../hooks/useLaborPresupuestos';
 import { useNotify } from '../../../shared/hooks/useNotify';
+import { laborApi } from '../../../services/api/labor.api';
+import { laboresQueryKeys } from '../hooks/useLabores';
 import type { Trabajador } from '../../trabajadores/types/trabajador.types';
 
 interface Props {
@@ -313,7 +315,6 @@ const schema = z.object({
 });
 
 type FormValues = z.infer<typeof schema>;
-
 type Modo = 'nuevo' | 'vincular';
 
 export const RegistrarTrabajadorModal: React.FC<Props> = ({
@@ -321,6 +322,7 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const notify = useNotify();
+  const queryClient = useQueryClient();
   const createTrabajador = useCreateTrabajador();
   const vincularMutation = useVincularProveedorTrabajador();
   const { data: especialidades = [] } = useEspecialidadesList();
@@ -353,30 +355,47 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
     onClose();
   };
 
-  const handleSubmitForm = async (values: FormValues) => {
-    try {
-      const payload: any = {
-        nombre: values.nombre,
-        apellido: values.apellido,
-        dni: values.dni,
-        telefono: values.telefono || null,
-        email: values.email,
-        password: values.password || null,
-        especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
-        jefe_id: null,
-        estado_id: 1,
-        fecha_ingreso: new Date().toISOString().split('T')[0],
-        usuario_creador_id: null,
-      };
-
-      const trabajador = await createTrabajador.mutateAsync(payload);
-      notify.success(t('registrar_trabajador.creado_ok'));
-      handleClose();
-      onTrabajadorCreado(trabajador);
-    } catch {
-      notify.error(t('registrar_trabajador.error_crear'));
+  const invalidarLabor = () => {
+    if (laborId) {
+      queryClient.invalidateQueries({ queryKey: laboresQueryKeys.detail(laborId) });
+      queryClient.invalidateQueries({ queryKey: laboresQueryKeys.all });
     }
   };
+
+  const handleSubmitForm = async (values: FormValues) => {
+  try {
+    const payload: any = {
+      nombre: values.nombre,
+      apellido: values.apellido,
+      dni: values.dni,
+      telefono: values.telefono || null,
+      email: values.email,
+      password: values.password || null,
+      especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
+      jefe_id: null,
+      estado_id: 1,
+      fecha_ingreso: new Date().toISOString().split('T')[0],
+      usuario_creador_id: null,
+    };
+
+    const trabajador = await createTrabajador.mutateAsync(payload);
+
+    if (laborId && trabajador?.id) {
+      await laborApi.update({
+        id: laborId,
+        trabajador_id: trabajador.id,
+      } as any);
+      invalidarLabor();
+    }
+
+    notify.success(t('registrar_trabajador.creado_ok'));
+    handleClose();
+    onTrabajadorCreado(trabajador);
+  } catch {
+    notify.error(t('registrar_trabajador.error_crear'));
+  }
+};
+
 
   const handleVincular = async () => {
     if (!proveedorExternoId || !trabajadorSeleccionado) return;
@@ -386,6 +405,7 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
         trabajador_id: Number(trabajadorSeleccionado),
         labor_id: laborId,
       });
+      invalidarLabor();
       notify.success(t('registrar_trabajador.vinculado_ok', { nombre: result.trabajador_nombre }));
       handleClose();
       onTrabajadorCreado({ id: result.trabajador_id } as Trabajador);

@@ -45,15 +45,18 @@ async getJefesConEquipo(especialidad_id: number): Promise<JefeConEquipo[]> {
 },
 
   // Crea un nuevo trabajador
- async create(payload: CreateTrabajadorPayload): Promise<Trabajador> {
+async create(payload: CreateTrabajadorPayload): Promise<Trabajador> {
   const cleanPayload = {
     ...payload,
     jefe_id: payload.jefe_id === ('' as any) ? null : payload.jefe_id,
     especialidad_id: payload.especialidad_id === ('' as any) ? null : payload.especialidad_id,
     estado_id: payload.estado_id === ('' as any) ? null : payload.estado_id,
   };
-  const response = await httpClient.post<Trabajador>(`${baseUrl}/crear`, cleanPayload);
-  return response.data;
+  const response = await httpClient.post<{ ok: boolean; data: { trabajador: Trabajador } }>(
+    `${baseUrl}/crear`,
+    cleanPayload
+  );
+  return response.data.data.trabajador;
 },
 
   // Actualiza un trabajador existente
