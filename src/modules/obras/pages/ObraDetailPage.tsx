@@ -559,7 +559,7 @@ import {
 } from '@mui/material';
 import {
   ArrowLeft, MapPin, FileText, Calendar, Hammer, Pencil,
-  Clock, CheckCircle2, Building2, FileSearch, FileDown, FileSpreadsheet,
+  Clock, CheckCircle2, Building2, FileDown, FileSpreadsheet,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import L from 'leaflet';
@@ -575,7 +575,7 @@ import { LoadingState } from '../../../shared/components/LoadingState/LoadingSta
 import { ErrorState } from '../../../shared/components/ErrorState/ErrorState';
 import { useObraDetail, useEstadosObraOptions, useTiposObraOptions } from '../hooks/useObras';
 import { LaboresDeObra } from '../components/LaboresDeObra';
-import { AnalizarDocumentoModal } from '../../labores/components/AnalizarDocumentoModal';
+// import { AnalizarDocumentoModal } from '../../labores/components/AnalizarDocumentoModal';
 import { useLaborsByObra } from '../../labores/hooks/useLabores';
 import { usePresupuestosList } from '../../presupuestos/hooks/usePresupuestos';
 import { useEstadosGenerales } from '../../trabajadores/hooks/useEspecialidades';
@@ -679,7 +679,7 @@ export const ObraDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const obraId = Number(id);
 
-  const [analizarOpen, setAnalizarOpen] = useState(false);
+  // const [analizarOpen, setAnalizarOpen] = useState(false);
   const [exportando, setExportando] = useState(false);
 
   const { data: obra, isLoading, isError, refetch } = useObraDetail(obraId);
@@ -932,9 +932,9 @@ export const ObraDetailPage: React.FC = () => {
                       </Typography>
                     </Box>
                   </Stack>
-                  <Button variant="outlined" size="small" startIcon={<FileSearch size={14} />} onClick={() => setAnalizarOpen(true)}>
+                  {/* <Button variant="outlined" size="small" startIcon={<FileSearch size={14} />} onClick={() => setAnalizarOpen(true)}>
                     {t('obras.detail.importar_documento')}
-                  </Button>
+                  </Button> */}
                 </Stack>
                 <Divider sx={{ mb: 3 }} />
                 <LaboresDeObra obraId={obraId} />
@@ -1029,11 +1029,12 @@ export const ObraDetailPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      <AnalizarDocumentoModal
+      {/* <AnalizarDocumentoModal
         open={analizarOpen}
         obra_id={obraId}
         onClose={() => setAnalizarOpen(false)}
-      />
+      /> */}
+
     </AppLayout>
   );
 };

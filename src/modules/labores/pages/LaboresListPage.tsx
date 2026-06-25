@@ -5,7 +5,7 @@ import {
   Stack, Tab, Table, TableBody, TableCell, TableHead, TableRow,
   Tabs, TextField, Typography, useTheme,
 } from '@mui/material';
-import { Archive, Eye, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Archive, Eye, Pencil, Plus, Trash2, FileSearch } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
@@ -23,6 +23,8 @@ import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidade
 import { estadoApi } from '../../../services/api/estado.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { useAuthStore } from '../../../app/store/auth.store';
+import { AnalizarDocumentoModal } from '../components/AnalizarDocumentoModal';
+
 
 const PROGRESO_MAP: Record<string, number> = {
   'Planificada': 0, 'Labor en proceso': 25, 'Avanzada': 50, 'Muy avanzada': 75, 'Finalizada': 100,
@@ -48,6 +50,8 @@ export const LaboresListPage = () => {
   const [filtroEspecialidad, setFiltroEspecialidad] = useState('');
   const [tab, setTab] = useState(0);
   const [page, setPage] = useState(1);
+  const [analizarOpen, setAnalizarOpen] = useState(false);
+
 
   const user = useAuthStore((s) => s.user);
   const esWorker = user?.rol_id === 7 || user?.rol_id === 8;
@@ -146,9 +150,14 @@ export const LaboresListPage = () => {
           subtitle={esWorker ? t('labores.subtitle_worker') : t('labores.subtitle')}
           actions={
             !esWorker && tab === 0 ? (
-              <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/labores/nueva')}>
-                {t('labores.nueva')}
-              </Button>
+              <Stack direction="row" spacing={1}>
+                <Button variant="outlined" startIcon={<FileSearch size={16} />} onClick={() => setAnalizarOpen(true)}>
+                  {t('analizar_doc.titulo')}
+                </Button>
+                <Button variant="contained" startIcon={<Plus size={18} />} onClick={() => navigate('/labores/nueva')}>
+                  {t('labores.nueva')}
+                </Button>
+              </Stack>
             ) : undefined
           }
         />
@@ -337,7 +346,15 @@ export const LaboresListPage = () => {
             )}
           </>
         )}
+
+
       </Box>
+      <AnalizarDocumentoModal
+        open={analizarOpen}
+        onClose={() => setAnalizarOpen(false)}
+      />
     </AppLayout>
+
   );
+
 };
