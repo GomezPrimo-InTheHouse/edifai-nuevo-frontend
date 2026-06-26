@@ -1236,7 +1236,8 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
         </Stack>
     );
 
-    return (
+return (
+    <>
         <Dialog
             open={open}
             onClose={analizarMutation.isPending || confirmando ? undefined : handleCloseWithConfirm}
@@ -1259,10 +1260,7 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
                 </Stack>
             </DialogTitle>
             <Divider />
-            <DialogContent sx={{ p: 3, position: 'relative' }}>
-
-                {/* ── Overlay de progreso ── */}
-                {fase === 'progreso' && <ProgresoOverlay items={progresoItems} />}
+            <DialogContent sx={{ p: 3 }}>
 
                 {/* ── FASE OBRA ── */}
                 {fase === 'obra' && (
@@ -1395,7 +1393,7 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
                 )}
 
                 {/* ── FASE REVISIÓN ── */}
-                {(fase === 'revision' || fase === 'progreso') && (
+                {fase === 'revision' && (
                     <Stack spacing={2}>
                         <Stack
                             direction={{ xs: 'column', sm: 'row' }}
@@ -1425,15 +1423,12 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
                                     </Typography>
                                 </Stack>
                             </Stack>
-                            {fase === 'revision' && (
-                                <Button size="small" variant="outlined" onClick={() => setFase('input')} sx={{ flexShrink: 0 }}>
-                                    {t('analizar_doc.volver_input')}
-                                </Button>
-                            )}
+                            <Button size="small" variant="outlined" onClick={() => setFase('input')} sx={{ flexShrink: 0 }}>
+                                {t('analizar_doc.volver_input')}
+                            </Button>
                         </Stack>
 
-                        {/* Cotizante global */}
-                        {cotizanteGlobal !== null && fase === 'revision' && (
+                        {cotizanteGlobal !== null && (
                             <Box sx={{ p: 2, borderRadius: 2, border: cardBorder, bgcolor: theme.palette.action.hover }}>
                                 <Typography variant="body2" fontWeight={700} color="text.primary" sx={{ mb: 1.5 }}>
                                     {t('analizar_doc.cotizante_global_titulo')}
@@ -1512,12 +1507,8 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
                                                     <Stack spacing={0.5}>
                                                         {renderSelectorEspecialidad(idx, sug)}
                                                         {sug.especialidad_id && sug._especialidad_id_edit === sug.especialidad_id && (
-                                                            <Chip
-                                                                label="IA"
-                                                                size="small"
-                                                                icon={<Sparkles size={10} />}
-                                                                sx={{ height: 16, fontSize: 10, bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309', fontWeight: 700, alignSelf: 'flex-start' }}
-                                                            />
+                                                            <Chip label="IA" size="small" icon={<Sparkles size={10} />}
+                                                                sx={{ height: 16, fontSize: 10, bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309', fontWeight: 700, alignSelf: 'flex-start' }} />
                                                         )}
                                                     </Stack>
                                                 </TableCell>
@@ -1590,22 +1581,15 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
                                                 disabled={!sug.seleccionada}
                                                 sx={{ '& .MuiInputBase-root': { fontSize: 13 } }} />
                                         </Stack>
-
-                                        {/* Especialidad */}
                                         <Box sx={{ mb: 1.5 }}>
                                             <Stack spacing={0.5}>
                                                 {renderSelectorEspecialidad(idx, sug)}
                                                 {sug.especialidad_id && sug._especialidad_id_edit === sug.especialidad_id && (
-                                                    <Chip
-                                                        label="Sugerida por IA"
-                                                        size="small"
-                                                        icon={<Sparkles size={10} />}
-                                                        sx={{ height: 16, fontSize: 10, bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309', fontWeight: 700, alignSelf: 'flex-start' }}
-                                                    />
+                                                    <Chip label="Sugerida por IA" size="small" icon={<Sparkles size={10} />}
+                                                        sx={{ height: 16, fontSize: 10, bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309', fontWeight: 700, alignSelf: 'flex-start' }} />
                                                 )}
                                             </Stack>
                                         </Box>
-
                                         <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
                                             <TextField select size="small" fullWidth label={t('analizar_doc.col_unidad')}
                                                 value={sug._unidad_edit}
@@ -1659,26 +1643,37 @@ export const AnalizarDocumentoModal: React.FC<Props> = ({ open, onClose }) => {
                             </Typography>
                         </Box>
 
-                        {fase === 'revision' && (
-                            <Stack direction="row" justifyContent="flex-end" spacing={1}>
-                                <Button variant="outlined" onClick={handleCloseWithConfirm}>{t('analizar_doc.cancelar')}</Button>
-                                <Button
-                                    variant="contained"
-                                    onClick={handleConfirmar}
-                                    disabled={confirmando || sugerencias.filter((s) => s.seleccionada).length === 0 || !cotizantesValidos}
-                                    startIcon={confirmando ? <CircularProgress size={14} color="inherit" /> : <Sparkles size={14} />}
-                                >
-                                    {confirmando
-                                        ? t('analizar_doc.registrando')
-                                        : t('analizar_doc.confirmar', { n: sugerencias.filter((s) => s.seleccionada).length })}
-                                </Button>
-                            </Stack>
-                        )}
+                        <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                            <Button variant="outlined" onClick={handleCloseWithConfirm}>{t('analizar_doc.cancelar')}</Button>
+                            <Button
+                                variant="contained"
+                                onClick={handleConfirmar}
+                                disabled={confirmando || sugerencias.filter((s) => s.seleccionada).length === 0 || !cotizantesValidos}
+                                startIcon={confirmando ? <CircularProgress size={14} color="inherit" /> : <Sparkles size={14} />}
+                            >
+                                {confirmando
+                                    ? t('analizar_doc.registrando')
+                                    : t('analizar_doc.confirmar', { n: sugerencias.filter((s) => s.seleccionada).length })}
+                            </Button>
+                        </Stack>
                     </Stack>
                 )}
             </DialogContent>
         </Dialog>
-    );
+
+        {/* ── Dialog de progreso separado ── */}
+        <Dialog
+            open={fase === 'progreso'}
+            maxWidth="sm"
+            fullWidth
+            PaperProps={{ sx: { borderRadius: 3, overflow: 'hidden' } }}
+        >
+            <Box sx={{ p: 4 }}>
+                <ProgresoOverlay items={progresoItems} />
+            </Box>
+        </Dialog>
+    </>
+);
 };
 
 function fileToBase64(file: File): Promise<string> {
