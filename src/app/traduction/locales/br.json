@@ -238,6 +238,7 @@
     }
   },
   "labores": {
+    "especialidad": "Especialidade",
     "title": "Tarefas",
     "subtitle": "Gestão de tarefas por obra.",
     "subtitle_worker": "Suas tarefas atribuídas.",
@@ -316,6 +317,8 @@
     }
   },
   "labor_form": {
+    "especialidad_heredada": "Especialidade herdada do trabalhador selecionado",
+"sin_especialidad": "Sem especialidade",
     "modo_bloqueado_presupuestos": "O modo não pode ser alterado porque a labor possui orçamentos carregados.",
     "modo_bloqueado_sin_asignar": "O modo não pode ser alterado enquanto a labor estiver Sem atribuição.",
     "nombre": "Nome da tarefa",
@@ -479,6 +482,10 @@
     "proveedor_requerido": "Selecione um fornecedor."
   },
   "analizar_doc": {
+    "col_especialidad": "Especialidade",
+"confirm_cerrar_title": "Fechar sem salvar?",
+"confirm_cerrar_msg": "Se fechar agora, todas as sugestões e alterações serão perdidas.",
+"confirm_cerrar_btn": "Fechar mesmo assim",
     "seleccionar_obra": "Selecione a obra",
 "seleccionar_obra_desc": "As tarefas serão carregadas na obra selecionada.",
 "obra_label": "Obra",

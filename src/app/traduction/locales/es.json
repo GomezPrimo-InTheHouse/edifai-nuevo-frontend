@@ -238,6 +238,7 @@
     }
   },
   "labores": {
+    "especialidad": "Especialidad",
     "title": "Labores",
     "subtitle": "Gestión general de labores y tareas.",
     "subtitle_worker": "Tus labores asignadas.",
@@ -341,6 +342,8 @@
   "ver_detalle": "Ver detalle →"
 },
   "labor_form": {
+    "especialidad_heredada": "Especialidad heredada del trabajador seleccionado",
+"sin_especialidad": "Sin especialidad",
     "modo_bloqueado_presupuestos": "El modo no puede cambiarse porque la labor tiene presupuestos cargados.",
     "modo_bloqueado_sin_asignar": "El modo no puede cambiarse mientras la labor está Sin asignar.",
     "nombre": "Nombre de la labor",
@@ -479,6 +482,10 @@
     "error_crear": "No se pudo registrar el trabajador."
   },
   "analizar_doc": {
+    "col_especialidad": "Especialidad",
+"confirm_cerrar_title": "¿Cerrar sin guardar?",
+"confirm_cerrar_msg": "Si cerrás ahora se perderán todas las sugerencias y cambios realizados.",
+"confirm_cerrar_btn": "Cerrar de todas formas",
     "seleccionar_obra": "Seleccioná la obra",
 "seleccionar_obra_desc": "Las labores se cargarán en la obra seleccionada.",
 "obra_label": "Obra",

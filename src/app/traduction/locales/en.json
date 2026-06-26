@@ -270,6 +270,7 @@
     "error_crear": "Could not register the worker."
   },
   "labores": {
+    "especialidad": "Specialty",
     "title": "Tasks",
     "subtitle": "Task and labor management by project.",
     "subtitle_worker": "Your assigned tasks.",
@@ -435,6 +436,10 @@
     "proveedor_requerido": "Select a provider."
   },
   "analizar_doc": {
+    "col_especialidad": "Specialty",
+"confirm_cerrar_title": "Close without saving?",
+"confirm_cerrar_msg": "If you close now, all suggestions and changes will be lost.",
+"confirm_cerrar_btn": "Close anyway",
     "seleccionar_obra": "Select the project",
 "seleccionar_obra_desc": "Tasks will be loaded into the selected project.",
 "obra_label": "Project",
@@ -477,6 +482,8 @@
     "error_registro": "Error registering labors."
   },
   "labor_form": {
+    "especialidad_heredada": "Specialty inherited from selected worker",
+"sin_especialidad": "No specialty",
     "modo_bloqueado_presupuestos": "Mode cannot be changed because the labor has loaded budgets.",
     "modo_bloqueado_sin_asignar": "Mode cannot be changed while the labor is Unassigned.",
     "nombre": "Task name",

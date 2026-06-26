@@ -256,68 +256,80 @@ export const LaboresListPage = () => {
                   border: `1px solid ${theme.palette.divider}`,
                   boxShadow: 'none',
                 }}>
-                  <Table size="small">
-                    <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.nombre')}</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.obra')}</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.inicio_estimado')}</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.fin_estimado')}</TableCell>
-                        <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.progreso')}</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 700 }}>{t('labores.tabla.acciones')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {paginatedData.map((l) => {
-                        const progreso = getProgreso(l.estado_id);
-                        const color = getProgressColor(progreso);
-                        const obraNombre = tab === 1 ? (l.obra_nombre ?? '-') : getObraNombre(l.obra_id);
-                        return (
-                          <TableRow key={l.id} hover sx={{ opacity: tab === 1 ? 0.8 : 1 }}>
-                            <TableCell>
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2" fontWeight={600}>{l.nombre}</Typography>
-                                {tab === 1 && <Chip label={t('labores.archivada')} size="small" color="warning" variant="outlined" />}
-                              </Box>
-                            </TableCell>
-                            <TableCell><Typography variant="body2">{obraNombre}</Typography></TableCell>
-                            <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
-                            <TableCell><Typography variant="body2">{l.fecha_fin_estimada ? new Date(l.fecha_fin_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
-                            <TableCell sx={{ minWidth: 160 }}>
-                              <Stack spacing={0.5}>
-                                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                  <LaborEstadoChip estadoNombre={getEstadoNombre(l.estado_id)} />
-                                  <Typography variant="caption" fontWeight={700} sx={{ color }}>{progreso}%</Typography>
-                                </Stack>
-                                <LinearProgress
-                                  variant="determinate"
-                                  value={progreso}
-                                  sx={{
-                                    height: 6, borderRadius: 3,
-                                    bgcolor: theme.palette.action.hover,
-                                    '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: color },
-                                  }}
-                                />
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="right">
-                              <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
-                                <IconButton size="small" onClick={() => navigate(`/labores/${l.id}`, {
-                                  state: { breadcrumbLabel: l.nombre }
-                                })}><Eye size={16} /></IconButton>
-                                {!esWorker && tab === 0 && (
-                                  <>
-                                    <IconButton size="small" onClick={() => navigate(`/labores/${l.id}/editar`)}><Pencil size={16} /></IconButton>
-                                    <IconButton size="small" color="error" onClick={() => handleDelete(l.id)} disabled={deleteMutation.isPending}><Trash2 size={16} /></IconButton>
-                                  </>
-                                )}
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
+<Table size="small">
+  <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
+    <TableRow>
+      <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.nombre')}</TableCell>
+      <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.obra')}</TableCell>
+      <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.especialidad')}</TableCell>
+      <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.inicio_estimado')}</TableCell>
+      <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.fin_estimado')}</TableCell>
+      <TableCell sx={{ fontWeight: 700 }}>{t('labores.tabla.progreso')}</TableCell>
+      <TableCell align="right" sx={{ fontWeight: 700 }}>{t('labores.tabla.acciones')}</TableCell>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    {paginatedData.map((l) => {
+      const progreso = getProgreso(l.estado_id);
+      const color = getProgressColor(progreso);
+      const obraNombre = tab === 1 ? (l.obra_nombre ?? '-') : getObraNombre(l.obra_id);
+      return (
+        <TableRow key={l.id} hover sx={{ opacity: tab === 1 ? 0.8 : 1 }}>
+          <TableCell>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" fontWeight={600}>{l.nombre}</Typography>
+              {tab === 1 && <Chip label={t('labores.archivada')} size="small" color="warning" variant="outlined" />}
+            </Box>
+          </TableCell>
+          <TableCell><Typography variant="body2">{obraNombre}</Typography></TableCell>
+          <TableCell>
+            {l.especialidad_nombre ? (
+              <Chip
+                label={l.especialidad_nombre}
+                size="small"
+                sx={{ bgcolor: '#EFF6FF', color: '#1D4ED8', fontWeight: 700, fontSize: 11 }}
+              />
+            ) : (
+              <Typography variant="caption" color="text.disabled">-</Typography>
+            )}
+          </TableCell>
+          <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
+          <TableCell><Typography variant="body2">{l.fecha_fin_estimada ? new Date(l.fecha_fin_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
+          <TableCell sx={{ minWidth: 160 }}>
+            <Stack spacing={0.5}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <LaborEstadoChip estadoNombre={getEstadoNombre(l.estado_id)} />
+                <Typography variant="caption" fontWeight={700} sx={{ color }}>{progreso}%</Typography>
+              </Stack>
+              <LinearProgress
+                variant="determinate"
+                value={progreso}
+                sx={{
+                  height: 6, borderRadius: 3,
+                  bgcolor: theme.palette.action.hover,
+                  '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: color },
+                }}
+              />
+            </Stack>
+          </TableCell>
+          <TableCell align="right">
+            <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
+              <IconButton size="small" onClick={() => navigate(`/labores/${l.id}`, {
+                state: { breadcrumbLabel: l.nombre }
+              })}><Eye size={16} /></IconButton>
+              {!esWorker && tab === 0 && (
+                <>
+                  <IconButton size="small" onClick={() => navigate(`/labores/${l.id}/editar`)}><Pencil size={16} /></IconButton>
+                  <IconButton size="small" color="error" onClick={() => handleDelete(l.id)} disabled={deleteMutation.isPending}><Trash2 size={16} /></IconButton>
+                </>
+              )}
+            </Stack>
+          </TableCell>
+        </TableRow>
+      );
+    })}
+  </TableBody>
+</Table>
                 </Paper>
 
                 {totalPaginas > 1 && (

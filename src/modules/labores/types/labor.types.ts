@@ -288,7 +288,8 @@ export interface LaborSugerencia {
   cantidad: number | null;
   seleccionada: boolean;
   descripcion_completa?: string | null;
-
+  especialidad_id: number | null;       // ← nuevo
+  especialidad_nombre: string | null;   // ← nuevo
   presupuesto: LaborSugerenciaPresupuesto | null;
 }
 
