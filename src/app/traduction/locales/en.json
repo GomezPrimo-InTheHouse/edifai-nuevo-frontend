@@ -238,6 +238,9 @@
     }
   },
   "registrar_trabajador": {
+    "confirm_cerrar_title": "Close without saving?",
+"confirm_cerrar_msg": "If you close now, the entered data will be lost and you will need to register the worker again.",
+"confirm_cerrar_btn": "Close anyway",
     "modo_nuevo": "Register new",
 "modo_vincular": "Link existing",
 "vincular_desc": "Select a worker already registered in the system. This link will be saved for future budgets from this provider.",

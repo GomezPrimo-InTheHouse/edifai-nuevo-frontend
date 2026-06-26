@@ -385,6 +385,9 @@
   "ver_detalle": "Ver detalhe →"
 },
   "registrar_trabajador": {
+    "confirm_cerrar_title": "Fechar sem salvar?",
+"confirm_cerrar_msg": "Se fechar agora, os dados inseridos serão perdidos e você precisará registrar o trabalhador novamente.",
+"confirm_cerrar_btn": "Fechar mesmo assim",
     "modo_nuevo": "Registrar novo",
 "modo_vincular": "Vincular existente",
 "vincular_desc": "Selecione um trabalhador já registrado no sistema. Esta vinculação será salva para futuros orçamentos deste fornecedor.",

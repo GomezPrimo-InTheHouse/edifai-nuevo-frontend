@@ -77,6 +77,16 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
     onClose();
   };
 
+  const handleCloseWithConfirm = async () => {
+  const confirmed = await notify.confirm({
+    title: t('registrar_trabajador.confirm_cerrar_title'),
+    message: t('registrar_trabajador.confirm_cerrar_msg'),
+    confirmLabel: t('registrar_trabajador.confirm_cerrar_btn'),
+    severity: 'warning',
+  });
+  if (confirmed) handleClose();
+};
+
   const invalidarLabor = () => {
     if (laborId) {
       queryClient.invalidateQueries({ queryKey: laboresQueryKeys.detail(laborId) });
@@ -149,14 +159,14 @@ export const RegistrarTrabajadorModal: React.FC<Props> = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleCloseWithConfirm} maxWidth="sm" fullWidth>
       <DialogTitle>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <Stack direction="row" alignItems="center" gap={1}>
             <UserPlus size={18} color="#F59E0B" />
             <Typography variant="h6" fontWeight={700}>{t('registrar_trabajador.titulo')}</Typography>
           </Stack>
-          <IconButton size="small" onClick={handleClose}><X size={18} /></IconButton>
+          <IconButton size="small" onClick={handleCloseWithConfirm}><X size={18} /></IconButton>
         </Stack>
       </DialogTitle>
       <Divider />
