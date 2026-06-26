@@ -4,6 +4,7 @@ import { Chip } from '@mui/material';
 interface Props { estadoNombre?: string; }
 
 const colorMap: Record<string, 'default' | 'info' | 'success' | 'error' | 'warning'> = {
+  'Seleccionado': 'warning',
   'Borrador': 'default',
   'En revisión': 'info',
   'Confirmado': 'success',
