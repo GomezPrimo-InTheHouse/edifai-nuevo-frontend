@@ -479,6 +479,11 @@
     "proveedor_requerido": "Selecione um fornecedor."
   },
   "analizar_doc": {
+    "seleccionar_obra": "Selecione a obra",
+"seleccionar_obra_desc": "As tarefas serão carregadas na obra selecionada.",
+"obra_label": "Obra",
+"continuar": "Continuar",
+"cambiar": "Alterar",
     "cotizante_global_titulo": "Cotizante do documento (aplica-se a todas as labores)",
     "editable_hint": "Os campos são editáveis antes de confirmar",
     "titulo": "Importar labores do documento",

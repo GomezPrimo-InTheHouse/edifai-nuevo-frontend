@@ -435,6 +435,11 @@
     "proveedor_requerido": "Select a provider."
   },
   "analizar_doc": {
+    "seleccionar_obra": "Select the project",
+"seleccionar_obra_desc": "Tasks will be loaded into the selected project.",
+"obra_label": "Project",
+"continuar": "Continue",
+"cambiar": "Change",
     "cotizante_global_titulo": "Document bidder (applies to all labors)",
     "editable_hint": "Fields are editable before confirming",
     "titulo": "Import labors from document",
