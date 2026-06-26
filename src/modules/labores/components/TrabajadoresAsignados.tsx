@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, CardContent, Chip, Grid, IconButton, LinearProgress, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Card, CardContent, Chip, Grid, IconButton, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
 import { User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { LaborEstadoChip } from './LaborEstadoChip';
@@ -33,12 +33,13 @@ export function TrabajadoresAsignados({
   esWorker,
 }: Props) {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   if (laboresConTrabajador.length === 0) return null;
 
   return (
     <Box sx={{ mt: 3 }}>
-      <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: '#64748B' }}>
+      <Typography variant="body2" fontWeight={700} sx={{ mb: 2, color: 'text.secondary' }}>
         TRABAJADORES ASIGNADOS ({laboresConTrabajador.length})
       </Typography>
 
@@ -57,21 +58,27 @@ export function TrabajadoresAsignados({
                 sx={{
                   borderRadius: 3,
                   boxShadow: 'none',
-                  border: '1px solid #E2E8F0',
+                  border: `1px solid ${theme.palette.divider}`,
+                  bgcolor: 'background.paper',
                   cursor: 'pointer',
                   height: '100%',
                   transition: 'all 0.2s',
-                  '&:hover': { borderColor: '#F59E0B', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', transform: 'translateY(-2px)' },
+                  '&:hover': {
+                    borderColor: '#F59E0B',
+                    boxShadow: theme.shadows[2],
+                    transform: 'translateY(-2px)',
+                  },
                 }}
               >
                 <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 1 }} spacing={0.5}>
-                    <Typography variant="body2" fontWeight={700} sx={{ color: '#0F172A', fontSize: 12, lineHeight: 1.3, flex: 1, minWidth: 0 }} noWrap>
+                    <Typography variant="body2" fontWeight={700} color="text.primary" sx={{ fontSize: 12, lineHeight: 1.3, flex: 1, minWidth: 0 }} noWrap>
                       {l.nombre}
                     </Typography>
                     <Box sx={{ display: { xs: 'block', md: 'none' } }}>
                       <LaborEstadoChip estadoNombre={estadoNombre} />
-                    </Box>                  </Stack>
+                    </Box>
+                  </Stack>
 
                   <Box sx={{ mb: 1.5 }}>
                     <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.5 }}>
@@ -82,7 +89,8 @@ export function TrabajadoresAsignados({
                       variant="determinate"
                       value={progreso}
                       sx={{
-                        height: 5, borderRadius: 3, backgroundColor: '#E2E8F0',
+                        height: 5, borderRadius: 3,
+                        bgcolor: theme.palette.action.hover,
                         '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: color },
                       }}
                     />
@@ -98,7 +106,7 @@ export function TrabajadoresAsignados({
                         {trabajador.nombre[0]}{trabajador.apellido[0]}
                       </Avatar>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="body2" fontWeight={600} noWrap sx={{ fontSize: 11 }}>
+                        <Typography variant="body2" fontWeight={600} color="text.primary" noWrap sx={{ fontSize: 11 }}>
                           {trabajador.nombre} {trabajador.apellido}
                         </Typography>
                         <Chip
@@ -113,7 +121,7 @@ export function TrabajadoresAsignados({
                           onClick={(e) => { e.stopPropagation(); navigate(`/trabajadores/${trabajador.id}`); }}
                           sx={{ p: 0.25, flexShrink: 0 }}
                         >
-                          <User size={12} />
+                          <User size={12} color={theme.palette.text.secondary} />
                         </IconButton>
                       )}
                     </Stack>
