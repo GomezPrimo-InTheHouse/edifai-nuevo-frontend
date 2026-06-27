@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import { Popover, Box, Typography, Divider, Switch } from '@mui/material';
-import { Settings, Language, DarkMode, LightMode, Notifications, Dashboard, AttachMoney, OpenInNew } from '@mui/icons-material';
+import { Settings, Language, DarkMode, LightMode, Notifications, Dashboard, AttachMoney } from '@mui/icons-material';
 import { IconButton, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../app/store/auth.store';
 import { useGuardarPreferencias } from '../modules/configuracion/hooks/usePreferencias';
@@ -11,7 +11,7 @@ import type { UserPreferencias, Tema, Idioma, Moneda } from '../modules/configur
 
 export const ConfiguracionPopover: React.FC = () => {
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -176,7 +176,7 @@ export const ConfiguracionPopover: React.FC = () => {
           />
         </Box>
 
-        <Box
+        {/* <Box
           onClick={() => { setAnchor(null); navigate('/configuracion'); }}
           sx={{
             display: 'flex', alignItems: 'center', gap: 1,
@@ -190,7 +190,7 @@ export const ConfiguracionPopover: React.FC = () => {
           <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
             {t('config.ver_completa')}
           </Typography>
-        </Box>
+        </Box> */}
 
       </Popover>
     </>
