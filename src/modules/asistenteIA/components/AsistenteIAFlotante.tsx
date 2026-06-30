@@ -348,6 +348,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { asistenteApi, type MensajeAsistente } from '../../../services/api/asistente.api';
+import { useAsistenteStore } from '../store/useAsistenteStore';
 
 const ROLES_ADMIN = [1, 3, 4, 6, 9];
 
@@ -376,7 +377,8 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const [abierto, setAbierto] = useState(false);
+  // DESPUÉS
+  const { abierto, setAbierto, mensajeInicial, limpiarMensajeInicial } = useAsistenteStore();
   const [input, setInput] = useState('');
   const [sesionId, setSesionId] = useState<number | undefined>();
   const [mensajes, setMensajes] = useState<MensajeAsistente[]>([]);
@@ -396,6 +398,15 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [mensajes]);
+  // Enviar mensaje inicial si viene desde otro componente
+  useEffect(() => {
+    if (abierto && mensajeInicial) {
+      setTimeout(() => {
+        handleEnviar(mensajeInicial);
+        limpiarMensajeInicial();
+      }, 300);
+    }
+  }, [abierto, mensajeInicial]);
 
   useEffect(() => {
     if (abierto) setTimeout(() => inputRef.current?.focus(), 150);
@@ -499,155 +510,155 @@ export const AsistenteIAFlotante: React.FC<AsistenteIAFlotanteProps> = ({ rolId 
   };
 
   const limpiarTexto = (texto: string): string =>
-  texto
-    .replace(/[ÁÀÄÂ]/g, 'A').replace(/[áàäâ]/g, 'a')
-    .replace(/[ÉÈËÊ]/g, 'E').replace(/[éèëê]/g, 'e')
-    .replace(/[ÍÌÏÎ]/g, 'I').replace(/[íìïî]/g, 'i')
-    .replace(/[ÓÒÖÔ]/g, 'O').replace(/[óòöô]/g, 'o')
-    .replace(/[ÚÙÜÛ]/g, 'U').replace(/[úùüû]/g, 'u')
-    .replace(/Ñ/g, 'N').replace(/ñ/g, 'n')
-    .replace(/[^\x00-\x7F]/g, '');
+    texto
+      .replace(/[ÁÀÄÂ]/g, 'A').replace(/[áàäâ]/g, 'a')
+      .replace(/[ÉÈËÊ]/g, 'E').replace(/[éèëê]/g, 'e')
+      .replace(/[ÍÌÏÎ]/g, 'I').replace(/[íìïî]/g, 'i')
+      .replace(/[ÓÒÖÔ]/g, 'O').replace(/[óòöô]/g, 'o')
+      .replace(/[ÚÙÜÛ]/g, 'U').replace(/[úùüû]/g, 'u')
+      .replace(/Ñ/g, 'N').replace(/ñ/g, 'n')
+      .replace(/[^\x00-\x7F]/g, '');
 
-const exportarPDF = (contenido: string) => {
-  const doc  = new jsPDF();
-  const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const exportarPDF = (contenido: string) => {
+    const doc = new jsPDF();
+    const fecha = new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  doc.setFillColor(15, 23, 42);
-  doc.rect(0, 0, 210, 28, 'F');
-  doc.setFontSize(14);
-  doc.setTextColor(245, 158, 11);
-  doc.text('EdifAI — Asistente IA', 14, 12);
-  doc.setFontSize(9);
-  doc.setTextColor(148, 163, 184);
-  doc.text(`Generado: ${fecha}`, 14, 21);
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, 210, 28, 'F');
+    doc.setFontSize(14);
+    doc.setTextColor(245, 158, 11);
+    doc.text('EdifAI — Asistente IA', 14, 12);
+    doc.setFontSize(9);
+    doc.setTextColor(148, 163, 184);
+    doc.text(`Generado: ${fecha}`, 14, 21);
 
-  let cursorY = 36;
-  const lineas = contenido.split('\n');
+    let cursorY = 36;
+    const lineas = contenido.split('\n');
 
-  for (let idx = 0; idx < lineas.length; idx++) {
-    if (cursorY > 270) { doc.addPage(); cursorY = 14; }
+    for (let idx = 0; idx < lineas.length; idx++) {
+      if (cursorY > 270) { doc.addPage(); cursorY = 14; }
 
-    const raw = lineas[idx].trim();
-    if (!raw) { cursorY += 3; continue; }
+      const raw = lineas[idx].trim();
+      if (!raw) { cursorY += 3; continue; }
 
-    if (/^---+$/.test(raw)) {
-      doc.setDrawColor(226, 232, 240);
-      doc.setLineWidth(0.3);
-      doc.line(14, cursorY, 196, cursorY);
-      cursorY += 5;
-      continue;
-    }
-
-    if (raw.startsWith('## ')) {
-      const texto = limpiarTexto(raw.replace(/^##\s+/, '').replace(/[*_`#|]/g, '').trim());
-      doc.setFillColor(30, 58, 95);
-      doc.roundedRect(14, cursorY - 1, 182, 8, 1, 1, 'F');
-      doc.setFontSize(10);
-      doc.setTextColor(245, 158, 11);
-      doc.setFont('helvetica', 'bold');
-      doc.text(texto, 17, cursorY + 5);
-      doc.setFont('helvetica', 'normal');
-      cursorY += 12;
-      continue;
-    }
-
-    if (raw.startsWith('### ')) {
-      const texto = limpiarTexto(raw.replace(/^###\s+/, '').replace(/[*_`#]/g, '').trim());
-      doc.setFontSize(10);
-      doc.setTextColor(239, 68, 68);
-      doc.setFont('helvetica', 'bold');
-      doc.text(texto, 14, cursorY);
-      doc.setFont('helvetica', 'normal');
-      cursorY += 7;
-      continue;
-    }
-
-    if (raw.startsWith('|')) {
-      const filasMd: string[] = [];
-      let i = idx;
-      while (i < lineas.length && lineas[i].trim().startsWith('|')) {
-        filasMd.push(lineas[i].trim());
-        i++;
+      if (/^---+$/.test(raw)) {
+        doc.setDrawColor(226, 232, 240);
+        doc.setLineWidth(0.3);
+        doc.line(14, cursorY, 196, cursorY);
+        cursorY += 5;
+        continue;
       }
 
-      const parseFila = (f: string) =>
-        f.split('|')
-          .slice(1, -1)
-          .map(c => limpiarTexto(c.replace(/[*_`]/g, '').trim()));
-
-      const separadorIdx = filasMd.findIndex(f => /^\|[\s\-|]+\|$/.test(f));
-      if (separadorIdx !== -1) {
-        const head = [parseFila(filasMd[0])];
-        const body = filasMd.slice(separadorIdx + 1).map(parseFila);
-
-        if (cursorY > 240) { doc.addPage(); cursorY = 14; }
-
-        autoTable(doc, {
-          startY: cursorY,
-          head,
-          body,
-          styles:             { fontSize: 8, cellPadding: 2.5, overflow: 'linebreak' },
-          headStyles:         { fillColor: [30, 58, 95], textColor: [248, 250, 252], fontStyle: 'bold' },
-          alternateRowStyles: { fillColor: [248, 250, 252] },
-          margin:             { left: 14, right: 14 },
-        });
-
-        cursorY = (doc as any).lastAutoTable.finalY + 6;
-        // Marcar filas procesadas
-        for (let k = idx + 1; k < idx + filasMd.length; k++) lineas[k] = '';
-        idx += filasMd.length - 1;
+      if (raw.startsWith('## ')) {
+        const texto = limpiarTexto(raw.replace(/^##\s+/, '').replace(/[*_`#|]/g, '').trim());
+        doc.setFillColor(30, 58, 95);
+        doc.roundedRect(14, cursorY - 1, 182, 8, 1, 1, 'F');
+        doc.setFontSize(10);
+        doc.setTextColor(245, 158, 11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(texto, 17, cursorY + 5);
+        doc.setFont('helvetica', 'normal');
+        cursorY += 12;
+        continue;
       }
-      continue;
-    }
 
-    if (raw.startsWith('- ') || raw.startsWith('* ')) {
-      const texto = limpiarTexto(raw.slice(2).replace(/\*\*(.*?)\*\*/g, '$1').replace(/[*_`]/g, '').trim());
-      const wrapped = doc.splitTextToSize(`• ${texto}`, 174);
+      if (raw.startsWith('### ')) {
+        const texto = limpiarTexto(raw.replace(/^###\s+/, '').replace(/[*_`#]/g, '').trim());
+        doc.setFontSize(10);
+        doc.setTextColor(239, 68, 68);
+        doc.setFont('helvetica', 'bold');
+        doc.text(texto, 14, cursorY);
+        doc.setFont('helvetica', 'normal');
+        cursorY += 7;
+        continue;
+      }
+
+      if (raw.startsWith('|')) {
+        const filasMd: string[] = [];
+        let i = idx;
+        while (i < lineas.length && lineas[i].trim().startsWith('|')) {
+          filasMd.push(lineas[i].trim());
+          i++;
+        }
+
+        const parseFila = (f: string) =>
+          f.split('|')
+            .slice(1, -1)
+            .map(c => limpiarTexto(c.replace(/[*_`]/g, '').trim()));
+
+        const separadorIdx = filasMd.findIndex(f => /^\|[\s\-|]+\|$/.test(f));
+        if (separadorIdx !== -1) {
+          const head = [parseFila(filasMd[0])];
+          const body = filasMd.slice(separadorIdx + 1).map(parseFila);
+
+          if (cursorY > 240) { doc.addPage(); cursorY = 14; }
+
+          autoTable(doc, {
+            startY: cursorY,
+            head,
+            body,
+            styles: { fontSize: 8, cellPadding: 2.5, overflow: 'linebreak' },
+            headStyles: { fillColor: [30, 58, 95], textColor: [248, 250, 252], fontStyle: 'bold' },
+            alternateRowStyles: { fillColor: [248, 250, 252] },
+            margin: { left: 14, right: 14 },
+          });
+
+          cursorY = (doc as any).lastAutoTable.finalY + 6;
+          // Marcar filas procesadas
+          for (let k = idx + 1; k < idx + filasMd.length; k++) lineas[k] = '';
+          idx += filasMd.length - 1;
+        }
+        continue;
+      }
+
+      if (raw.startsWith('- ') || raw.startsWith('* ')) {
+        const texto = limpiarTexto(raw.slice(2).replace(/\*\*(.*?)\*\*/g, '$1').replace(/[*_`]/g, '').trim());
+        const wrapped = doc.splitTextToSize(`• ${texto}`, 174);
+        doc.setFontSize(9);
+        doc.setTextColor(51, 65, 85);
+        doc.setFont('helvetica', 'normal');
+        doc.text(wrapped, 18, cursorY);
+        cursorY += wrapped.length * 5 + 1;
+        continue;
+      }
+
+      if (/^\*\*.*\*\*/.test(raw)) {
+        const texto = limpiarTexto(raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/[*_`]/g, '').trim());
+        if (!texto) continue;
+        doc.setFontSize(9);
+        doc.setTextColor(15, 23, 42);
+        doc.setFont('helvetica', 'bold');
+        const wrapped = doc.splitTextToSize(texto, 182);
+        doc.text(wrapped, 14, cursorY);
+        doc.setFont('helvetica', 'normal');
+        cursorY += wrapped.length * 5 + 2;
+        continue;
+      }
+
+      const textoLimpio = limpiarTexto(
+        raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/[*_`#|]/g, '').trim()
+      );
+      if (!textoLimpio) continue;
+
       doc.setFontSize(9);
       doc.setTextColor(51, 65, 85);
       doc.setFont('helvetica', 'normal');
-      doc.text(wrapped, 18, cursorY);
-      cursorY += wrapped.length * 5 + 1;
-      continue;
-    }
-
-    if (/^\*\*.*\*\*/.test(raw)) {
-      const texto = limpiarTexto(raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/[*_`]/g, '').trim());
-      if (!texto) continue;
-      doc.setFontSize(9);
-      doc.setTextColor(15, 23, 42);
-      doc.setFont('helvetica', 'bold');
-      const wrapped = doc.splitTextToSize(texto, 182);
+      const wrapped = doc.splitTextToSize(textoLimpio, 182);
       doc.text(wrapped, 14, cursorY);
-      doc.setFont('helvetica', 'normal');
       cursorY += wrapped.length * 5 + 2;
-      continue;
     }
 
-    const textoLimpio = limpiarTexto(
-      raw.replace(/\*\*(.*?)\*\*/g, '$1').replace(/[*_`#|]/g, '').trim()
-    );
-    if (!textoLimpio) continue;
+    const totalPaginas = (doc as any).internal.getNumberOfPages();
+    for (let p = 1; p <= totalPaginas; p++) {
+      doc.setPage(p);
+      doc.setFontSize(7);
+      doc.setTextColor(148, 163, 184);
+      doc.text(`EdifAI · Pagina ${p} de ${totalPaginas}`, 14, 290);
+      doc.text(fecha, 170, 290);
+    }
 
-    doc.setFontSize(9);
-    doc.setTextColor(51, 65, 85);
-    doc.setFont('helvetica', 'normal');
-    const wrapped = doc.splitTextToSize(textoLimpio, 182);
-    doc.text(wrapped, 14, cursorY);
-    cursorY += wrapped.length * 5 + 2;
-  }
-
-  const totalPaginas = (doc as any).internal.getNumberOfPages();
-  for (let p = 1; p <= totalPaginas; p++) {
-    doc.setPage(p);
-    doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
-    doc.text(`EdifAI · Pagina ${p} de ${totalPaginas}`, 14, 290);
-    doc.text(fecha, 170, 290);
-  }
-
-  doc.save(`asistente-edifai-${Date.now()}.pdf`);
-};
+    doc.save(`asistente-edifai-${Date.now()}.pdf`);
+  };
 
   const hayMensajes = mensajes.length > 0;
 
@@ -918,8 +929,8 @@ const exportarPDF = (contenido: string) => {
       </Collapse>
 
       <Fab
-        onClick={() => setAbierto((p) => !p)}
-        sx={{
+        onClick={() => setAbierto(!abierto)}
+         sx={{
           position: 'fixed',
           bottom: { xs: 'calc(16px + env(safe-area-inset-bottom))', sm: 24 },
           right: { xs: 16, sm: 24 },
