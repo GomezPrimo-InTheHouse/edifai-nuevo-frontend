@@ -6,29 +6,35 @@ import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { LaborForm } from '../components/LaborForm';
 import { useCreateLabor } from '../hooks/useLabores';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import type { LaborFormValues } from '../types/labor.types';
 
 export const LaborCreatePage: React.FC = () => {
   const navigate = useNavigate();
+  const notify = useNotify();
   const [searchParams] = useSearchParams();
   const obraIdFijo = searchParams.get('obra_id') ? Number(searchParams.get('obra_id')) : undefined;
   const createMutation = useCreateLabor();
 
-const handleSubmit = async (values: LaborFormValues) => {
-    console.log('VALUES:', JSON.stringify(values)); // ← 
-
-  const payload = {
-    ...values,
-    trabajador_id: values.trabajador_id === '' ? null : values.trabajador_id,
-    especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
-    estado_id: values.estado_id === '' ? null : values.estado_id,
-    obra_id: values.obra_id === '' ? null : values.obra_id,
-    fecha_inicio_real: values.fecha_inicio_real === '' ? null : values.fecha_inicio_real,
-    fecha_fin_real: values.fecha_fin_real === '' ? null : values.fecha_fin_real,
+  const handleSubmit = async (values: LaborFormValues) => {
+    const payload = {
+      ...values,
+      trabajador_id: values.trabajador_id === '' ? null : values.trabajador_id,
+      especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
+      estado_id: values.estado_id === '' ? null : values.estado_id,
+      obra_id: values.obra_id === '' ? null : values.obra_id,
+      costo_estimado: values.costo_estimado === '' ? null : values.costo_estimado,
+      fecha_inicio_real: values.fecha_inicio_real === '' ? null : values.fecha_inicio_real,
+      fecha_fin_real: values.fecha_fin_real === '' ? null : values.fecha_fin_real,
+    };
+    try {
+      await createMutation.mutateAsync(payload as any);
+      notify.success('Labor creada correctamente.');
+      navigate(obraIdFijo ? `/labores?obra_id=${obraIdFijo}` : '/labores');
+    } catch {
+      notify.error('No se pudo crear la labor.');
+    }
   };
-  await createMutation.mutateAsync(payload as any);
-  navigate(obraIdFijo ? `/labores?obra_id=${obraIdFijo}` : '/labores');
-};
 
   return (
     <AppLayout>

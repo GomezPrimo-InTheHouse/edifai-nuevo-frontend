@@ -2239,13 +2239,15 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
               <Grid size={{ xs: 12, md: 6 }}>
                 <Controller name="fecha_inicio_estimada" control={control} render={({ field }) => (
                   <TextField {...field} fullWidth type="date" label={t('labor_form.inicio_estimado')}
-                    InputLabelProps={{ shrink: true }} />
+                    InputLabelProps={{ shrink: true }}
+                    error={!!errors.fecha_inicio_estimada} helperText={errors.fecha_inicio_estimada?.message ?? ''} />
                 )} />
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Controller name="fecha_fin_estimada" control={control} render={({ field }) => (
                   <TextField {...field} fullWidth type="date" label={t('labor_form.fin_estimado')}
-                    InputLabelProps={{ shrink: true }} />
+                    InputLabelProps={{ shrink: true }}
+                    error={!!errors.fecha_fin_estimada} helperText={errors.fecha_fin_estimada?.message ?? ''} />
                 )} />
               </Grid>
               {initialData && (
@@ -2261,13 +2263,15 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Controller name="fecha_inicio_real" control={control} render={({ field }) => (
                       <TextField {...field} fullWidth type="date" label={t('labor_form.inicio_real')}
-                        InputLabelProps={{ shrink: true }} />
+                        InputLabelProps={{ shrink: true }}
+                        error={!!errors.fecha_inicio_real} helperText={errors.fecha_inicio_real?.message ?? ''} />
                     )} />
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Controller name="fecha_fin_real" control={control} render={({ field }) => (
                       <TextField {...field} fullWidth type="date" label={t('labor_form.fin_real')}
-                        InputLabelProps={{ shrink: true }} />
+                        InputLabelProps={{ shrink: true }}
+                        error={!!errors.fecha_fin_real} helperText={errors.fecha_fin_real?.message ?? ''} />
                     )} />
                   </Grid>
                 </>

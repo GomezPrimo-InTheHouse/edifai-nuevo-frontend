@@ -24,6 +24,26 @@ export const laborSchema = z.object({
       path: ['trabajador_id'],
     });
   }
+
+  if (data.fecha_inicio_estimada && data.fecha_fin_estimada) {
+    if (new Date(data.fecha_fin_estimada) < new Date(data.fecha_inicio_estimada)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'La fecha de fin estimada no puede ser anterior a la fecha de inicio',
+        path: ['fecha_fin_estimada'],
+      });
+    }
+  }
+
+  if (data.fecha_inicio_real && data.fecha_fin_real) {
+    if (new Date(data.fecha_fin_real) < new Date(data.fecha_inicio_real)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'La fecha de fin real no puede ser anterior a la fecha de inicio',
+        path: ['fecha_fin_real'],
+      });
+    }
+  }
 });
 
 export type LaborSchemaValues = z.infer<typeof laborSchema>;
