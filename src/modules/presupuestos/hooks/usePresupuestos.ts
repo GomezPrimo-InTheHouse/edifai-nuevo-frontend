@@ -73,3 +73,23 @@ export function usePresupuestosArchivados() {
     queryFn: () => presupuestoApi.getAllArchivados(),
   });
 }
+
+export function usePresupuestoByLabor(labor_id: number) {
+  return useQuery({
+    queryKey: ['presupuestos', 'by-labor', labor_id] as const,
+    queryFn: () => presupuestoApi.getByLaborId(labor_id),
+    enabled: Boolean(labor_id),
+  });
+}
+
+export function useAnularPresupuesto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, motivo }: { id: number | string; motivo: string }) =>
+      presupuestoApi.anular(id, motivo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: presupuestosQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['labores'] });
+    },
+  });
+}

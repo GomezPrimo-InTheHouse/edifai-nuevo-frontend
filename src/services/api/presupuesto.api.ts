@@ -26,6 +26,15 @@ export const presupuestoApi = {
   return response.data.data;
 },
 
+async anular(id: number | string, motivo: string): Promise<void> {
+  await httpClient.put(`${baseUrl}/anular/${id}`, { motivo });
+},
+
+async getByLaborId(laborId: number): Promise<Presupuesto | null> {
+  const all = await this.getAll();
+  return all.find((p) => p.labor_id === laborId) ?? null;
+},
+
   async remove(id: number | string): Promise<void> {
     await httpClient.delete(`${baseUrl}/delete/${id}`);
   },

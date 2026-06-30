@@ -26,6 +26,7 @@ import { AvancesLabor } from '../components/AvancesLabor';
 import { useAuthStore } from '../../../app/store/auth.store';
 import { useLocation } from 'react-router-dom';
 import { LaborPresupuestosPanel } from '../components/LaboresPresupuestosPanel';
+import { PresupuestoConfirmadoCard } from '../components/PresupuestoConfirmadoCard';
 
 const ROLES_ADMIN = [1, 3, 4, 6, 9];
 
@@ -328,6 +329,8 @@ export const LaborDetailPage: React.FC = () => {
           onPresupuestoConfirmado={refetch}
         />
       )}
+    
+    <PresupuestoConfirmadoCard labor_id={laborId} esAdmin={esAdmin} />
     </AppLayout>
   );
 };

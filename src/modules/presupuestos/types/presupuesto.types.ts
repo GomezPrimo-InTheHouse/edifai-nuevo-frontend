@@ -111,3 +111,31 @@ export interface PresupuestoContextoPago {
     unidad?: string | null;
   }[];
 }
+
+export type EstadoConfirmacion = 'confirmado' | 'anulado' | 'reemplazado';
+
+export interface Presupuesto {
+  id: number;
+  nombre?: string | null;
+  descripcion?: string | null;
+  labor_id: number;
+  obra_id?: number | null;
+  obra_nombre?: string | null;
+  estado_id?: number | null;
+  total_estimado?: number | null;
+  costo_mano_obra?: number | null;
+  precio_unitario?: number | null;
+  cantidad?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  estado_confirmacion?: EstadoConfirmacion | null;
+  anulado_por?: number | null;
+  anulado_at?: string | null;
+  motivo_anulacion?: string | null;
+  reemplazado_por?: number | null;
+  trabajador_id?: number | null;
+  jefe_nombre?: string | null;
+  jefe_apellido?: string | null;
+  jefe_especialidad?: string | null;
+  equipo?: PresupuestoMiembro[];
+}
