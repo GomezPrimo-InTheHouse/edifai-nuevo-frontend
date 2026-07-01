@@ -1,7 +1,5 @@
-// ── Modo de labor ─────────────────────────────────────────────
 export type LaborModo = 'rapido' | 'cotizacion';
 
-// ── Unidad de medida ──────────────────────────────────────────
 export interface UnidadMedida {
   id: number;
   nombre: string;
@@ -9,7 +7,6 @@ export interface UnidadMedida {
   descripcion?: string | null;
 }
 
-// ── Labor ─────────────────────────────────────────────────────
 export interface Labor {
   id: number;
   nombre: string;
@@ -33,6 +30,9 @@ export interface Labor {
   trabajador_nombre?: string | null;
   trabajador_apellido?: string | null;
   especialidad_nombre?: string | null;
+  sector_id?: number | null;
+  sector_tipo?: string | null;
+  sector_valor?: string | null;
 }
 
 export interface LaborFormValues {
@@ -51,6 +51,7 @@ export interface LaborFormValues {
   fecha_inicio_real: string;
   fecha_fin_real: string;
   usuario_creador_id: number;
+  sector_id?: number | '' | null;
 }
 
 export interface CreateLaborPayload {
@@ -67,6 +68,7 @@ export interface CreateLaborPayload {
   fecha_inicio_estimada?: string | null;
   fecha_fin_estimada?: string | null;
   usuario_creador_id: number;
+  sector_id?: number | null;
 }
 
 export interface UpdateLaborPayload extends CreateLaborPayload {
@@ -89,9 +91,11 @@ export interface LaborDeObra {
   fecha_fin_estimada?: string | null;
   fecha_inicio_real?: string | null;
   fecha_fin_real?: string | null;
+  sector_id?: number | null;
+  sector_tipo?: string | null;
+  sector_valor?: string | null;
 }
 
-// ── Proveedores externos ──────────────────────────────────────
 export interface ProveedorExterno {
   id: number;
   nombre: string;
@@ -109,7 +113,6 @@ export interface CreateProveedorExternoPayload {
   cuit?: string | null;
 }
 
-// ── Presupuestos de labor ─────────────────────────────────────
 export type LaborPresupuestoEstado = 'pendiente' | 'seleccionado' | 'no_seleccionado';
 export type LaborPresupuestoCalidad = 'alta' | 'media' | 'baja';
 
@@ -144,7 +147,6 @@ export interface CreateLaborPresupuestoPayload {
   notificar_trabajador?: boolean;
 }
 
-// ── IA — Análisis de documento ────────────────────────────────
 export interface LaborSugerenciaPresupuesto {
   cotizante_nombre: string | null;
   precio_unitario: number | null;

@@ -16,6 +16,8 @@ export const laborSchema = z.object({
   fecha_inicio_real: z.string().optional().or(z.literal('')),
   fecha_fin_real: z.string().optional().or(z.literal('')),
   usuario_creador_id: z.number(),
+  sector_id: z.union([z.number().positive(), z.literal('')]).optional(),
+  
 }).superRefine((data, ctx) => {
   if (data.modo === 'rapido' && !data.trabajador_id) {
     ctx.addIssue({

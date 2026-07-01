@@ -24,14 +24,15 @@ export const LaborEditPage: React.FC = () => {
   const handleSubmit = async (values: LaborFormValues) => {
     const payload = {
       ...values,
-      id: laborId,
-      trabajador_id: values.trabajador_id === '' ? null : values.trabajador_id,
-      especialidad_id: values.especialidad_id === '' ? null : values.especialidad_id,
-      estado_id: values.estado_id === '' ? null : values.estado_id,
-      obra_id: values.obra_id === '' ? null : values.obra_id,
-      costo_estimado: values.costo_estimado === '' ? null : values.costo_estimado,
+      id:               laborId,
+      trabajador_id:    values.trabajador_id    === '' ? null : values.trabajador_id,
+      especialidad_id:  values.especialidad_id  === '' ? null : values.especialidad_id,
+      estado_id:        values.estado_id        === '' ? null : values.estado_id,
+      obra_id:          values.obra_id          === '' ? null : values.obra_id,
+      costo_estimado:   values.costo_estimado   === '' ? null : values.costo_estimado,
       fecha_inicio_real: values.fecha_inicio_real === '' ? null : values.fecha_inicio_real,
-      fecha_fin_real: values.fecha_fin_real === '' ? null : values.fecha_fin_real,
+      fecha_fin_real:   values.fecha_fin_real   === '' ? null : values.fecha_fin_real,
+      sector_id:        values.sector_id === '' || values.sector_id == null ? null : values.sector_id,
     };
     try {
       await updateMutation.mutateAsync(payload as any);
