@@ -1,10 +1,12 @@
+import type { SectorTipo } from './sector.types';
+
 export interface Obra {
   id: number;
   nombre: string;
   descripcion?: string | null;
   ubicacion?: string | null;
-  latitud?: number | null;              
-  longitud?: number | null;             
+  latitud?: number | null;
+  longitud?: number | null;
   tipo_obra_id?: number | null;
   estado_id?: number | null;
   cliente_id?: number | null;
@@ -15,15 +17,15 @@ export interface Obra {
   usuario_creador_id: number;
   created_at?: string | null;
   updated_at?: string | null;
-archivado?: boolean;
+  archivado?: boolean;
 }
 
 export interface ObraFormValues {
   nombre: string;
   descripcion: string;
   ubicacion: string;
-  latitud: number | null;               
-  longitud: number | null;              
+  latitud: number | null;
+  longitud: number | null;
   tipo_obra_id: number | '';
   estado_id: number | '';
   cliente_id: number | '' | null;
@@ -32,6 +34,8 @@ export interface ObraFormValues {
   fecha_inicio_real: string;
   fecha_fin_real: string;
   usuario_creador_id: number;
+  // Solo se usa en creación; en edición los sectores se persisten en tiempo real
+  sectores?: { tipo: SectorTipo; valor: string; orden?: number }[];
 }
 
 export interface TipoObraOption {
@@ -62,8 +66,8 @@ export interface CreateObraPayload {
   nombre: string;
   descripcion?: string | null;
   ubicacion?: string | null;
-  latitud?: number | null;              // ← nuevo
-  longitud?: number | null;             // ← nuevo
+  latitud?: number | null;
+  longitud?: number | null;
   tipo_obra_id?: number | null;
   estado_id?: number | null;
   cliente_id?: number | null;
@@ -72,8 +76,10 @@ export interface CreateObraPayload {
   fecha_inicio_real?: string | null;
   fecha_fin_real?: string | null;
   usuario_creador_id: number;
+  // No se manda al backend de obras; se manda por separado a /sectores/bulk
+  sectores?: { tipo: SectorTipo; valor: string; orden?: number }[];
 }
 
-export interface UpdateObraPayload extends CreateObraPayload {
+export interface UpdateObraPayload extends Omit<CreateObraPayload, 'sectores'> {
   id: number;
 }

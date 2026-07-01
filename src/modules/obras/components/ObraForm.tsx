@@ -1,11 +1,10 @@
-
 import { useEffect, useState } from 'react';
 import {
-  Box, Button, Grid, IconButton, InputAdornment,
+  Box, Button, Chip, Grid, IconButton, InputAdornment,
   MenuItem, Paper, Stack, TextField, Tooltip, Typography,
   useTheme,
 } from '@mui/material';
-import { MapPin, X } from 'lucide-react';
+import { MapPin, Plus, X } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +14,19 @@ import type {
   ClienteOption, EstadoOption, Obra, ObraFormValues, TipoObraOption,
 } from '../types/obra.types';
 import { MapPickerModal, type MapPickerResult } from './MapPickerModal';
+import {
+  SECTOR_TIPOS_OPTIONS,
+  nombreCompletoSector,
+  type SectorTipo,
+} from '../types/sector.types';
+import { useCreateSector, useDeleteSector, useSectoresPorObra } from '../hooks/useSectores';
+import { useNotify } from '../../../shared/hooks/useNotify';
+
+interface SectorLocal {
+  tipo: SectorTipo;
+  valor: string;
+  orden: number;
+}
 
 interface ObraFormProps {
   initialData?:  Obra | null;
@@ -39,7 +51,7 @@ function toFormDefaults(initialData?: Obra | null): ObraFormValues {
     longitud:              initialData?.longitud != null ? Number(initialData.longitud) : null,
     tipo_obra_id:          initialData?.tipo_obra_id          ?? '',
     estado_id:             initialData?.estado_id             ?? '',
-    cliente_id:            initialData?.cliente_id            ?? null,  // ← null en vez de ''
+    cliente_id:            initialData?.cliente_id            ?? null,
     fecha_inicio_estimado: toDateInput(initialData?.fecha_inicio_estimado),
     fecha_fin_estimado:    toDateInput(initialData?.fecha_fin_estimado),
     fecha_inicio_real:     toDateInput(initialData?.fecha_inicio_real),
@@ -56,10 +68,71 @@ function clienteLabel(c: ClienteOption): string {
 export function ObraForm({
   initialData, tiposObra, estados, clientes, onSubmit, isSubmitting = false,
 }: ObraFormProps) {
-  const theme = useTheme();
-  const { t } = useTranslation();
+  const theme   = useTheme();
+  const { t }   = useTranslation();
+  const notify  = useNotify();
   const [mapOpen, setMapOpen] = useState(false);
 
+  // ── Modo edición vs creación ──────────────────────────────────
+  const obraId     = initialData?.id ?? null;
+  const isEditMode = obraId !== null;
+
+  // ── Sectores: estado local (solo para creación) ───────────────
+  const [sectoresLocales, setSectoresLocales] = useState<SectorLocal[]>([]);
+
+  // ── Sectores: API (solo para edición) ────────────────────────
+  const sectoresQuery          = useSectoresPorObra(obraId ?? 0);
+  const crearSectorMutation    = useCreateSector(obraId ?? 0);
+  const eliminarSectorMutation = useDeleteSector(obraId ?? 0);
+
+  // ── Mini-form de sectores ─────────────────────────────────────
+  const [nuevoTipo,  setNuevoTipo]  = useState<SectorTipo>('piso');
+  const [nuevoValor, setNuevoValor] = useState('');
+
+  const handleAgregarSector = () => {
+    const valor = nuevoValor.trim();
+    if (!valor) return;
+
+    if (isEditMode) {
+      crearSectorMutation.mutate(
+        { tipo: nuevoTipo, valor, orden: sectoresQuery.data?.length ?? 0 },
+        {
+          onError: (err: unknown) => {
+            const msg = (err as { response?: { data?: { message?: string } } })
+              ?.response?.data?.message ?? 'Error al agregar el sector';
+            notify.error(msg);
+          },
+        }
+      );
+    } else {
+      setSectoresLocales((prev: SectorLocal[]) => [
+        ...prev,
+        { tipo: nuevoTipo, valor, orden: prev.length },
+      ]);
+    }
+
+    setNuevoValor('');
+  };
+
+  const handleEliminarSector = (index: number, sectorId?: number) => {
+    if (isEditMode && sectorId !== undefined) {
+      eliminarSectorMutation.mutate(sectorId, {
+        onError: (err: unknown) => {
+          const msg = (err as { response?: { data?: { message?: string } } })
+            ?.response?.data?.message ?? 'Error al eliminar el sector';
+          notify.error(msg);
+        },
+      });
+    } else {
+      setSectoresLocales((prev: SectorLocal[]) => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const sectoresMostrar: SectorLocal[] = isEditMode
+    ? (sectoresQuery.data ?? [])
+    : sectoresLocales;
+
+  // ── Form principal ────────────────────────────────────────────
   const { control, handleSubmit, reset, setValue, watch, formState: { errors } } =
     useForm<ObraSchemaValues>({
       resolver: zodResolver(obraSchema),
@@ -92,19 +165,20 @@ export function ObraForm({
     setValue('longitud',  null);
   };
 
-const handleFormSubmit = (values: ObraSchemaValues) => {
-  const sanitized = {
-    ...values,
-    cliente_id:            values.cliente_id            || null,
-    tipo_obra_id:          values.tipo_obra_id          || null,
-    estado_id:             values.estado_id             || null,
-    fecha_inicio_estimado: values.fecha_inicio_estimado || null,
-    fecha_fin_estimado:    values.fecha_fin_estimado    || null,
-    fecha_inicio_real:     values.fecha_inicio_real     || null,
-    fecha_fin_real:        values.fecha_fin_real        || null,
+  const handleFormSubmit = (values: ObraSchemaValues) => {
+    const sanitized: ObraFormValues = {
+      ...(values as unknown as ObraFormValues),
+      cliente_id:            (values as unknown as ObraFormValues).cliente_id || null,
+      tipo_obra_id:          (values as unknown as ObraFormValues).tipo_obra_id || '',
+      estado_id:             (values as unknown as ObraFormValues).estado_id || '',
+      fecha_inicio_estimado: (values as unknown as ObraFormValues).fecha_inicio_estimado || '',
+      fecha_fin_estimado:    (values as unknown as ObraFormValues).fecha_fin_estimado || '',
+      fecha_inicio_real:     (values as unknown as ObraFormValues).fecha_inicio_real || '',
+      fecha_fin_real:        (values as unknown as ObraFormValues).fecha_fin_real || '',
+      sectores: isEditMode ? undefined : sectoresLocales,
+    };
+    onSubmit(sanitized);
   };
-  onSubmit(sanitized as unknown as ObraFormValues);
-};
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3 }}>
@@ -187,7 +261,9 @@ const handleFormSubmit = (values: ObraSchemaValues) => {
                 error={!!errors.tipo_obra_id} helperText={errors.tipo_obra_id?.message ?? ''}
               >
                 <MenuItem value="">{t('obras.form.seleccionar')}</MenuItem>
-                {tiposObra.map((t) => <MenuItem key={t.id} value={t.id}>{t.nombre}</MenuItem>)}
+                {tiposObra.map((tipo) => (
+                  <MenuItem key={tipo.id} value={tipo.id}>{tipo.nombre}</MenuItem>
+                ))}
               </TextField>
             )} />
           </Grid>
@@ -202,7 +278,9 @@ const handleFormSubmit = (values: ObraSchemaValues) => {
                 error={!!errors.estado_id} helperText={errors.estado_id?.message ?? ''}
               >
                 <MenuItem value="">{t('obras.form.seleccionar')}</MenuItem>
-                {estados.map((e) => <MenuItem key={e.id} value={e.id}>{e.nombre}</MenuItem>)}
+                {estados.map((estado) => (
+                  <MenuItem key={estado.id} value={estado.id}>{estado.nombre}</MenuItem>
+                ))}
               </TextField>
             )} />
           </Grid>
@@ -286,6 +364,95 @@ const handleFormSubmit = (values: ObraSchemaValues) => {
                 helperText={errors.fecha_fin_real?.message ?? ''}
               />
             )} />
+          </Grid>
+
+          {/* ── Estructura de la obra (Sectores) ───────────────────── */}
+          <Grid size={{ xs: 12 }}>
+            <Box sx={{
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 2,
+              p: 2,
+              bgcolor: 'background.paper',
+            }}>
+              <Typography variant="caption" fontWeight={700}
+                sx={{
+                  color: 'text.secondary',
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  mb: 2,
+                  display: 'block',
+                }}>
+                Estructura de la obra
+              </Typography>
+
+              {/* Mini-form */}
+              <Stack direction="row" spacing={1} sx={{ mb: 2 }} alignItems="flex-start">
+                <TextField
+                  select
+                  size="small"
+                  label="Tipo"
+                  value={nuevoTipo}
+                  onChange={(e) => setNuevoTipo(e.target.value as SectorTipo)}
+                  sx={{ minWidth: 120 }}
+                >
+                  {SECTOR_TIPOS_OPTIONS.map((op) => (
+                    <MenuItem key={op.value} value={op.value}>{op.label}</MenuItem>
+                  ))}
+                </TextField>
+
+                <TextField
+                  size="small"
+                  label="Valor"
+                  placeholder="ej: 2, Norte, A"
+                  value={nuevoValor}
+                  onChange={(e) => setNuevoValor(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAgregarSector();
+                    }
+                  }}
+                  sx={{ flex: 1 }}
+                />
+
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleAgregarSector}
+                  disabled={!nuevoValor.trim() || crearSectorMutation.isPending}
+                  startIcon={<Plus size={14} />}
+                  sx={{ whiteSpace: 'nowrap', height: 40 }}
+                >
+                  Agregar
+                </Button>
+              </Stack>
+
+              {/* Lista de sectores */}
+              {isEditMode && sectoresQuery.isLoading ? (
+                <Typography variant="body2" sx={{ color: 'text.disabled' }}>
+                  Cargando sectores...
+                </Typography>
+              ) : sectoresMostrar.length === 0 ? (
+                <Typography variant="body2" sx={{ color: 'text.disabled' }}>
+                  Sin sectores definidos. Podés agregarlos ahora o después.
+                </Typography>
+              ) : (
+                <Stack direction="row" flexWrap="wrap" gap={1}>
+                  {sectoresMostrar.map((s, idx) => (
+                    <Chip
+                      key={'id' in s ? (s as { id: number }).id : idx}
+                      label={nombreCompletoSector(s)}
+                      onDelete={() =>
+                        handleEliminarSector(idx, 'id' in s ? (s as { id: number }).id : undefined)
+                      }
+                      size="small"
+                      disabled={eliminarSectorMutation.isPending}
+                      sx={{ bgcolor: theme.palette.action.hover }}
+                    />
+                  ))}
+                </Stack>
+              )}
+            </Box>
           </Grid>
 
         </Grid>
