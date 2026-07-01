@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Box, Button, Chip, Divider, Grid, IconButton, InputAdornment,
-  MenuItem, Paper, Stack, TextField, Tooltip, Typography, useTheme,
+  Box, Button, Chip, CircularProgress, Divider, Grid, IconButton,
+  InputAdornment, MenuItem, Paper, Stack, TextField, Tooltip,
+  Typography, useTheme,
 } from '@mui/material';
 import {
-  MapPin, Plus, X, Clock, Building2, Users, Layers,
+  MapPin, Plus, X, Clock, Building2, Users, Layers, CheckCircle2,
 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -59,7 +60,6 @@ function clienteLabel(c: ClienteOption): string {
   return `${c.nombre}${c.apellido ? ` ${c.apellido}` : ''}`;
 }
 
-// ── Componente de animación (igual que LaborForm) ─────────────
 function SeccionAnimada({ children, visible }: { children: React.ReactNode; visible: boolean }) {
   if (!visible) return null;
   return (
@@ -75,7 +75,6 @@ function SeccionAnimada({ children, visible }: { children: React.ReactNode; visi
   );
 }
 
-// ── Header de paso (igual que LaborForm) ──────────────────────
 function PasoHeader({
   numero, titulo, subtitulo, completado,
 }: {
@@ -102,6 +101,33 @@ function PasoHeader({
         <Typography variant="caption" color="text.secondary">{subtitulo}</Typography>
       </Box>
     </Stack>
+  );
+}
+
+// ── Overlay de carga ──────────────────────────────────────────
+function LoadingOverlay({ visible }: { visible: boolean }) {
+  if (!visible) return null;
+  return (
+    <Box sx={{
+      position: 'absolute', inset: 0, zIndex: 10,
+      borderRadius: 3,
+      bgcolor: 'rgba(255,255,255,0.75)',
+      backdropFilter: 'blur(3px)',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', gap: 2,
+    }}>
+      <Box sx={{
+        width: 64, height: 64, borderRadius: '50%',
+        bgcolor: 'background.paper',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <CircularProgress size={32} thickness={4} sx={{ color: '#F59E0B' }} />
+      </Box>
+      <Typography variant="body2" fontWeight={600} color="text.secondary">
+        Guardando obra...
+      </Typography>
+    </Box>
   );
 }
 
@@ -197,8 +223,8 @@ export function ObraForm({
     }
   };
 
-  const flattenedEdit  = flattenSectorTree(sectoresQuery.data ?? []);
-  const flattenedLocal = flattenLocalSectorTree(sectoresLocales);
+  const flattenedEdit      = flattenSectorTree(sectoresQuery.data ?? []);
+  const flattenedLocal     = flattenLocalSectorTree(sectoresLocales);
   const parentOptionsEdit  = flattenSectorTree(sectoresQuery.data ?? []);
   const parentOptionsLocal = flattenLocalSectorTree(sectoresLocales);
 
@@ -209,39 +235,46 @@ export function ObraForm({
       defaultValues: toFormDefaults(initialData) as unknown as ObraSchemaValues,
     });
 
-  const nombreWatch    = watch('nombre');
-  const descripcionWatch = watch('descripcion');
-  const tipo_obra_id   = watch('tipo_obra_id');
-  const estado_id      = watch('estado_id');
-  const ubicacionWatch = watch('ubicacion');
-  const latitudWatch   = watch('latitud');
-  const longitudWatch  = watch('longitud');
+  const nombreWatch          = watch('nombre');
+  const descripcionWatch     = watch('descripcion');
+  const tipo_obra_id         = watch('tipo_obra_id');
+  const estado_id            = watch('estado_id');
+  const cliente_id           = watch('cliente_id');
+  const fecha_inicio_estimado = watch('fecha_inicio_estimado');
+  const fecha_fin_estimado   = watch('fecha_fin_estimado');
+  const ubicacionWatch       = watch('ubicacion');
+  const latitudWatch         = watch('latitud');
+  const longitudWatch        = watch('longitud');
 
   const latNum      = latitudWatch  != null ? Number(latitudWatch)  : null;
   const lngNum      = longitudWatch != null ? Number(longitudWatch) : null;
   const tieneCoords = latNum != null && !isNaN(latNum) && lngNum != null && !isNaN(lngNum);
 
-  // ── Revelación progresiva ─────────────────────────────────────
+  // ── Lógica de completado por paso ─────────────────────────────
   const nombreCompleto      = !!nombreWatch && nombreWatch.length >= 3;
   const descripcionCompleta = !!descripcionWatch && descripcionWatch.length >= 5;
-const tipoYEstado         = !!tipo_obra_id && !!estado_id;
-  const mostrarNombre        = true;
-  const mostrarDescripcion   = isEditMode || nombreCompleto;
-  const mostrarTipoEstado    = isEditMode || descripcionCompleta;
-  const mostrarCliente       = isEditMode || tipoYEstado;
-  const mostrarFechas        = isEditMode || mostrarCliente;
-  const mostrarSectores      = isEditMode || mostrarFechas;
+  const tipoYEstado         = !!tipo_obra_id && !!estado_id;
+  const clienteCompletado   = cliente_id !== null && cliente_id !== '' && cliente_id !== undefined;
+  const fechasCompletadas   = !!(fecha_inicio_estimado && fecha_fin_estimado);
+  const sectoresCompletados = isEditMode
+    ? (sectoresQuery.data?.length ?? 0) > 0
+    : sectoresLocales.length > 0;
+
+  // ── Revelación progresiva ─────────────────────────────────────
+  const mostrarNombre      = true;
+  const mostrarDescripcion = isEditMode || nombreCompleto;
+  const mostrarTipoEstado  = isEditMode || descripcionCompleta;
+  const mostrarCliente     = isEditMode || tipoYEstado;
+  const mostrarFechas      = isEditMode || mostrarCliente;
+  const mostrarSectores    = isEditMode || mostrarFechas;
 
   useEffect(() => {
     if (initialData && tiposObra.length > 0 && estados.length > 0)
       reset(toFormDefaults(initialData) as unknown as ObraSchemaValues);
   }, [initialData, tiposObra, estados, reset]);
 
-  // autoFocus en el campo valor al cambiar tipo
   useEffect(() => {
-    if (nuevoTipo && valorRef.current) {
-      valorRef.current.focus();
-    }
+    if (nuevoTipo && valorRef.current) valorRef.current.focus();
   }, [nuevoTipo]);
 
   const handleMapConfirm = (result: MapPickerResult) => {
@@ -272,8 +305,16 @@ const tipoYEstado         = !!tipo_obra_id && !!estado_id;
   };
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 3, bgcolor: 'background.paper' }}>
-      <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
+    <Paper sx={{ p: 3, borderRadius: 3, bgcolor: 'background.paper', position: 'relative' }}>
+
+      {/* ── Overlay de carga ─────────────────────────────────── */}
+      <LoadingOverlay visible={isSubmitting} />
+
+      <Box
+        component="form"
+        onSubmit={handleSubmit(handleFormSubmit)}
+        sx={{ opacity: isSubmitting ? 0.4 : 1, transition: 'opacity 0.2s', pointerEvents: isSubmitting ? 'none' : 'auto' }}
+      >
         <Stack spacing={3}>
 
           {/* ── ENCABEZADO ORIENTATIVO ──────────────────────────── */}
@@ -449,7 +490,7 @@ const tipoYEstado         = !!tipo_obra_id && !!estado_id;
               numero={4}
               titulo="Cliente asociado"
               subtitulo="El cliente es opcional — podés asignarlo ahora o después"
-              completado={false}
+              completado={clienteCompletado}
             />
             <Controller name="cliente_id" control={control} render={({ field }) => (
               <TextField
@@ -477,23 +518,13 @@ const tipoYEstado         = !!tipo_obra_id && !!estado_id;
           {/* ── PASO 5 — Fechas ─────────────────────────────────── */}
           <SeccionAnimada visible={mostrarFechas}>
             <Divider sx={{ mb: 3 }} />
-            <Stack direction="row" alignItems="center" gap={1} mb={1}>
-              <Box sx={{
-                width: 24, height: 24, borderRadius: '50%',
-                bgcolor: theme.palette.action.hover,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-              }}>
-                <Typography sx={{ color: theme.palette.text.secondary, fontSize: 12, fontWeight: 800 }}>5</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body1" fontWeight={700}>Fechas del proyecto</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Las fechas estimadas son opcionales y sirven para planificar el cronograma
-                </Typography>
-              </Box>
-            </Stack>
+            <PasoHeader
+              numero={5}
+              titulo="Fechas del proyecto"
+              subtitulo="Las fechas estimadas son opcionales y sirven para planificar el cronograma"
+              completado={fechasCompletadas}
+            />
 
-            {/* Aclaración fechas reales */}
             <Box sx={{
               display: 'flex', alignItems: 'flex-start', gap: 1,
               p: 1.5, mb: 2.5, ml: 4, borderRadius: 2,
@@ -538,12 +569,11 @@ const tipoYEstado         = !!tipo_obra_id && !!estado_id;
                 )} />
               </Grid>
 
-              {/* Fechas reales — solo en edición */}
               {isEditMode && (
                 <>
                   <Grid size={{ xs: 12 }}>
                     <Stack direction="row" alignItems="center" gap={0.75} sx={{ mt: 1, mb: -0.5 }}>
-                      <Clock size={13} color={theme.palette.text.disabled} />
+                      <CheckCircle2 size={13} color={theme.palette.text.disabled} />
                       <Typography variant="caption" color="text.disabled" fontWeight={600}>
                         Fechas reales — se completan al iniciar y finalizar la obra
                       </Typography>
@@ -579,21 +609,12 @@ const tipoYEstado         = !!tipo_obra_id && !!estado_id;
           {/* ── PASO 6 — Sectores ───────────────────────────────── */}
           <SeccionAnimada visible={mostrarSectores}>
             <Divider sx={{ mb: 3 }} />
-            <Stack direction="row" alignItems="center" gap={1} mb={1}>
-              <Box sx={{
-                width: 24, height: 24, borderRadius: '50%',
-                bgcolor: theme.palette.action.hover,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-              }}>
-                <Typography sx={{ color: theme.palette.text.secondary, fontSize: 12, fontWeight: 800 }}>6</Typography>
-              </Box>
-              <Box>
-                <Typography variant="body1" fontWeight={700}>Estructura de la obra</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  Organizá los trabajos por zona física de la obra
-                </Typography>
-              </Box>
-            </Stack>
+            <PasoHeader
+              numero={6}
+              titulo="Estructura de la obra"
+              subtitulo="Organizá los trabajos por zona física de la obra"
+              completado={sectoresCompletados}
+            />
 
             <Box sx={{
               display: 'flex', alignItems: 'flex-start', gap: 1,
@@ -716,7 +737,13 @@ const tipoYEstado         = !!tipo_obra_id && !!estado_id;
 
           {/* ── Botón guardar ────────────────────────────────────── */}
           <Stack direction="row" justifyContent="flex-end" sx={{ pt: 1 }}>
-            <Button type="submit" variant="contained" disabled={isSubmitting} size="large">
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+              size="large"
+              startIcon={isSubmitting ? <CircularProgress size={16} sx={{ color: 'inherit' }} /> : undefined}
+            >
               {isSubmitting ? t('obras.form.guardando') : t('obras.form.guardar')}
             </Button>
           </Stack>
