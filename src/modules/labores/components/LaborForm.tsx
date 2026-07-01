@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box, Button, Card, CardContent, Chip, Divider, Grid, LinearProgress,
   MenuItem, Paper, Stack, TextField, Typography, useTheme,
@@ -7,7 +6,7 @@ import {
 } from '@mui/material';
 import {
   User, CreditCard, Phone, Briefcase, Star, CalendarCheck,
-  Zap, ClipboardList, Lock, AlertTriangle, Bot, Clock,
+  Zap, ClipboardList, Lock, AlertTriangle, Bot, Clock, MapPin,
 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,6 +24,8 @@ import { PagoEstadoChip } from '../../pagos/components/PagoEstadoChip';
 import { estadoApi } from '../../../services/api/estado.api';
 import { useQuery } from '@tanstack/react-query';
 import { useAsistenteStore } from '../../asistenteIA/store/useAsistenteStore';
+import { useSectoresPorObra } from '../../obras/hooks/useSectores';
+import { nombreCompletoSector, type Sector } from '../../obras/types/sector.types';
 
 const ESTADO_SIN_ASIGNAR = 29;
 
@@ -61,21 +62,22 @@ function toDateInput(value?: string | null): string {
 
 function toFormDefaults(initialData?: Labor | null, obraIdFijo?: number): LaborSchemaValues {
   return {
-    nombre: initialData?.nombre ?? '',
-    descripcion: initialData?.descripcion ?? '',
-    obra_id: initialData?.obra_id ?? obraIdFijo ?? '',
-    trabajador_id: initialData?.trabajador_id ?? '',
-    especialidad_id: initialData?.especialidad_id ?? '',
-    estado_id: initialData?.estado_id ?? '',
-    modo: (initialData?.modo as 'rapido' | 'cotizacion') ?? 'rapido',
-    unidad_id: initialData?.unidad_id ?? '',
-    cantidad: initialData?.cantidad ? Math.round(Number(initialData.cantidad)) : '',
-    costo_estimado: initialData?.costo_estimado ? Number(initialData.costo_estimado) : '',
+    nombre:               initialData?.nombre ?? '',
+    descripcion:          initialData?.descripcion ?? '',
+    obra_id:              initialData?.obra_id ?? obraIdFijo ?? '',
+    trabajador_id:        initialData?.trabajador_id ?? '',
+    especialidad_id:      initialData?.especialidad_id ?? '',
+    estado_id:            initialData?.estado_id ?? '',
+    modo:                 (initialData?.modo as 'rapido' | 'cotizacion') ?? 'rapido',
+    unidad_id:            initialData?.unidad_id ?? '',
+    cantidad:             initialData?.cantidad ? Math.round(Number(initialData.cantidad)) : '',
+    costo_estimado:       initialData?.costo_estimado ? Number(initialData.costo_estimado) : '',
     fecha_inicio_estimada: toDateInput(initialData?.fecha_inicio_estimada),
-    fecha_fin_estimada: toDateInput(initialData?.fecha_fin_estimada),
-    fecha_inicio_real: toDateInput(initialData?.fecha_inicio_real),
-    fecha_fin_real: toDateInput(initialData?.fecha_fin_real),
-    usuario_creador_id: initialData?.usuario_creador_id ?? 2,
+    fecha_fin_estimada:   toDateInput(initialData?.fecha_fin_estimada),
+    fecha_inicio_real:    toDateInput(initialData?.fecha_inicio_real),
+    fecha_fin_real:       toDateInput(initialData?.fecha_fin_real),
+    usuario_creador_id:   initialData?.usuario_creador_id ?? 2,
+    sector_id:            initialData?.sector_id ?? '',
   };
 }
 
@@ -91,27 +93,19 @@ function InfoCard({ icon, label, value }: { icon: React.ReactNode; label: string
   );
 }
 
-// ── Tarjeta de modo seleccionable ─────────────────────────────
 function ModoCard({
   selected, onClick, icon, titulo, descripcion, detalles, color, disabled,
 }: {
-  selected: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  titulo: string;
-  descripcion: string;
-  detalles: string[];
-  color: string;
-  disabled?: boolean;
+  selected: boolean; onClick: () => void; icon: React.ReactNode;
+  titulo: string; descripcion: string; detalles: string[];
+  color: string; disabled?: boolean;
 }) {
   const theme = useTheme();
   return (
     <Box
       onClick={disabled ? undefined : onClick}
       sx={{
-        flex: 1,
-        p: 2.5,
-        borderRadius: 3,
+        flex: 1, p: 2.5, borderRadius: 3,
         border: `2px solid ${selected ? color : theme.palette.divider}`,
         bgcolor: selected ? `${color}0D` : 'background.paper',
         cursor: disabled ? 'not-allowed' : 'pointer',
@@ -157,7 +151,6 @@ function ModoCard({
   );
 }
 
-// ── Sección con animación de aparición ────────────────────────
 function SeccionAnimada({ children, visible }: { children: React.ReactNode; visible: boolean }) {
   if (!visible) return null;
   return (
@@ -165,7 +158,7 @@ function SeccionAnimada({ children, visible }: { children: React.ReactNode; visi
       animation: 'fadeSlideIn 0.3s ease-out',
       '@keyframes fadeSlideIn': {
         from: { opacity: 0, transform: 'translateY(8px)' },
-        to: { opacity: 1, transform: 'translateY(0)' },
+        to:   { opacity: 1, transform: 'translateY(0)' },
       },
     }}>
       {children}
@@ -173,14 +166,10 @@ function SeccionAnimada({ children, visible }: { children: React.ReactNode; visi
   );
 }
 
-// ── Header de paso reutilizable, con check de completado ──────
 function PasoHeader({
   numero, titulo, subtitulo, completado,
 }: {
-  numero: number | string;
-  titulo: string;
-  subtitulo: string;
-  completado: boolean;
+  numero: number | string; titulo: string; subtitulo: string; completado: boolean;
 }) {
   const theme = useTheme();
   return (
@@ -203,6 +192,143 @@ function PasoHeader({
   );
 }
 
+// ── Selector de sector en cascada ─────────────────────────────
+function buildChildrenMap(sectores: Sector[]): Record<string, Sector[]> {
+  const map: Record<string, Sector[]> = { root: [] };
+  sectores.forEach(s => {
+    const key = s.parent_id != null ? String(s.parent_id) : 'root';
+    if (!map[key]) map[key] = [];
+    map[key].push(s);
+  });
+  return map;
+}
+
+function buildPathToSector(sectorId: number, sectores: Sector[]): number[] {
+  const path: number[] = [];
+  let currentId: number | null = sectorId;
+  while (currentId != null) {
+    const found = sectores.find(s => s.id === currentId);
+    if (!found) break;
+    path.unshift(found.id);
+    currentId = found.parent_id ?? null;
+  }
+  return path;
+}
+
+function SectorCascade({
+  sectores,
+  value,
+  onChange,
+}: {
+  sectores: Sector[];
+  value: number | null;
+  onChange: (id: number | null) => void;
+}) {
+  const theme = useTheme();
+  const childrenMap = useMemo(() => buildChildrenMap(sectores), [sectores]);
+  const isLeaf = useCallback((id: number) => !childrenMap[String(id)]?.length, [childrenMap]);
+  const [path, setPath] = useState<number[]>([]);
+
+  // Inicializar path en modo edición
+  useEffect(() => {
+    if (value && sectores.length > 0) {
+      setPath(buildPathToSector(value, sectores));
+    } else if (!value) {
+      setPath([]);
+    }
+  }, [value, sectores]);
+
+  const handleLevelChange = (level: number, rawValue: string) => {
+    if (rawValue === '') {
+      setPath(prev => prev.slice(0, level));
+      onChange(null);
+      return;
+    }
+    const id = Number(rawValue);
+    const newPath = [...path.slice(0, level), id];
+    setPath(newPath);
+    onChange(isLeaf(id) ? id : null);
+  };
+
+  if (sectores.length === 0) {
+    return (
+      <Box sx={{
+        p: 2, borderRadius: 2,
+        bgcolor: theme.palette.action.hover,
+        border: `1px solid ${theme.palette.divider}`,
+      }}>
+        <Stack direction="row" alignItems="center" gap={1}>
+          <MapPin size={14} color={theme.palette.text.disabled} />
+          <Typography variant="body2" color="text.disabled">
+            Esta obra no tiene sectores definidos. Podés crearlos desde la edición de la obra.
+          </Typography>
+        </Stack>
+      </Box>
+    );
+  }
+
+  // Construir niveles a mostrar
+  const levelsToShow: { options: Sector[]; selectedId: number | undefined }[] = [];
+  levelsToShow.push({ options: childrenMap['root'] ?? [], selectedId: path[0] });
+  for (let i = 0; i < path.length; i++) {
+    const children = childrenMap[String(path[i])];
+    if (children?.length) {
+      levelsToShow.push({ options: children, selectedId: path[i + 1] });
+    }
+  }
+
+  const selectedLeaf = path.length > 0 && isLeaf(path[path.length - 1])
+    ? sectores.find(s => s.id === path[path.length - 1])
+    : null;
+
+  return (
+    <Stack spacing={1.5}>
+      {levelsToShow.map((level, idx) => (
+        <TextField
+          key={idx}
+          select
+          fullWidth
+          size="small"
+          label={idx === 0 ? 'Sector' : 'Sub-sector'}
+          value={level.selectedId ?? ''}
+          onChange={(e) => handleLevelChange(idx, e.target.value)}
+          sx={{ bgcolor: 'background.paper' }}
+        >
+          <MenuItem value="">— Seleccionar —</MenuItem>
+          {level.options.map(s => (
+            <MenuItem key={s.id} value={s.id}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ width: '100%' }}>
+                <Typography variant="body2">{nombreCompletoSector(s)}</Typography>
+                {isLeaf(s.id) ? (
+                  <Chip
+                    label="asignable" size="small"
+                    sx={{ height: 16, fontSize: 9, ml: 1, bgcolor: 'rgba(22,163,74,0.1)', color: '#16A34A' }}
+                  />
+                ) : (
+                  <Typography variant="caption" color="text.disabled" sx={{ ml: 1 }}>▸</Typography>
+                )}
+              </Stack>
+            </MenuItem>
+          ))}
+        </TextField>
+      ))}
+
+      {selectedLeaf && (
+        <Stack direction="row" alignItems="center" gap={0.75}>
+          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#16A34A', flexShrink: 0 }} />
+          <Typography variant="caption" sx={{ color: '#16A34A', fontWeight: 600 }}>
+            {path.map(id => {
+              const s = sectores.find(sec => sec.id === id);
+              return s ? nombreCompletoSector(s) : '';
+            }).join(' › ')}
+          </Typography>
+        </Stack>
+      )}
+    </Stack>
+  );
+}
+
+// ── LaborForm ─────────────────────────────────────────────────
 export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = false }: LaborFormProps) {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -237,38 +363,44 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
 
   const trabajadores = todosLosTrabajadores.filter((tr) => tr.jefe_id === null);
 
-  const modoSeleccionado = watch('modo');
-  const obraIdSeleccionada = watch('obra_id');
-  const nombreWatch = watch('nombre');
-  const descripcionWatch = watch('descripcion');
+  const modoSeleccionado         = watch('modo');
+  const obraIdSeleccionada       = watch('obra_id');
+  const nombreWatch              = watch('nombre');
+  const descripcionWatch         = watch('descripcion');
   const trabajadorIdSeleccionado = watch('trabajador_id');
-  const estadoIdSeleccionado = watch('estado_id');
+  const estadoIdSeleccionado     = watch('estado_id');
   const especialidadIdSeleccionada = watch('especialidad_id');
-  const costoEstimado = watch('costo_estimado');
+  const costoEstimado            = watch('costo_estimado');
+  const sectorIdWatch            = watch('sector_id');
 
-  // Visibilidad progresiva de secciones
-  const mostrarObra = true;
-  const mostrarNombre = !!modoSeleccionado;
-  const nombreCompleto = !!nombreWatch && nombreWatch.length >= 3;
-  const mostrarDescripcion = nombreCompleto;
-  const detalleCompleto = mostrarDescripcion && !!descripcionWatch && descripcionWatch.length >= 5;
-  const mostrarEspecialidad = mostrarDescripcion;
-  const mostrarTrabajador = mostrarEspecialidad && modoSeleccionado === 'rapido';
-  const mostrarCosto = mostrarEspecialidad && modoSeleccionado === 'rapido';
-  const mostrarUnidadCantidad = mostrarEspecialidad;
-  const mostrarEstado = mostrarTrabajador && !!trabajadorIdSeleccionado;
-  const mostrarFechas = esEdicion ? true : mostrarEspecialidad;
-  const mostrarInfoCotizacion = modoSeleccionado === 'cotizacion' && mostrarDescripcion && !esEdicion;
+  // Sectores de la obra seleccionada
+  const { data: sectoresObra = [] } = useSectoresPorObra(Number(obraIdSeleccionada) || 0);
 
-  const trabajadorSeleccionado = trabajadores.find((tr) => tr.id === Number(trabajadorIdSeleccionado));
-  const especialidadNombre = especialidades.find((e) => e.id === (trabajadorSeleccionado?.especialidad_id ?? Number(especialidadIdSeleccionada)))?.nombre;
-  const estadoSeleccionado = estadosLabor.find((e) => e.id === Number(estadoIdSeleccionado));
-  const progreso = PROGRESO_MAP[estadoSeleccionado?.nombre ?? ''] ?? 0;
-  const progressColor = getProgressColor(progreso);
+  // Visibilidad progresiva
+  const mostrarObra            = true;
+  const mostrarSector          = !!obraIdSeleccionada;
+  const mostrarNombre          = !!modoSeleccionado;
+  const nombreCompleto         = !!nombreWatch && nombreWatch.length >= 3;
+  const mostrarDescripcion     = nombreCompleto;
+  const detalleCompleto        = mostrarDescripcion && !!descripcionWatch && descripcionWatch.length >= 5;
+  const mostrarEspecialidad    = mostrarDescripcion;
+  const mostrarTrabajador      = mostrarEspecialidad && modoSeleccionado === 'rapido';
+  const mostrarCosto           = mostrarEspecialidad && modoSeleccionado === 'rapido';
+  const mostrarUnidadCantidad  = mostrarEspecialidad;
+  const mostrarEstado          = mostrarTrabajador && !!trabajadorIdSeleccionado;
+  const mostrarFechas          = esEdicion ? true : mostrarEspecialidad;
+  const mostrarInfoCotizacion  = modoSeleccionado === 'cotizacion' && mostrarDescripcion && !esEdicion;
 
-  const asistenciaPct = Number(trabajadorSeleccionado?.porcentaje_asistencia_mes ?? 0);
-  const asistenciaColor = getAsistenciaColor(asistenciaPct);
-  const puntos = trabajadorSeleccionado?.puntos ?? 0;
+  const sectorCompletado = Number(sectorIdWatch) > 0;
+
+  const trabajadorSeleccionado   = trabajadores.find((tr) => tr.id === Number(trabajadorIdSeleccionado));
+  const especialidadNombre       = especialidades.find((e) => e.id === (trabajadorSeleccionado?.especialidad_id ?? Number(especialidadIdSeleccionada)))?.nombre;
+  const estadoSeleccionado       = estadosLabor.find((e) => e.id === Number(estadoIdSeleccionado));
+  const progreso                 = PROGRESO_MAP[estadoSeleccionado?.nombre ?? ''] ?? 0;
+  const progressColor            = getProgressColor(progreso);
+  const asistenciaPct            = Number(trabajadorSeleccionado?.porcentaje_asistencia_mes ?? 0);
+  const asistenciaColor          = getAsistenciaColor(asistenciaPct);
+  const puntos                   = trabajadorSeleccionado?.puntos ?? 0;
 
   const { data: pagosRaw } = usePagosByTrabajador(
     trabajadorSeleccionado ? Number(trabajadorIdSeleccionado) : 0
@@ -281,7 +413,6 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
   const presupuestosDelTrabajador = todosPresupuestos.filter((p) =>
     laborasDelTrabajador.some((l: Labor) => l.id === p.labor_id)
   );
-
   const totalPresupuestado = presupuestosDelTrabajador.reduce(
     (acc, p) => acc + Number(p.total_estimado ?? 0), 0
   );
@@ -307,7 +438,13 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
     }
   }, [modoSeleccionado, setValue, esEdicion]);
 
-  // ── Submit con verificación de costo estimado ─────────────
+  // Reset sector cuando cambia la obra (solo en creación)
+  useEffect(() => {
+    if (!esEdicion) {
+      setValue('sector_id', '');
+    }
+  }, [obraIdSeleccionada, esEdicion, setValue]);
+
   const handleFormSubmit = (values: LaborFormValues) => {
     if (modoSeleccionado === 'rapido' && !values.costo_estimado) {
       setPendingSubmitValues(values);
@@ -351,24 +488,16 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
               </Stack>
             ))}
           </Stack>
-          <Box sx={{
-            p: 2, borderRadius: 2,
-            bgcolor: theme.palette.action.hover,
-            border: `1px solid ${theme.palette.divider}`,
-          }}>
+          <Box sx={{ p: 2, borderRadius: 2, bgcolor: theme.palette.action.hover, border: `1px solid ${theme.palette.divider}` }}>
             <Stack direction="row" alignItems="center" gap={1}>
               <Bot size={16} color="#F59E0B" />
-              <Typography variant="body2" fontWeight={600}>
-                ¿No sabés cuánto cargar?
-              </Typography>
+              <Typography variant="body2" fontWeight={600}>¿No sabés cuánto cargar?</Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, mb: 1 }}>
               El asistente IA puede ayudarte a estimar el costo basándose en trabajos similares registrados en el sistema.
             </Typography>
             <Button
-              size="small"
-              variant="outlined"
-              startIcon={<Bot size={14} />}
+              size="small" variant="outlined" startIcon={<Bot size={14} />}
               onClick={() => {
                 setDialogAdvertencia(false);
                 abrirConMensaje('¿Podés ayudarme a estimar el costo de una labor? Necesito saber cuánto cargar como costo estimado.');
@@ -380,12 +509,8 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
-          <Button variant="outlined" onClick={() => setDialogAdvertencia(false)}>
-            Volver y completar
-          </Button>
-          <Button variant="contained" color="warning" onClick={handleConfirmarSinCosto}>
-            Guardar sin costo estimado
-          </Button>
+          <Button variant="outlined" onClick={() => setDialogAdvertencia(false)}>Volver y completar</Button>
+          <Button variant="contained" color="warning" onClick={handleConfirmarSinCosto}>Guardar sin costo estimado</Button>
         </DialogActions>
       </Dialog>
 
@@ -395,20 +520,14 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
           {/* PASO 1 — Modo */}
           <Box>
             <Stack direction="row" alignItems="center" gap={1} mb={0.5}>
-              <Box sx={{
-                width: 24, height: 24, borderRadius: '50%',
-                bgcolor: '#F59E0B', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
+              <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: '#F59E0B', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Typography sx={{ color: '#0F172A', fontSize: 12, fontWeight: 800 }}>1</Typography>
               </Box>
-              <Typography variant="body1" fontWeight={700}>
-                {t('labor_form.modo_titulo')}
-              </Typography>
+              <Typography variant="body1" fontWeight={700}>{t('labor_form.modo_titulo')}</Typography>
             </Stack>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, ml: 4 }}>
               Elegí cómo querés gestionar esta labor antes de continuar
             </Typography>
-
             {modoBloquado && (
               <Stack direction="row" alignItems="center" gap={0.5} sx={{ mb: 1.5 }}>
                 <Lock size={11} color={theme.palette.text.disabled} />
@@ -419,15 +538,12 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 </Typography>
               </Stack>
             )}
-
             <Controller name="modo" control={control} render={({ field }) => (
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <ModoCard
                   selected={field.value === 'rapido'}
                   onClick={() => { if (!modoBloquado) field.onChange('rapido'); }}
-                  icon={<Zap size={18} />}
-                  titulo={t('labor_form.modo_rapido')}
-                  color="#F59E0B"
+                  icon={<Zap size={18} />} titulo={t('labor_form.modo_rapido')} color="#F59E0B"
                   disabled={modoBloquado}
                   descripcion="Ya sabés quién va a hacer el trabajo. Lo asignás directamente y el sistema registra la labor de inmediato."
                   detalles={[
@@ -439,9 +555,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 <ModoCard
                   selected={field.value === 'cotizacion'}
                   onClick={() => { if (!modoBloquado) field.onChange('cotizacion'); }}
-                  icon={<ClipboardList size={18} />}
-                  titulo={t('labor_form.modo_cotizacion')}
-                  color="#3B82F6"
+                  icon={<ClipboardList size={18} />} titulo={t('labor_form.modo_cotizacion')} color="#3B82F6"
                   disabled={modoBloquado}
                   descripcion="Todavía no decidiste quién hace el trabajo. Primero pedís precios a varios proveedores y después elegís el mejor."
                   detalles={[
@@ -459,15 +573,13 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
           {/* PASO 2 — Obra */}
           <SeccionAnimada visible={mostrarObra}>
             <PasoHeader
-              numero={2}
-              titulo="Obra asociada"
+              numero={2} titulo="Obra asociada"
               subtitulo="¿A qué obra pertenece este trabajo?"
               completado={!!obraIdSeleccionada}
             />
             <Controller name="obra_id" control={control} render={({ field }) => (
               <TextField
-                select fullWidth
-                label={t('labor_form.obra')}
+                select fullWidth label={t('labor_form.obra')}
                 value={field.value}
                 onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                 disabled={obraBloquada}
@@ -479,40 +591,49 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             {esEdicion && presupuestosExistentes.length > 0 && (
               <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 0.5 }}>
                 <Lock size={11} color={theme.palette.text.disabled} />
-                <Typography variant="caption" color="text.disabled">
-                  {t('labor_form.obra_bloqueada')}
-                </Typography>
+                <Typography variant="caption" color="text.disabled">{t('labor_form.obra_bloqueada')}</Typography>
               </Stack>
             )}
           </SeccionAnimada>
 
-          {/* PASO 3 — Nombre */}
-          <SeccionAnimada visible={mostrarNombre}>
+          {/* PASO 3 — Sector (ubicación física) */}
+          <SeccionAnimada visible={mostrarSector}>
             <Divider sx={{ mb: 3 }} />
             <PasoHeader
               numero={3}
-              titulo="Nombre del trabajo"
+              titulo="Ubicación en la obra"
+              subtitulo="Seleccioná el sector donde se realiza este trabajo (opcional)"
+              completado={sectorCompletado}
+            />
+            <SectorCascade
+              sectores={sectoresObra}
+              value={Number(sectorIdWatch) || null}
+              onChange={(id) => setValue('sector_id', id ?? '')}
+            />
+          </SeccionAnimada>
+
+          {/* PASO 4 — Nombre */}
+          <SeccionAnimada visible={mostrarNombre}>
+            <Divider sx={{ mb: 3 }} />
+            <PasoHeader
+              numero={4} titulo="Nombre del trabajo"
               subtitulo="Describí brevemente qué trabajo se va a realizar"
               completado={nombreCompleto}
             />
             <Controller name="nombre" control={control} render={({ field }) => (
               <TextField
-                {...field}
-                fullWidth
-                label={t('labor_form.nombre')}
+                {...field} fullWidth label={t('labor_form.nombre')}
                 placeholder="Ej: Excavación viga fundación, Instalación eléctrica planta baja..."
-                error={!!errors.nombre}
-                helperText={errors.nombre?.message ?? ''}
+                error={!!errors.nombre} helperText={errors.nombre?.message ?? ''}
               />
             )} />
           </SeccionAnimada>
 
-          {/* PASO 4 — Descripción + Especialidad */}
+          {/* PASO 5 — Descripción + Especialidad */}
           <SeccionAnimada visible={mostrarDescripcion}>
             <Divider sx={{ mb: 3 }} />
             <PasoHeader
-              numero={4}
-              titulo="Detalle del trabajo"
+              numero={5} titulo="Detalle del trabajo"
               subtitulo="Descripción técnica y especialidad requerida"
               completado={detalleCompleto}
             />
@@ -520,9 +641,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
               <Grid size={{ xs: 12 }}>
                 <Controller name="descripcion" control={control} render={({ field }) => (
                   <TextField
-                    {...field}
-                    fullWidth multiline minRows={3}
-                    label={t('labor_form.descripcion')}
+                    {...field} fullWidth multiline minRows={3} label={t('labor_form.descripcion')}
                     placeholder="Describí el alcance del trabajo, materiales involucrados, condiciones especiales..."
                   />
                 )} />
@@ -530,8 +649,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
               <Grid size={{ xs: 12, md: mostrarUnidadCantidad ? 6 : 12 }}>
                 <Controller name="especialidad_id" control={control} render={({ field }) => (
                   <TextField
-                    select fullWidth
-                    label={t('labor_form.especialidad')}
+                    select fullWidth label={t('labor_form.especialidad')}
                     value={field.value}
                     onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                   >
@@ -544,9 +662,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 {modoSeleccionado === 'rapido' && trabajadorSeleccionado?.especialidad_id && (
                   <Stack direction="row" alignItems="center" gap={0.5} sx={{ mt: 0.5 }}>
                     <Briefcase size={11} color={theme.palette.text.disabled} />
-                    <Typography variant="caption" color="text.disabled">
-                      {t('labor_form.especialidad_heredada')}
-                    </Typography>
+                    <Typography variant="caption" color="text.disabled">{t('labor_form.especialidad_heredada')}</Typography>
                   </Stack>
                 )}
               </Grid>
@@ -555,8 +671,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                   <Grid size={{ xs: 12, md: 3 }}>
                     <Controller name="unidad_id" control={control} render={({ field }) => (
                       <TextField
-                        select fullWidth
-                        label={t('labor_form.unidad')}
+                        select fullWidth label={t('labor_form.unidad')}
                         value={field.value}
                         onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                       >
@@ -570,10 +685,8 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                   <Grid size={{ xs: 12, md: 3 }}>
                     <Controller name="cantidad" control={control} render={({ field }) => (
                       <TextField
-                        fullWidth type="number"
-                        label={t('labor_form.cantidad')}
-                        value={field.value}
-                        inputProps={{ min: 0, step: 1 }}
+                        fullWidth type="number" label={t('labor_form.cantidad')}
+                        value={field.value} inputProps={{ min: 0, step: 1 }}
                         onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                       />
                     )} />
@@ -583,22 +696,19 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             </Grid>
           </SeccionAnimada>
 
-          {/* PASO 5 — Trabajador (solo modo rápido) */}
+          {/* PASO 6 — Trabajador (solo modo rápido) */}
           <SeccionAnimada visible={mostrarTrabajador}>
             <Divider sx={{ mb: 3 }} />
             <PasoHeader
-              numero={5}
-              titulo="Trabajador responsable"
+              numero={6} titulo="Trabajador responsable"
               subtitulo="¿Quién va a realizar este trabajo?"
               completado={!!trabajadorIdSeleccionado}
             />
             <Controller name="trabajador_id" control={control} render={({ field }) => (
               <TextField
-                select fullWidth
-                label={t('labor_form.trabajador')}
+                select fullWidth label={t('labor_form.trabajador')}
                 value={field.value}
-                error={!!errors.trabajador_id}
-                helperText={errors.trabajador_id?.message ?? ''}
+                error={!!errors.trabajador_id} helperText={errors.trabajador_id?.message ?? ''}
                 onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                 SelectProps={{ MenuProps: { PaperProps: { sx: { maxHeight: 320 } } } }}
               >
@@ -611,9 +721,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                     <MenuItem key={tr.id} value={tr.id}>
                       <Box sx={{ width: '100%' }}>
                         <Stack direction="row" alignItems="center" justifyContent="space-between">
-                          <Typography variant="body2" fontWeight={600}>
-                            {tr.nombre} {tr.apellido}
-                          </Typography>
+                          <Typography variant="body2" fontWeight={600}>{tr.nombre} {tr.apellido}</Typography>
                           <Stack direction="row" spacing={0.5}>
                             <Chip label={`${pct}%`} size="small" icon={<CalendarCheck size={10} />}
                               sx={{ height: 18, fontSize: 10, fontWeight: 700, bgcolor: `${getAsistenciaColor(pct)}18`, color: getAsistenciaColor(pct) }} />
@@ -621,9 +729,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                               sx={{ height: 18, fontSize: 10, fontWeight: 700, bgcolor: 'rgba(245,158,11,0.1)', color: '#B45309' }} />
                           </Stack>
                         </Stack>
-                        {espNombre && (
-                          <Typography variant="caption" color="text.secondary">{espNombre}</Typography>
-                        )}
+                        {espNombre && <Typography variant="caption" color="text.secondary">{espNombre}</Typography>}
                       </Box>
                     </MenuItem>
                   );
@@ -632,7 +738,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             )} />
           </SeccionAnimada>
 
-          {/* PASO 6 — Costo estimado + Estado (solo modo rápido) */}
+          {/* PASO 7 — Costo estimado + Estado (solo modo rápido) */}
           <SeccionAnimada visible={mostrarCosto}>
             <Divider sx={{ mb: 3 }} />
             <Stack direction="row" alignItems="center" gap={1} mb={2}>
@@ -643,7 +749,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 transition: 'all 0.2s', flexShrink: 0,
               }}>
                 <Typography sx={{ color: costoEstimado ? '#fff' : '#F59E0B', fontSize: 12, fontWeight: 800 }}>
-                  {costoEstimado ? '✓' : '6'}
+                  {costoEstimado ? '✓' : '7'}
                 </Typography>
               </Box>
               <Box>
@@ -656,20 +762,14 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 </Typography>
               </Box>
             </Stack>
-
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: mostrarEstado ? 6 : 12 }}>
                 <Controller name="costo_estimado" control={control} render={({ field }) => (
                   <TextField
-                    fullWidth type="number"
-                    label="Costo estimado ($)"
-                    placeholder="Ej: 150000"
-                    value={field.value}
-                    inputProps={{ min: 0, step: 100 }}
+                    fullWidth type="number" label="Costo estimado ($)" placeholder="Ej: 150000"
+                    value={field.value} inputProps={{ min: 0, step: 100 }}
                     onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
-                    InputProps={{
-                      startAdornment: <Typography sx={{ mr: 0.5, color: 'text.secondary' }}>$</Typography>,
-                    }}
+                    InputProps={{ startAdornment: <Typography sx={{ mr: 0.5, color: 'text.secondary' }}>$</Typography> }}
                   />
                 )} />
                 {!costoEstimado && (
@@ -678,13 +778,11 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                   </Typography>
                 )}
               </Grid>
-
               {mostrarEstado && (
                 <Grid size={{ xs: 12, md: 6 }}>
                   <Controller name="estado_id" control={control} render={({ field }) => (
                     <TextField
-                      select fullWidth
-                      label={t('labor_form.estado')}
+                      select fullWidth label={t('labor_form.estado')}
                       value={field.value}
                       onChange={(e) => field.onChange(e.target.value === '' ? '' : Number(e.target.value))}
                     >
@@ -719,17 +817,9 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
           {/* Info cotización */}
           <SeccionAnimada visible={mostrarInfoCotizacion}>
             <Divider sx={{ mb: 3 }} />
-            <Box sx={{
-              p: 2.5, borderRadius: 2,
-              bgcolor: 'rgba(59,130,246,0.06)',
-              border: '1px solid rgba(59,130,246,0.2)',
-            }}>
+            <Box sx={{ p: 2.5, borderRadius: 2, bgcolor: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)' }}>
               <Stack direction="row" gap={1.5} alignItems="flex-start">
-                <Box sx={{
-                  width: 32, height: 32, borderRadius: 2, flexShrink: 0,
-                  bgcolor: 'rgba(59,130,246,0.12)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
+                <Box sx={{ width: 32, height: 32, borderRadius: 2, flexShrink: 0, bgcolor: 'rgba(59,130,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ClipboardList size={16} color="#3B82F6" />
                 </Box>
                 <Box>
@@ -756,7 +846,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             </Box>
           </SeccionAnimada>
 
-          {/* PASO 7 — Fechas */}
+          {/* PASO 8 — Fechas */}
           <SeccionAnimada visible={mostrarFechas}>
             <Divider sx={{ mb: 3 }} />
             <Stack direction="row" alignItems="center" gap={1} mb={1}>
@@ -766,7 +856,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
               }}>
                 <Typography sx={{ color: theme.palette.text.secondary, fontSize: 12, fontWeight: 800 }}>
-                  {modoSeleccionado === 'cotizacion' ? '5' : '7'}
+                  {modoSeleccionado === 'cotizacion' ? '6' : '8'}
                 </Typography>
               </Box>
               <Box>
@@ -776,20 +866,17 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                 </Typography>
               </Box>
             </Stack>
-
             <Box sx={{
               display: 'flex', alignItems: 'flex-start', gap: 1,
-              p: 1.5, mb: 2, ml: 4,
-              borderRadius: 2, bgcolor: theme.palette.action.hover,
-              border: `1px solid ${theme.palette.divider}`,
+              p: 1.5, mb: 2, ml: 4, borderRadius: 2,
+              bgcolor: theme.palette.action.hover, border: `1px solid ${theme.palette.divider}`,
             }}>
               <Clock size={14} color={theme.palette.text.secondary} style={{ marginTop: 2, flexShrink: 0 }} />
               <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.5 }}>
                 Las fechas <strong>reales</strong> de inicio y fin no se cargan ahora: se completan más adelante,
-                cuando el trabajo efectivamente comience y finalice. Por ahora solo necesitás indicar una estimación.
+                cuando el trabajo efectivamente comience y finalice.
               </Typography>
             </Box>
-
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
                 <Controller name="fecha_inicio_estimada" control={control} render={({ field }) => (
@@ -834,34 +921,25 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
             </Grid>
           </SeccionAnimada>
 
-          {/* Info trabajador seleccionado — sección visualmente separada */}
+          {/* Info trabajador seleccionado */}
           {modoSeleccionado === 'rapido' && trabajadorSeleccionado && (
-            <SeccionAnimada visible={true}>
+            <SeccionAnimada visible>
               <Box sx={{
-                mt: 1,
-                p: 2.5,
-                borderRadius: 3,
+                mt: 1, p: 2.5, borderRadius: 3,
                 bgcolor: theme.palette.mode === 'dark' ? 'rgba(245,158,11,0.04)' : '#FFFBEB',
                 border: `1px dashed ${theme.palette.mode === 'dark' ? 'rgba(245,158,11,0.3)' : '#FDE68A'}`,
               }}>
                 <Stack direction="row" alignItems="center" gap={1} mb={2}>
-                  <Box sx={{
-                    width: 28, height: 28, borderRadius: 2,
-                    bgcolor: 'rgba(245,158,11,0.15)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
+                  <Box sx={{ width: 28, height: 28, borderRadius: 2, bgcolor: 'rgba(245,158,11,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <User size={14} color="#F59E0B" />
                   </Box>
                   <Box>
-                    <Typography variant="body2" fontWeight={700}>
-                      {t('labor_form.info_trabajador')}
-                    </Typography>
+                    <Typography variant="body2" fontWeight={700}>{t('labor_form.info_trabajador')}</Typography>
                     <Typography variant="caption" color="text.secondary">
                       Información de referencia del trabajador asignado — no forma parte de los datos de esta labor
                     </Typography>
                   </Box>
                 </Stack>
-
                 <Stack direction="row" spacing={1} sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
                   <Chip icon={<CalendarCheck size={14} />} label={t('labor_form.asistencia_mes', { pct: asistenciaPct })}
                     sx={{ fontWeight: 700, fontSize: 12, bgcolor: `${asistenciaColor}18`, color: asistenciaColor }} />
@@ -872,7 +950,6 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
                       sx={{ fontWeight: 700, fontSize: 12, bgcolor: '#EFF6FF', color: '#1D4ED8' }} />
                   )}
                 </Stack>
-
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Card sx={{ borderRadius: 2, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
