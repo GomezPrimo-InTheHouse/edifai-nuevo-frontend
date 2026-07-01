@@ -49,7 +49,7 @@ import type {
 } from '../../modules/obras/types/sector.types';
 import { flattenLocalSectorTree as flattenLocal } from '../../modules/obras/types/sector.types';
 
-const baseUrl = env.sectoresApiUrl;
+const baseUrl = `${env.sectoresApiUrl}/sectores`;
 
 export const sectorApi = {
   async getByObra(obra_id: number): Promise<Sector[]> {
