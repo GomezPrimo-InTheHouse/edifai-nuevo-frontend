@@ -688,90 +688,84 @@ export const LaborDetailPage: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Sector — solo si tiene asignado */}
-            {sectorPath.length > 0 && (
-              <Card elevation={0} sx={{ borderRadius: 3, border: cardBorder, bgcolor: 'background.paper' }}>
-                <CardContent sx={{ p: 3 }}>
-                  <Stack direction="row" alignItems="center" gap={1} mb={2}>
-                    <MapPin size={16} color="#F59E0B" />
-                    <Typography variant="h6" fontWeight={700}>Ubicación en la obra</Typography>
-                  </Stack>
-                  <Divider sx={{ mb: 2.5 }} />
+          {/* Sector — solo si tiene asignado */}
+{sectorPath.length > 0 && (
+  <Card elevation={0} sx={{ borderRadius: 3, border: cardBorder, bgcolor: 'background.paper' }}>
+    <CardContent sx={{ p: 3 }}>
+      <Stack direction="row" alignItems="center" gap={1} mb={2}>
+        <MapPin size={16} color="#F59E0B" />
+        <Typography variant="h6" fontWeight={700}>Ubicación en la obra</Typography>
+      </Stack>
+      <Divider sx={{ mb: 2.5 }} />
 
-                  {/* Ruta completa */}
-                  <Stack spacing={0.75}>
-                    {sectorPath.map((sector, idx) => {
-                      const isLast  = idx === sectorPath.length - 1;
-                      const isFirst = idx === 0;
-                      return (
-                        <Stack key={sector.id} direction="row" alignItems="center" gap={1}>
-                          {/* Línea conectora */}
-                          {!isFirst && (
-                            <Box sx={{
-                              width: 1, height: 16, ml: 1.25,
-                              borderLeft: `2px solid ${theme.palette.divider}`,
-                              flexShrink: 0,
-                            }} />
-                          )}
-                          <Box sx={{
-                            display: 'flex', alignItems: 'center', gap: 1,
-                            pl: isFirst ? 0 : 2,
-                            py: 0.75, px: 1.5,
-                            borderRadius: 2,
-                            bgcolor: isLast ? 'rgba(245,158,11,0.08)' : theme.palette.action.hover,
-                            border: `1px solid ${isLast ? '#F59E0B' : theme.palette.divider}`,
-                            flex: 1,
-                          }}>
-                            <Box sx={{
-                              width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-                              bgcolor: isLast ? '#F59E0B' : theme.palette.text.disabled,
-                            }} />
-                            <Box>
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  color: 'text.disabled',
-                                  fontWeight: 600,
-                                  fontSize: 9,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: 0.5,
-                                  display: 'block',
-                                }}
-                              >
-                                {sector.tipo}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                fontWeight={isLast ? 700 : 500}
-                                color={isLast ? '#F59E0B' : 'text.primary'}
-                                sx={{ lineHeight: 1.2 }}
-                              >
-                                {nombreCompletoSector(sector)}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </Stack>
-                      );
-                    })}
-                  </Stack>
-
-                  {/* Path completo resumido */}
-                  <Box sx={{
-                    mt: 2, p: 1.5, borderRadius: 2,
-                    bgcolor: theme.palette.action.hover,
-                    border: `1px solid ${theme.palette.divider}`,
+      <Stack spacing={0}>
+        {sectorPath.map((sector, idx) => {
+          const isLast = idx === sectorPath.length - 1;
+          return (
+            <Box key={sector.id}>
+              {/* Línea conectora vertical — solo entre items */}
+              {idx > 0 && (
+                <Box sx={{
+                  width: 2, height: 14,
+                  bgcolor: theme.palette.divider,
+                  ml: 1.75,
+                }} />
+              )}
+              {/* Card del sector */}
+              <Box sx={{
+                display: 'flex', alignItems: 'center', gap: 1,
+                py: 0.75, px: 1.5, borderRadius: 2,
+                bgcolor: isLast ? 'rgba(245,158,11,0.08)' : theme.palette.action.hover,
+                border: `1px solid ${isLast ? '#F59E0B' : theme.palette.divider}`,
+              }}>
+                <Box sx={{
+                  width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                  bgcolor: isLast ? '#F59E0B' : theme.palette.text.disabled,
+                }} />
+                <Box>
+                  <Typography variant="caption" sx={{
+                    color: 'text.disabled', fontWeight: 600,
+                    fontSize: 9, textTransform: 'uppercase',
+                    letterSpacing: 0.5, display: 'block',
                   }}>
-                    <Typography variant="caption" color="text.disabled" fontWeight={600}
-                      display="block" mb={0.5} sx={{ textTransform: 'uppercase', fontSize: 9, letterSpacing: 0.5 }}>
-                      Ruta completa
-                    </Typography>
-                    <Typography variant="caption" fontWeight={600} color="text.secondary">
-                      {sectorPath.map(s => nombreCompletoSector(s)).join(' › ')}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            )}
+                    {sector.tipo}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fontWeight={isLast ? 700 : 500}
+                    color={isLast ? '#F59E0B' : 'text.primary'}
+                    sx={{ lineHeight: 1.2 }}
+                  >
+                    {nombreCompletoSector(sector)}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          );
+        })}
+      </Stack>
+
+      {/* Ruta resumida — solo si hay más de un nivel */}
+      {sectorPath.length > 1 && (
+        <Box sx={{
+          mt: 2, p: 1.5, borderRadius: 2,
+          bgcolor: theme.palette.action.hover,
+          border: `1px solid ${theme.palette.divider}`,
+        }}>
+          <Typography variant="caption" color="text.disabled" fontWeight={600}
+            display="block" mb={0.5}
+            sx={{ textTransform: 'uppercase', fontSize: 9, letterSpacing: 0.5 }}>
+            Ruta completa
+          </Typography>
+          <Typography variant="caption" fontWeight={600} color="text.secondary">
+            {sectorPath.map(s => nombreCompletoSector(s)).join(' › ')}
+          </Typography>
+        </Box>
+      )}
+
+    </CardContent>
+  </Card>
+)}
 
           </Stack>
         </Grid>
