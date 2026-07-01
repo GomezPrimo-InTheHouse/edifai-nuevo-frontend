@@ -1,140 +1,45 @@
-// import React from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { Button, useTheme, useMediaQuery } from '@mui/material';
-// import { ArrowLeft } from 'lucide-react';
-
-// import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
-// import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
-// import { ObraForm } from '../components/ObraForm';
-// import { useNotify } from '../../../shared/context/NotifyContext'; 
-
-// import { useClientesList } from '../../clientes/hooks/useClientes';
-
-// import {
-//   useCreateObra,
-//   useEstadosObraOptions,
-//   useTiposObraOptions,
-// } from '../hooks/useObras';
-
-// export const ObraCreatePage: React.FC = () => {
-//   const navigate = useNavigate();
-//   const notify = useNotify();
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-//   const createMutation = useCreateObra();
-//   const { data: tiposObra = [] } = useTiposObraOptions();
-//   const { data: estados = [] } = useEstadosObraOptions();
-//   const { data: clientes = [] } = useClientesList();
-  
-//   const handleSubmit = async (values: any) => {
-//   try {
-//     await createMutation.mutateAsync(values);
-//     notify.success('La obra se ha registrado exitosamente.');
-//     navigate('/obras');
-//   } catch (error: any) {
-//     // 1. Log para diagnóstico (Míralo en la consola F12)
-//     console.error("DEBUG ERROR COMPLETO:", error);
-//     console.log("DATA DEL ERROR:", error.response?.data);
-
-//     // 2. Extracción ultra-flexible del mensaje
-//     const errorMessage = 
-//       error.response?.data?.error ||        // Caso: { error: "..." }
-//       error.response?.data?.message ||      // Caso: { message: "..." }
-//       error.response?.data ||               // Caso: "Mensaje directo"
-//       error.message ||                      // Error genérico de JS/Network
-//       'Error desconocido al procesar la solicitud';
-
-//     // 3. Lanzar la notificación
-//     console.log("MENSAJE EXTRAÍDO PARA NOTIFICACIÓN:", errorMessage);
-//     console.log('RESPONSE DATA:', error.response?.data);
-//     console.log('STATUS:', error.response?.status);
-    
-//     notify.error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
-//   }
-// };
-
-//   return (
-//     <AppLayout>
-//       <PageHeader
-//         title="Nueva obra"
-//         subtitle="Registrar una nueva obra en el sistema."
-//         actions={
-//           <Button
-//             variant="outlined"
-//             size={isMobile ? "small" : "medium"}
-//             startIcon={<ArrowLeft size={16} />}
-//             onClick={() => navigate('/obras')}
-//             sx={{ borderRadius: 2 }}
-//           >
-//             {isMobile ? "Volver" : "Volver a obras"}
-//           </Button>
-//         }
-//       />
-
-//       <ObraForm
-//         tiposObra={tiposObra}
-//         clientes={clientes}
-//         estados={estados}
-//         onSubmit={handleSubmit}
-//         isSubmitting={createMutation.isPending}
-//       />
-//     </AppLayout>
-//   );
-// };
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, useTheme, useMediaQuery } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
 import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
 import { ObraForm } from '../components/ObraForm';
-import { useNotify } from '../../../shared/context/NotifyContext';
-
+import { useCreateObra, useTiposObraOptions, useEstadosObraOptions } from '../hooks/useObras';
 import { useClientesList } from '../../clientes/hooks/useClientes';
-
-import {
-  useCreateObra,
-  useEstadosObraOptions,
-  useTiposObraOptions,
-} from '../hooks/useObras';
+import { useNotify } from '../../../shared/hooks/useNotify';
+import { sectorApi } from '../../../services/api/sector.api';
+import type { ObraFormValues } from '../types/obra.types';
 
 export const ObraCreatePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const notify = useNotify();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   const createMutation = useCreateObra();
   const { data: tiposObra = [] } = useTiposObraOptions();
-  const { data: estados = [] } = useEstadosObraOptions();
-  const { data: clientes = [] } = useClientesList();
+  const { data: estados = [] }   = useEstadosObraOptions();
+  const { data: clientes = [] }  = useClientesList();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: ObraFormValues) => {
+    const { sectores, ...obraPayload } = values;
     try {
-      await createMutation.mutateAsync(values);
+      const response = await createMutation.mutateAsync(obraPayload as any);
+      const obraId: number = (response as any).obra?.id ?? (response as any).id;
+
+      if (sectores && sectores.length > 0 && obraId) {
+        try {
+          await sectorApi.createWithHierarchy(obraId, sectores as any);
+        } catch {
+          notify.warning?.('Obra creada, pero hubo un error al guardar algunos sectores.');
+        }
+      }
+
       notify.success(t('obras.notify.creada'));
-      navigate('/obras');
-    } catch (error: any) {
-      console.error("DEBUG ERROR COMPLETO:", error);
-      console.log("DATA DEL ERROR:", error.response?.data);
-
-      const errorMessage =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        error.response?.data ||
-        error.message ||
-        t('obras.notify.error_desconocido');
-
-      console.log("MENSAJE EXTRAÍDO PARA NOTIFICACIÓN:", errorMessage);
-      console.log('RESPONSE DATA:', error.response?.data);
-      console.log('STATUS:', error.response?.status);
-
-      notify.error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
+      navigate(`/obras/${obraId}`);
+    } catch {
+      notify.error(t('obras.notify.error_crear'));
     }
   };
 
@@ -144,24 +49,16 @@ export const ObraCreatePage: React.FC = () => {
         title={t('obras.create.title')}
         subtitle={t('obras.create.subtitle')}
         actions={
-          <Button
-            variant="outlined"
-            size={isMobile ? "small" : "medium"}
-            startIcon={<ArrowLeft size={16} />}
-            onClick={() => navigate('/obras')}
-            sx={{ borderRadius: 2 }}
-          >
-            {isMobile ? t('obras.acciones.ver') : t('obras.acciones.volver')}
-          </Button>
+          <Stack direction="row" spacing={1}>
+            <Button variant="outlined" startIcon={<ArrowLeft size={16} />} onClick={() => navigate('/obras')}>
+              {t('obras.acciones.volver')}
+            </Button>
+          </Stack>
         }
       />
-
       <ObraForm
-        tiposObra={tiposObra}
-        clientes={clientes}
-        estados={estados}
-        onSubmit={handleSubmit}
-        isSubmitting={createMutation.isPending}
+        tiposObra={tiposObra} estados={estados} clientes={clientes}
+        onSubmit={handleSubmit} isSubmitting={createMutation.isPending}
       />
     </AppLayout>
   );
