@@ -336,7 +336,8 @@
       "inicio_estimado": "Est. start",
       "fin_estimado": "Est. end",
       "progreso": "Progress",
-      "acciones": "Actions"
+      "acciones": "Actions",
+      "especialidad": "Specialty"
     },
     "confirm": {
       "eliminar_title": "Remove this task?",

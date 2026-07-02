@@ -304,7 +304,8 @@
       "inicio_estimado": "Início estimado",
       "fin_estimado": "Fim estimado",
       "progreso": "Progresso",
-      "acciones": "Ações"
+      "acciones": "Ações",
+      "especialidad": "Especialidade"
     },
     "confirm": {
       "eliminar_title": "Remover esta tarefa?",

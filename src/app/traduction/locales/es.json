@@ -280,7 +280,8 @@
       "inicio_estimado": "Inicio estimado",
       "fin_estimado": "Fin estimado",
       "progreso": "Progreso",
-      "acciones": "Acciones"
+      "acciones": "Acciones",
+      "especialidad":"Especialidad"
     },
     "confirm": {
       "eliminar_title": "¿Dar de baja esta labor?",
