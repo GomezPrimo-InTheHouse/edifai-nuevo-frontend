@@ -287,6 +287,10 @@
     "todas": "All",
     "header_archivadas": "ARCHIVED TASKS",
     "header_registradas": "REGISTERED TASKS",
+    "filtro_estado": "State",
+"todos_estados": "All states",
+"filtro_trabajador": "Worker",
+"todos_trabajadores": "All workers",
     "tabs": {
       "activas": "Active",
       "archivadas": "Archived"

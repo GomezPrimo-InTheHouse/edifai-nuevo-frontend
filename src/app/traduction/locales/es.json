@@ -255,6 +255,10 @@
     "todas": "Todas",
     "header_archivadas": "LABORES ARCHIVADAS",
     "header_registradas": "LABORES REGISTRADAS",
+    "filtro_estado": "Estado",
+"todos_estados": "Todos los estados",
+"filtro_trabajador": "Trabajador",
+"todos_trabajadores": "Todos los trabajadores",
     "tabs": {
       "activas": "Activas",
       "archivadas": "Archivadas"
