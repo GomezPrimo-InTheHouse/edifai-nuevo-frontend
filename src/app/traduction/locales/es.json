@@ -1499,6 +1499,26 @@
       "sin_datos": "Sin datos"
     }
   },
+  "compras": {
+  "title": "Compras",
+  "title_nueva": "Nueva compra",
+  "title_editar": "Editar compra",
+  "nueva": "Nueva compra",
+  "empty": { "desc": "Todavía no hay compras registradas" },
+  "tabla": {
+    "fecha": "Fecha", "obra": "Obra", "descripcion": "Descripción",
+    "especialidad": "Especialidad", "material": "Material", "monto": "Monto"
+  },
+  "form": {
+    "obra": "Obra", "sector": "Sector", "sin_sector": "Sin sector",
+    "especialidad": "Especialidad", "proveedor": "Proveedor", "descripcion": "Descripción",
+    "monto": "Monto", "fecha": "Fecha", "subir_comprobante": "Subir comprobante",
+    "comprobante_cargado": "Comprobante cargado ✓", "es_compra_material": "¿Es compra de material?",
+    "material": "Material", "cantidad": "Cantidad", "guardar": "Guardar compra"
+  },
+  "acciones": { "editar": "Editar", "eliminar": "Eliminar", "ver_comprobante": "Ver comprobante" },
+  "confirm": { "eliminar_msg": "¿Eliminar esta compra? Si está vinculada a un material, se revertirá el stock." }
+},
   "market": {
     "title": "Market",
     "subtitle": "Comprá y vendé materiales con otros administradores.",

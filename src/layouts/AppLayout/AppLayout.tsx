@@ -20,7 +20,7 @@ import { ResumenWidget } from '../../modules/resumen/components/ResumenWidget';
 import {
   Menu, Dashboard, Construction, Group, Inventory2,
   AssignmentTurnedIn, ReceiptLong,
-  KeyboardArrowDown, KeyboardArrowUp,
+  KeyboardArrowDown, KeyboardArrowUp, ShoppingCart,
 } from '@mui/icons-material';
 import { ShoppingBag } from 'lucide-react';
 
@@ -128,6 +128,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
       items: [
         { label: t('nav.presupuestos'), icon: <ReceiptLong />, path: '/presupuestos', allowedRoles: [1, 3, 4, 6, 9] },
         { label: t('nav.pagos'), icon: <ReceiptLong />, path: '/pagos', allowedRoles: [1, 3, 4, 6, 9] },
+        { label: 'Compras', icon: <ShoppingCart />, path: '/compras', allowedRoles: [1, 3, 4, 6, 9] },
         { label: 'Gastos Imprevistos', icon: <ReceiptLong />, path: '/gastos-imprevistos', allowedRoles: [1, 3, 4, 6, 9, 7, 8] },
         { label: t('market.title'), icon: <ShoppingBag size={20} />, path: '/market', allowedRoles: [1, 3, 4, 6, 9] },
         { label: t('nav.presentismo'), icon: <AssignmentTurnedIn />, path: '/presentismo/admin', allowedRoles: [1, 3, 4, 6, 9] },

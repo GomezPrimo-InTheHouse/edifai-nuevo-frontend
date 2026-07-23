@@ -1090,6 +1090,26 @@
   "creado_ok": "Material created and added to budget.",
   "error_crear": "Could not create the material."
 },
+"compras": {
+  "title": "Purchases",
+  "title_nueva": "New purchase",
+  "title_editar": "Edit purchase",
+  "nueva": "New purchase",
+  "empty": { "desc": "No purchases registered yet" },
+  "tabla": {
+    "fecha": "Date", "obra": "Project", "descripcion": "Description",
+    "especialidad": "Specialty", "material": "Material", "monto": "Amount"
+  },
+  "form": {
+    "obra": "Project", "sector": "Sector", "sin_sector": "No sector",
+    "especialidad": "Specialty", "proveedor": "Supplier", "descripcion": "Description",
+    "monto": "Amount", "fecha": "Date", "subir_comprobante": "Upload receipt",
+    "comprobante_cargado": "Receipt uploaded ✓", "es_compra_material": "Is this a material purchase?",
+    "material": "Material", "cantidad": "Quantity", "guardar": "Save purchase"
+  },
+  "acciones": { "editar": "Edit", "eliminar": "Delete", "ver_comprobante": "View receipt" },
+  "confirm": { "eliminar_msg": "Delete this purchase? If linked to a material, stock will be reverted." }
+},
   "pagos": {
     "title": "Payments",
     "subtitle": "Payment history and advances to workers.",

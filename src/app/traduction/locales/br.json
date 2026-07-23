@@ -1089,6 +1089,26 @@
     "creado_ok": "Material criado e adicionado ao orçamento.",
     "error_crear": "Não foi possível criar o material."
   },
+  "compras": {
+  "title": "Compras",
+  "title_nueva": "Nova compra",
+  "title_editar": "Editar compra",
+  "nueva": "Nova compra",
+  "empty": { "desc": "Ainda não há compras registradas" },
+  "tabla": {
+    "fecha": "Data", "obra": "Obra", "descripcion": "Descrição",
+    "especialidad": "Especialidade", "material": "Material", "monto": "Valor"
+  },
+  "form": {
+    "obra": "Obra", "sector": "Setor", "sin_sector": "Sem setor",
+    "especialidad": "Especialidade", "proveedor": "Fornecedor", "descripcion": "Descrição",
+    "monto": "Valor", "fecha": "Data", "subir_comprobante": "Enviar comprovante",
+    "comprobante_cargado": "Comprovante enviado ✓", "es_compra_material": "É compra de material?",
+    "material": "Material", "cantidad": "Quantidade", "guardar": "Salvar compra"
+  },
+  "acciones": { "editar": "Editar", "eliminar": "Excluir", "ver_comprobante": "Ver comprovante" },
+  "confirm": { "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido." }
+},
   "pagos": {
     "title": "Pagamentos",
     "subtitle": "Histórico de pagamentos e adiantamentos a trabalhadores.",
