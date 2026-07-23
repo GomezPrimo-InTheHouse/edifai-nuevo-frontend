@@ -12,9 +12,10 @@ export const compraSchema = z.object({
   es_compra_material: z.boolean().default(false),
   material_id: z.number().nullable().optional(),
   cantidad: z.number().nullable().optional(),
+  precio_unitario_material: z.number().nullable().optional(),
 }).refine(
-  (data) => !data.es_compra_material || (data.material_id && data.cantidad && data.cantidad > 0),
-  { message: 'Si es compra de material, debés seleccionar el material y la cantidad', path: ['material_id'] }
+  (data) => !data.es_compra_material || (data.material_id && data.cantidad && data.cantidad > 0 && data.precio_unitario_material && data.precio_unitario_material > 0),
+  { message: 'Si es compra de material, completá material, cantidad y precio unitario', path: ['material_id'] }
 );
 
 export type CompraFormValues = z.infer<typeof compraSchema>;

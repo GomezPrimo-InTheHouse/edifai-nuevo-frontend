@@ -21,16 +21,10 @@ function esHoja(sector: Sector, todos: Sector[]): boolean {
   return !todos.some((s) => s.parent_id === sector.id);
 }
 
-const rowSx = {
-  display: 'flex',
-  flexDirection: { xs: 'column', md: 'row' } as const,
-  gap: 2,
-};
-
+const rowSx = { display: 'flex', flexDirection: { xs: 'column', md: 'row' } as const, gap: 2 };
 const fieldSx = { flex: 1, minWidth: 0 };
 
 export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraFormProps) {
-//   const theme = useTheme();
   const { t } = useTranslation();
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<CompraFormValues>({
@@ -47,6 +41,7 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
       es_compra_material: false,
       material_id: null,
       cantidad: null,
+      precio_unitario_material: null,
       ...defaultValues,
     },
   });
@@ -54,6 +49,8 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
   const obraId = watch('obra_id');
   const esCompraMaterial = watch('es_compra_material');
   const comprobanteUrl = watch('comprobante_url');
+  const cantidad = watch('cantidad');
+  const precioUnitarioMaterial = watch('precio_unitario_material');
 
   const { data: obras = [] } = useObrasList();
   const { data: sectores = [] } = useSectoresPorObra(obraId);
@@ -71,6 +68,13 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
     }
   }, [obras]);
 
+  // recalcula el monto total automáticamente cuando es compra de material
+  React.useEffect(() => {
+    if (esCompraMaterial && cantidad && precioUnitarioMaterial) {
+      setValue('monto', +(cantidad * precioUnitarioMaterial).toFixed(2));
+    }
+  }, [esCompraMaterial, cantidad, precioUnitarioMaterial]);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -82,7 +86,7 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
     try {
       const datos = await analizarIA.mutateAsync(url);
       if (datos.descripcion) setValue('descripcion', datos.descripcion);
-      if (datos.monto) setValue('monto', datos.monto);
+      if (datos.monto && !esCompraMaterial) setValue('monto', datos.monto);
       if (datos.fecha) setValue('fecha', datos.fecha);
       if (datos.proveedor) setValue('proveedor', datos.proveedor);
     } catch {
@@ -91,6 +95,10 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
       setAnalizando(false);
     }
   };
+
+  const totalCalculado = esCompraMaterial && cantidad && precioUnitarioMaterial
+    ? +(cantidad * precioUnitarioMaterial).toFixed(2)
+    : null;
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
@@ -195,39 +203,6 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
         )}
       />
 
-      <Box sx={rowSx}>
-        <Controller
-          name="monto"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              type="number"
-              fullWidth
-              sx={fieldSx}
-              label={t('compras.form.monto')}
-              error={!!errors.monto}
-              helperText={errors.monto?.message}
-              onChange={(e) => field.onChange(Number(e.target.value))}
-            />
-          )}
-        />
-
-        <Controller
-          name="fecha"
-          control={control}
-          render={({ field }) => (
-            <TextField {...field} type="date" fullWidth sx={fieldSx} label={t('compras.form.fecha')} InputLabelProps={{ shrink: true }} />
-          )}
-        />
-      </Box>
-
-      <Button variant="outlined" component="label" disabled={uploadComprobante.isPending || analizando} sx={{ alignSelf: 'flex-start' }}>
-        {analizando ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
-        {comprobanteUrl ? t('compras.form.comprobante_cargado') : t('compras.form.subir_comprobante')}
-        <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
-      </Button>
-
       <Controller
         name="es_compra_material"
         control={control}
@@ -239,47 +214,119 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
         )}
       />
 
-      {esCompraMaterial && (
+      {esCompraMaterial ? (
+        <>
+          <Box sx={rowSx}>
+            <Controller
+              name="material_id"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  select
+                  fullWidth
+                  sx={fieldSx}
+                  label={t('compras.form.material')}
+                  error={!!errors.material_id}
+                  helperText={errors.material_id?.message}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                >
+                  {materiales.map((mat) => (
+                    <MenuItem key={mat.id} value={mat.id}>{mat.nombre} ({mat.unidad})</MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+
+            <Controller
+              name="cantidad"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  type="number"
+                  fullWidth
+                  sx={fieldSx}
+                  label={t('compras.form.cantidad')}
+                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                />
+              )}
+            />
+          </Box>
+
+          <Box sx={rowSx}>
+            <Controller
+              name="precio_unitario_material"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  value={field.value ?? ''}
+                  type="number"
+                  fullWidth
+                  sx={fieldSx}
+                  label={t('compras.form.precio_unitario')}
+                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                />
+              )}
+            />
+
+            <TextField
+              value={totalCalculado ?? ''}
+              fullWidth
+              sx={fieldSx}
+              label={t('compras.form.total_calculado')}
+              disabled
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+        </>
+      ) : (
         <Box sx={rowSx}>
           <Controller
-            name="material_id"
+            name="monto"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                value={field.value ?? ''}
-                select
+                type="number"
                 fullWidth
                 sx={fieldSx}
-                label={t('compras.form.material')}
-                error={!!errors.material_id}
-                helperText={errors.material_id?.message}
+                label={t('compras.form.monto')}
+                error={!!errors.monto}
+                helperText={errors.monto?.message}
                 onChange={(e) => field.onChange(Number(e.target.value))}
-              >
-                {materiales.map((mat) => (
-                  <MenuItem key={mat.id} value={mat.id}>{mat.nombre} ({mat.unidad})</MenuItem>
-                ))}
-              </TextField>
+              />
             )}
           />
 
           <Controller
-            name="cantidad"
+            name="fecha"
             control={control}
             render={({ field }) => (
-              <TextField
-                {...field}
-                value={field.value ?? ''}
-                type="number"
-                fullWidth
-                sx={fieldSx}
-                label={t('compras.form.cantidad')}
-                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-              />
+              <TextField {...field} type="date" fullWidth sx={fieldSx} label={t('compras.form.fecha')} InputLabelProps={{ shrink: true }} />
             )}
           />
         </Box>
       )}
+
+      {esCompraMaterial && (
+        <Controller
+          name="fecha"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} type="date" fullWidth label={t('compras.form.fecha')} InputLabelProps={{ shrink: true }} />
+          )}
+        />
+      )}
+
+      <Button variant="outlined" component="label" disabled={uploadComprobante.isPending || analizando} sx={{ alignSelf: 'flex-start' }}>
+        {analizando ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
+        {comprobanteUrl ? t('compras.form.comprobante_cargado') : t('compras.form.subir_comprobante')}
+        <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
+      </Button>
 
       <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ alignSelf: 'flex-start' }}>
         {isSubmitting ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : t('compras.form.guardar')}

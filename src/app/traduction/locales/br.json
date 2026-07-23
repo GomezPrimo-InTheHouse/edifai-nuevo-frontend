@@ -1100,6 +1100,8 @@
     "especialidad": "Especialidade", "material": "Material", "monto": "Valor"
   },
   "form": {
+    "precio_unitario": "Preço unitário",
+"total_calculado": "Total (calculado)",
     "obra": "Obra", "sector": "Setor", "sin_sector": "Sem setor",
     "especialidad": "Especialidade", "proveedor": "Fornecedor", "descripcion": "Descrição",
     "monto": "Valor", "fecha": "Data", "subir_comprobante": "Enviar comprovante",
@@ -1107,7 +1109,15 @@
     "material": "Material", "cantidad": "Quantidade", "guardar": "Salvar compra"
   },
   "acciones": { "editar": "Editar", "eliminar": "Excluir", "ver_comprobante": "Ver comprovante" },
-  "confirm": { "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido." }
+  "confirm": { "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido." },
+  "multi_item": {
+  "boton": "Enviar comprovante com IA",
+  "title": "Analisar comprovante com IA",
+  "analizando": "Detectando itens do comprovante...",
+  "marcar_material": "Marcar como material",
+  "es_gasto": "Despesa geral",
+  "guardar_todas": "Salvar {{count}} compra(s)"
+}
 },
   "pagos": {
     "title": "Pagamentos",

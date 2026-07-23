@@ -1500,6 +1500,7 @@
     }
   },
   "compras": {
+    
   "title": "Compras",
   "title_nueva": "Nueva compra",
   "title_editar": "Editar compra",
@@ -1510,6 +1511,8 @@
     "especialidad": "Especialidad", "material": "Material", "monto": "Monto"
   },
   "form": {
+    "precio_unitario": "Precio unitario",
+"total_calculado": "Total (calculado)",
     "obra": "Obra", "sector": "Sector", "sin_sector": "Sin sector",
     "especialidad": "Especialidad", "proveedor": "Proveedor", "descripcion": "Descripción",
     "monto": "Monto", "fecha": "Fecha", "subir_comprobante": "Subir comprobante",
@@ -1517,7 +1520,15 @@
     "material": "Material", "cantidad": "Cantidad", "guardar": "Guardar compra"
   },
   "acciones": { "editar": "Editar", "eliminar": "Eliminar", "ver_comprobante": "Ver comprobante" },
-  "confirm": { "eliminar_msg": "¿Eliminar esta compra? Si está vinculada a un material, se revertirá el stock." }
+  "confirm": { "eliminar_msg": "¿Eliminar esta compra? Si está vinculada a un material, se revertirá el stock." },
+  "multi_item": {
+  "boton": "Cargar comprobante con IA",
+  "title": "Analizar comprobante con IA",
+  "analizando": "Detectando ítems del comprobante...",
+  "marcar_material": "Marcar como material",
+  "es_gasto": "Gasto general",
+  "guardar_todas": "Guardar {{count}} compra(s)"
+}
 },
   "market": {
     "title": "Market",
