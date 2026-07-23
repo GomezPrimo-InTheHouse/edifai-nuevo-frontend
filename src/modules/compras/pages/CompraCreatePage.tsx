@@ -1,7 +1,7 @@
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CompraForm } from '../components/CompraFormDialog';
+import { CompraForm } from '../components/CompraForm';
 import { useCreateCompra } from '../hooks/useCompras';
 import type { CompraFormValues } from '../schemas/compra.schema';
 

@@ -1,8 +1,10 @@
-
 import { Box, Paper, Typography, Chip, Button, useTheme } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Edit, Delete } from '@mui/icons-material';
+import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
+import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
+import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
 import { useCompraDetail, useDeleteCompra } from '../hooks/useCompras';
 import { nombreCompletoSector } from '../../obras/types/sector.types';
 
@@ -26,23 +28,29 @@ export function CompraDetailPage() {
     navigate('/compras');
   };
 
-  if (isLoading || !compra) return null;
+  if (isLoading || !compra) {
+    return (
+      <AppLayout>
+        <LoadingState message={t('compras.loading')} />
+      </AppLayout>
+    );
+  }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
-          {compra.descripcion}
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button startIcon={<Edit />} onClick={() => navigate(`/compras/${compraId}/editar`)}>
-            {t('compras.acciones.editar')}
-          </Button>
-          <Button color="error" startIcon={<Delete />} onClick={handleDelete}>
-            {t('compras.acciones.eliminar')}
-          </Button>
-        </Box>
-      </Box>
+    <AppLayout>
+      <PageHeader
+        title={compra.descripcion}
+        actions={
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button startIcon={<Edit />} onClick={() => navigate(`/compras/${compraId}/editar`)}>
+              {t('compras.acciones.editar')}
+            </Button>
+            <Button color="error" startIcon={<Delete />} onClick={handleDelete}>
+              {t('compras.acciones.eliminar')}
+            </Button>
+          </Box>
+        }
+      />
 
       <Paper sx={{ p: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -67,6 +75,6 @@ export function CompraDetailPage() {
           )}
         </Box>
       </Paper>
-    </Box>
+    </AppLayout>
   );
 }

@@ -1,8 +1,10 @@
-
-import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Paper, useTheme } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CompraForm } from '../components/CompraFormDialog';
+import { AppLayout } from '../../../layouts/AppLayout/AppLayout';
+import { PageHeader } from '../../../shared/components/PageHeader/PageHeader';
+import { LoadingState } from '../../../shared/components/LoadingState/LoadingState';
+import { CompraForm } from '../components/CompraForm';
 import { useCompraDetail, useUpdateCompra } from '../hooks/useCompras';
 import type { CompraFormValues } from '../schemas/compra.schema';
 
@@ -31,13 +33,18 @@ export function CompraEditPage() {
     navigate(`/compras/${compraId}`);
   };
 
-  if (isLoading || !compra) return null;
+  if (isLoading || !compra) {
+    return (
+      <AppLayout>
+        <LoadingState message={t('compras.loading')} />
+      </AppLayout>
+    );
+  }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: theme.palette.text.primary }}>
-        {t('compras.title_editar')}
-      </Typography>
+    <AppLayout>
+      <PageHeader title={t('compras.title_editar')} />
+
       <Paper sx={{ p: 3, border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
         <CompraForm
           defaultValues={{
@@ -57,6 +64,6 @@ export function CompraEditPage() {
           isSubmitting={updateCompra.isPending}
         />
       </Paper>
-    </Box>
+    </AppLayout>
   );
 }

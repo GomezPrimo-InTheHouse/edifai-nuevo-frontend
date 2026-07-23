@@ -1,289 +1,85 @@
-import React from 'react';
-import { Box, TextField, MenuItem, Switch, FormControlLabel, Button, CircularProgress } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
+import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { compraSchema, type CompraFormValues } from '../schemas/compra.schema';
-import { useObrasList } from '../../obras/hooks/useObras';
-import { useSectoresPorObra } from '../../obras/hooks/useSectores';
-import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidades';
-import { useMaterialesList } from '../../materiales/hooks/useMateriales';
-import { useUploadComprobante, useAnalizarComprobanteConIA } from '../hooks/useCompras';
-import { flattenSectorTree, nombreCompletoSector, type Sector } from '../../obras/types/sector.types';
+import { CompraForm } from './CompraForm';
+import { useCreateCompra, useUpdateCompra } from '../hooks/useCompras';
+import type { CompraFormValues } from '../schemas/compra.schema';
+import type { Compra } from '../types/compra.types';
 
-interface CompraFormProps {
-  defaultValues?: Partial<CompraFormValues>;
-  onSubmit: (values: CompraFormValues) => void;
-  isSubmitting?: boolean;
+interface CompraFormDialogProps {
+  open: boolean;
+  onClose: () => void;
+  compra?: Compra | null;
 }
 
-function esHoja(sector: Sector, todos: Sector[]): boolean {
-  return !todos.some((s) => s.parent_id === sector.id);
-}
-
-const rowSx = {
-  display: 'flex',
-  flexDirection: { xs: 'column', md: 'row' } as const,
-  gap: 2,
-};
-
-const fieldSx = { flex: 1, minWidth: 0 };
-
-export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraFormProps) {
-//   const theme = useTheme();
+export function CompraFormDialog({ open, onClose, compra }: CompraFormDialogProps) {
+  
   const { t } = useTranslation();
+  const createCompra = useCreateCompra();
+  const updateCompra = useUpdateCompra();
 
-  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<CompraFormValues>({
-    resolver: zodResolver(compraSchema),
-    defaultValues: {
-      obra_id: 0,
-      sector_id: null,
-      especialidad_id: 0,
-      descripcion: '',
-      proveedor: '',
-      monto: 0,
-      fecha: new Date().toISOString().slice(0, 10),
-      comprobante_url: '',
-      es_compra_material: false,
-      material_id: null,
-      cantidad: null,
-      ...defaultValues,
-    },
-  });
+  const isEdit = Boolean(compra);
 
-  const obraId = watch('obra_id');
-  const esCompraMaterial = watch('es_compra_material');
-  const comprobanteUrl = watch('comprobante_url');
-
-  const { data: obras = [] } = useObrasList();
-  const { data: sectores = [] } = useSectoresPorObra(obraId);
-  const { data: especialidades = [] } = useEspecialidadesList();
-  const { data: materiales = [] } = useMaterialesList();
-
-  const uploadComprobante = useUploadComprobante();
-  const analizarIA = useAnalizarComprobanteConIA();
-
-  const [analizando, setAnalizando] = React.useState(false);
-
-  React.useEffect(() => {
-    if (obras.length === 1 && !defaultValues?.obra_id) {
-      setValue('obra_id', obras[0].id);
+  const handleSubmit = async (values: CompraFormValues) => {
+    if (isEdit && compra) {
+      await updateCompra.mutateAsync({
+        id: compra.id,
+        obra_id: values.obra_id,
+        sector_id: values.sector_id ?? null,
+        especialidad_id: values.especialidad_id,
+        descripcion: values.descripcion,
+        proveedor: values.proveedor,
+        monto: values.monto,
+        fecha: values.fecha,
+        comprobante_url: values.comprobante_url,
+      });
+    } else {
+      await createCompra.mutateAsync({
+        obra_id: values.obra_id,
+        sector_id: values.sector_id ?? null,
+        especialidad_id: values.especialidad_id,
+        descripcion: values.descripcion,
+        proveedor: values.proveedor,
+        monto: values.monto,
+        fecha: values.fecha,
+        comprobante_url: values.comprobante_url,
+        material_id: values.es_compra_material ? values.material_id : null,
+        cantidad: values.es_compra_material ? values.cantidad : null,
+      });
     }
-  }, [obras]);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const url = await uploadComprobante.mutateAsync(file);
-    setValue('comprobante_url', url);
-
-    setAnalizando(true);
-    try {
-      const datos = await analizarIA.mutateAsync(url);
-      if (datos.descripcion) setValue('descripcion', datos.descripcion);
-      if (datos.monto) setValue('monto', datos.monto);
-      if (datos.fecha) setValue('fecha', datos.fecha);
-      if (datos.proveedor) setValue('proveedor', datos.proveedor);
-    } catch {
-      // si la IA falla, el usuario completa a mano
-    } finally {
-      setAnalizando(false);
-    }
+    onClose();
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-      <Box sx={rowSx}>
-        <Controller
-          name="obra_id"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              select
-              fullWidth
-              sx={fieldSx}
-              label={t('compras.form.obra')}
-              error={!!errors.obra_id}
-              helperText={errors.obra_id?.message}
-              disabled={obras.length === 1}
-              onChange={(e) => field.onChange(Number(e.target.value))}
-            >
-              {obras.map((obra) => (
-                <MenuItem key={obra.id} value={obra.id}>{obra.nombre}</MenuItem>
-              ))}
-            </TextField>
-          )}
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {isEdit ? t('compras.title_editar') : t('compras.title_nueva')}
+        <IconButton onClick={onClose} size="small"><Close /></IconButton>
+      </DialogTitle>
+      <DialogContent dividers sx={{ pt: 3 }}>
+        <CompraForm
+          defaultValues={
+            compra
+              ? {
+                  obra_id: compra.obra_id,
+                  sector_id: compra.sector_id,
+                  especialidad_id: compra.especialidad_id,
+                  descripcion: compra.descripcion,
+                  proveedor: compra.proveedor ?? '',
+                  monto: compra.monto,
+                  fecha: compra.fecha.slice(0, 10),
+                  comprobante_url: compra.comprobante_url ?? '',
+                  es_compra_material: Boolean(compra.material_id),
+                  material_id: compra.material_id,
+                  cantidad: compra.cantidad,
+                }
+              : undefined
+          }
+          onSubmit={handleSubmit}
+          isSubmitting={createCompra.isPending || updateCompra.isPending}
         />
-
-        <Controller
-          name="sector_id"
-          control={control}
-          render={({ field }) => {
-            const arbol = flattenSectorTree(sectores);
-            return (
-              <TextField
-                {...field}
-                value={field.value ?? ''}
-                select
-                fullWidth
-                sx={fieldSx}
-                label={t('compras.form.sector')}
-                disabled={!obraId || sectores.length === 0}
-                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-              >
-                <MenuItem value="">{t('compras.form.sin_sector')}</MenuItem>
-                {arbol.map(({ sector, depth }) => {
-                  const hoja = esHoja(sector, sectores);
-                  return (
-                    <MenuItem key={sector.id} value={sector.id} disabled={!hoja} sx={{ pl: 2 + depth * 2 }}>
-                      {nombreCompletoSector(sector)}
-                    </MenuItem>
-                  );
-                })}
-              </TextField>
-            );
-          }}
-        />
-      </Box>
-
-      <Box sx={rowSx}>
-        <Controller
-          name="especialidad_id"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              select
-              fullWidth
-              sx={fieldSx}
-              label={t('compras.form.especialidad')}
-              error={!!errors.especialidad_id}
-              helperText={errors.especialidad_id?.message}
-              onChange={(e) => field.onChange(Number(e.target.value))}
-            >
-              {especialidades.map((esp) => (
-                <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>
-              ))}
-            </TextField>
-          )}
-        />
-
-        <Controller
-          name="proveedor"
-          control={control}
-          render={({ field }) => (
-            <TextField {...field} fullWidth sx={fieldSx} label={t('compras.form.proveedor')} />
-          )}
-        />
-      </Box>
-
-      <Controller
-        name="descripcion"
-        control={control}
-        render={({ field }) => (
-          <TextField
-            {...field}
-            fullWidth
-            multiline
-            minRows={2}
-            label={t('compras.form.descripcion')}
-            error={!!errors.descripcion}
-            helperText={errors.descripcion?.message}
-          />
-        )}
-      />
-
-      <Box sx={rowSx}>
-        <Controller
-          name="monto"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              type="number"
-              fullWidth
-              sx={fieldSx}
-              label={t('compras.form.monto')}
-              error={!!errors.monto}
-              helperText={errors.monto?.message}
-              onChange={(e) => field.onChange(Number(e.target.value))}
-            />
-          )}
-        />
-
-        <Controller
-          name="fecha"
-          control={control}
-          render={({ field }) => (
-            <TextField {...field} type="date" fullWidth sx={fieldSx} label={t('compras.form.fecha')} InputLabelProps={{ shrink: true }} />
-          )}
-        />
-      </Box>
-
-      <Button variant="outlined" component="label" disabled={uploadComprobante.isPending || analizando} sx={{ alignSelf: 'flex-start' }}>
-        {analizando ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
-        {comprobanteUrl ? t('compras.form.comprobante_cargado') : t('compras.form.subir_comprobante')}
-        <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
-      </Button>
-
-      <Controller
-        name="es_compra_material"
-        control={control}
-        render={({ field }) => (
-          <FormControlLabel
-            control={<Switch checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
-            label={t('compras.form.es_compra_material')}
-          />
-        )}
-      />
-
-      {esCompraMaterial && (
-        <Box sx={rowSx}>
-          <Controller
-            name="material_id"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                value={field.value ?? ''}
-                select
-                fullWidth
-                sx={fieldSx}
-                label={t('compras.form.material')}
-                error={!!errors.material_id}
-                helperText={errors.material_id?.message}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-              >
-                {materiales.map((mat) => (
-                  <MenuItem key={mat.id} value={mat.id}>{mat.nombre} ({mat.unidad})</MenuItem>
-                ))}
-              </TextField>
-            )}
-          />
-
-          <Controller
-            name="cantidad"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                value={field.value ?? ''}
-                type="number"
-                fullWidth
-                sx={fieldSx}
-                label={t('compras.form.cantidad')}
-                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
-              />
-            )}
-          />
-        </Box>
-      )}
-
-      <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ alignSelf: 'flex-start' }}>
-        {isSubmitting ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : t('compras.form.guardar')}
-      </Button>
-    </Box>
+      </DialogContent>
+    </Dialog>
   );
 }

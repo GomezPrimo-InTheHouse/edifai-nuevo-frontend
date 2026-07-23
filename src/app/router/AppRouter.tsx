@@ -48,7 +48,6 @@ import { InboxPage } from '../../modules/market/pages/InboxPage';
 import { MisComprasPage } from '../../modules/market/pages/MisComprasPage';
 
 import { ComprasListPage } from '../../modules/compras/pages/ComprasListPage';
-import { CompraCreatePage } from '../../modules/compras/pages/CompraCreatePage';
 import { CompraDetailPage } from '../../modules/compras/pages/CompraDetailPage';
 import { CompraEditPage } from '../../modules/compras/pages/CompraEditPage';
 
@@ -107,7 +106,6 @@ export const AppRouter = () => {
         <Route path="/materiales/:id/editar" element={<MaterialEditPage />} />
 
         <Route path="/compras" element={<ComprasListPage />} />
-        <Route path="/compras/nueva" element={<CompraCreatePage />} />
         <Route path="/compras/:id" element={<CompraDetailPage />} />
         <Route path="/compras/:id/editar" element={<CompraEditPage />} />
 
