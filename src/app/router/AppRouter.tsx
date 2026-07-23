@@ -48,8 +48,6 @@ import { InboxPage } from '../../modules/market/pages/InboxPage';
 import { MisComprasPage } from '../../modules/market/pages/MisComprasPage';
 
 import { ComprasListPage } from '../../modules/compras/pages/ComprasListPage';
-import { CompraDetailPage } from '../../modules/compras/pages/CompraDetailPage';
-import { CompraEditPage } from '../../modules/compras/pages/CompraEditPage';
 
 const ROLES_ADMIN = [1, 3, 4, 6];
 const ROLES_ADMIN_ALL = [1, 3, 4, 6, 9];
@@ -106,8 +104,6 @@ export const AppRouter = () => {
         <Route path="/materiales/:id/editar" element={<MaterialEditPage />} />
 
         <Route path="/compras" element={<ComprasListPage />} />
-        <Route path="/compras/:id" element={<CompraDetailPage />} />
-        <Route path="/compras/:id/editar" element={<CompraEditPage />} />
 
         <Route path="/presupuestos" element={<PresupuestosListPage />} />
         <Route path="/presupuestos/nuevo" element={<PresupuestoCreatePage />} />

@@ -1,4 +1,3 @@
-
 import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +13,6 @@ interface CompraFormDialogProps {
 }
 
 export function CompraFormDialog({ open, onClose, compra }: CompraFormDialogProps) {
-  
   const { t } = useTranslation();
   const createCompra = useCreateCompra();
   const updateCompra = useUpdateCompra();
@@ -59,6 +57,7 @@ export function CompraFormDialog({ open, onClose, compra }: CompraFormDialogProp
       </DialogTitle>
       <DialogContent dividers sx={{ pt: 3 }}>
         <CompraForm
+          key={compra?.id ?? 'nueva'}
           defaultValues={
             compra
               ? {
@@ -73,6 +72,9 @@ export function CompraFormDialog({ open, onClose, compra }: CompraFormDialogProp
                   es_compra_material: Boolean(compra.material_id),
                   material_id: compra.material_id,
                   cantidad: compra.cantidad,
+                  precio_unitario_material: compra.material_id && compra.cantidad
+                    ? +(compra.monto / compra.cantidad).toFixed(2)
+                    : null,
                 }
               : undefined
           }
