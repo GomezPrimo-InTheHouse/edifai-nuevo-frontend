@@ -61,3 +61,27 @@ export interface AnalizarComprobantePayload {
   fecha?: string;
   proveedor?: string;
 }
+
+export interface ItemDetectadoIA {
+  descripcion: string;
+  monto: number;
+  cantidad?: number | null;
+  unidad?: string | null;
+  material_id?: number | null;
+  material_nombre?: string | null;
+  especialidad_id?: number | null;
+  especialidad_nombre?: string | null;
+}
+
+export interface AnalisisMultiItemResult {
+  proveedor?: string;
+  fecha?: string;
+  items: ItemDetectadoIA[];
+}
+
+export interface ItemRevisionRow extends ItemDetectadoIA {
+  tempId: string;
+  obra_id: number | null;
+  sector_id: number | null;
+  es_compra_material: boolean;
+}

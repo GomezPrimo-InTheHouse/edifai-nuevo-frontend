@@ -74,3 +74,35 @@ export function useUploadComprobante() {
 export function useAnalizarComprobanteConIA() {
   return useMutation({ mutationFn: (imageUrl: string) => compraApi.analizarComprobanteConIA(imageUrl) });
 }
+
+export function useAnalizarComprobanteMultiItemConIA() {
+  return useMutation({
+    mutationFn: ({
+      imageUrl,
+      materiales,
+      especialidades,
+    }: {
+      imageUrl: string;
+      materiales: { id: number; nombre: string; unidad: string }[];
+      especialidades: { id: number; nombre: string }[];
+    }) => compraApi.analizarComprobanteMultiItemConIA(imageUrl, materiales, especialidades),
+  });
+}
+
+export function useCreateComprasBulk() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payloads: CreateCompraPayload[]) => {
+      const results = [];
+      for (const payload of payloads) {
+        results.push(await compraApi.create(payload));
+      }
+      return results;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: comprasQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['materiales'] });
+      queryClient.invalidateQueries({ queryKey: ['historial-incrementos'] });
+    },
+  });
+}
