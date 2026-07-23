@@ -1,4 +1,3 @@
-
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton,
   Button, Box, Typography, Chip,
@@ -6,6 +5,7 @@ import {
 import { Close, Edit, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useDeleteCompra } from '../hooks/useCompras';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import { nombreCompletoSector } from '../../obras/types/sector.types';
 import type { Compra } from '../types/compra.types';
 
@@ -22,13 +22,27 @@ function formatMoney(n: number) {
 
 export function CompraDetailDialog({ open, onClose, compra, onEdit }: CompraDetailDialogProps) {
   const { t } = useTranslation();
+  const notify = useNotify();
   const deleteCompra = useDeleteCompra(compra?.obra_id);
 
   const handleDelete = async () => {
     if (!compra) return;
-    if (!window.confirm(t('compras.confirm.eliminar_msg'))) return;
-    await deleteCompra.mutateAsync(compra.id);
-    onClose();
+
+    const confirmed = await notify.confirm({
+      title: t('compras.confirm.eliminar_title'),
+      message: t('compras.confirm.eliminar_msg'),
+      confirmLabel: t('compras.confirm.eliminar_btn'),
+      severity: 'error',
+    });
+    if (!confirmed) return;
+
+    try {
+      await deleteCompra.mutateAsync(compra.id);
+      notify.success(t('compras.notify.eliminada'));
+      onClose();
+    } catch {
+      notify.error(t('compras.notify.error_eliminar'));
+    }
   };
 
   if (!compra) return null;

@@ -1099,10 +1099,18 @@
   "tabla": {
     "fecha": "Date", "obra": "Project", "descripcion": "Description",
     "especialidad": "Specialty", "material": "Material", "monto": "Amount"
-  },
+  },"confirm": {
+  "eliminar_title": "Delete purchase",
+  "eliminar_msg": "Delete this purchase? If linked to a material, stock will be reverted.",
+  "eliminar_btn": "Delete"
+},
+"notify": {
+  "eliminada": "Purchase deleted successfully",
+  "error_eliminar": "Error deleting purchase"
+},
   "form": {
     "precio_unitario": "Unit price",
-"total_calculado": "Total (calculated)",
+    "total_calculado": "Total (calculated)",
     "obra": "Project", "sector": "Sector", "sin_sector": "No sector",
     "especialidad": "Specialty", "proveedor": "Supplier", "descripcion": "Description",
     "monto": "Amount", "fecha": "Date", "subir_comprobante": "Upload receipt",
@@ -1110,7 +1118,6 @@
     "material": "Material", "cantidad": "Quantity", "guardar": "Save purchase"
   },
   "acciones": { "editar": "Edit", "eliminar": "Delete", "ver_comprobante": "View receipt" },
-  "confirm": { "eliminar_msg": "Delete this purchase? If linked to a material, stock will be reverted." },
   "multi_item": {
   "boton": "Upload receipt with AI",
   "title": "Analyze receipt with AI",

@@ -1510,9 +1510,18 @@
     "fecha": "Fecha", "obra": "Obra", "descripcion": "Descripción",
     "especialidad": "Especialidad", "material": "Material", "monto": "Monto"
   },
+  "confirm": {
+  "eliminar_title": "Eliminar compra",
+  "eliminar_msg": "¿Eliminar esta compra? Si está vinculada a un material, se revertirá el stock.",
+  "eliminar_btn": "Eliminar"
+},
+"notify": {
+  "eliminada": "Compra eliminada correctamente",
+  "error_eliminar": "Error al eliminar la compra"
+},
   "form": {
     "precio_unitario": "Precio unitario",
-"total_calculado": "Total (calculado)",
+    "total_calculado": "Total (calculado)",
     "obra": "Obra", "sector": "Sector", "sin_sector": "Sin sector",
     "especialidad": "Especialidad", "proveedor": "Proveedor", "descripcion": "Descripción",
     "monto": "Monto", "fecha": "Fecha", "subir_comprobante": "Subir comprobante",
@@ -1520,7 +1529,6 @@
     "material": "Material", "cantidad": "Cantidad", "guardar": "Guardar compra"
   },
   "acciones": { "editar": "Editar", "eliminar": "Eliminar", "ver_comprobante": "Ver comprobante" },
-  "confirm": { "eliminar_msg": "¿Eliminar esta compra? Si está vinculada a un material, se revertirá el stock." },
   "multi_item": {
   "boton": "Cargar comprobante con IA",
   "title": "Analizar comprobante con IA",

@@ -1101,15 +1101,23 @@
   },
   "form": {
     "precio_unitario": "Preço unitário",
-"total_calculado": "Total (calculado)",
+    "total_calculado": "Total (calculado)",
     "obra": "Obra", "sector": "Setor", "sin_sector": "Sem setor",
     "especialidad": "Especialidade", "proveedor": "Fornecedor", "descripcion": "Descrição",
     "monto": "Valor", "fecha": "Data", "subir_comprobante": "Enviar comprovante",
     "comprobante_cargado": "Comprovante enviado ✓", "es_compra_material": "É compra de material?",
     "material": "Material", "cantidad": "Quantidade", "guardar": "Salvar compra"
   },
+  "confirm": {
+  "eliminar_title": "Excluir compra",
+  "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido.",
+  "eliminar_btn": "Excluir"
+},
+"notify": {
+  "eliminada": "Compra excluída com sucesso",
+  "error_eliminar": "Erro ao excluir a compra"
+},
   "acciones": { "editar": "Editar", "eliminar": "Excluir", "ver_comprobante": "Ver comprovante" },
-  "confirm": { "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido." },
   "multi_item": {
   "boton": "Enviar comprovante com IA",
   "title": "Analisar comprovante com IA",
