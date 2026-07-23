@@ -328,9 +328,11 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
         <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
       </Button>
 
-      <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ alignSelf: 'flex-start' }}>
-        {isSubmitting ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : t('compras.form.guardar')}
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button type="submit" variant="contained" disabled={isSubmitting}>
+          {isSubmitting ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : t('compras.form.guardar')}
+        </Button>
+      </Box>
     </Box>
   );
 }
