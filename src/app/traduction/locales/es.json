@@ -1511,6 +1511,25 @@
     "especialidad": "Especialidad", "material": "Material", "monto": "Monto",
     "acciones": "Acciones"
   },
+  "tabs": {
+  "listado": "Listado",
+  "estadisticas": "Estadísticas"
+},
+"filtros": {
+  "modo_fecha": "Filtrar por",
+  "rango": "Rango de fechas",
+  "mes": "Mes",
+  "desde": "Desde",
+  "hasta": "Hasta"
+},
+"stats": {
+  "total_compras": "Total compras",
+  "monto_total": "Monto total",
+  "con_material": "Con material",
+  "gastos_generales": "Gastos generales",
+  "por_obra": "Compras por obra",
+  "sin_datos": "Sin datos suficientes"
+},
   "notify": {
   "creada": "Compra registrada con éxito",
   "actualizada": "Compra actualizada con éxito",

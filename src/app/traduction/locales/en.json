@@ -1115,6 +1115,25 @@
   "eliminada": "Purchase deleted successfully",
   "error_eliminar": "Error deleting purchase"
 },
+"tabs": {
+  "listado": "List",
+  "estadisticas": "Statistics"
+},
+"filtros": {
+  "modo_fecha": "Filter by",
+  "rango": "Date range",
+  "mes": "Month",
+  "desde": "From",
+  "hasta": "To"
+},
+"stats": {
+  "total_compras": "Total purchases",
+  "monto_total": "Total amount",
+  "con_material": "With material",
+  "gastos_generales": "General expenses",
+  "por_obra": "Purchases by project",
+  "sin_datos": "Not enough data"
+},
   "form": {
     "precio_unitario": "Unit price",
     "total_calculado": "Total (calculated)",

@@ -1114,6 +1114,25 @@
   "eliminada": "Compra excluída com sucesso",
   "error_eliminar": "Erro ao excluir a compra"
 },
+"tabs": {
+  "listado": "Lista",
+  "estadisticas": "Estatísticas"
+},
+"filtros": {
+  "modo_fecha": "Filtrar por",
+  "rango": "Intervalo de datas",
+  "mes": "Mês",
+  "desde": "De",
+  "hasta": "Até"
+},
+"stats": {
+  "total_compras": "Total de compras",
+  "monto_total": "Valor total",
+  "con_material": "Com material",
+  "gastos_generales": "Despesas gerais",
+  "por_obra": "Compras por obra",
+  "sin_datos": "Dados insuficientes"
+},
   "form": {
     "precio_unitario": "Preço unitário",
     "total_calculado": "Total (calculado)",
