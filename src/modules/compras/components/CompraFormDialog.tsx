@@ -66,14 +66,14 @@ export function CompraFormDialog({ open, onClose, compra }: CompraFormDialogProp
                   especialidad_id: compra.especialidad_id,
                   descripcion: compra.descripcion,
                   proveedor: compra.proveedor ?? '',
-                  monto: compra.monto,
+                  monto: Number(compra.monto),
                   fecha: compra.fecha.slice(0, 10),
                   comprobante_url: compra.comprobante_url ?? '',
                   es_compra_material: Boolean(compra.material_id),
                   material_id: compra.material_id,
-                  cantidad: compra.cantidad,
+                  cantidad: compra.cantidad != null ? Number(compra.cantidad) : null,
                   precio_unitario_material: compra.material_id && compra.cantidad
-                    ? +(compra.monto / compra.cantidad).toFixed(2)
+                    ? +(Number(compra.monto) / Number(compra.cantidad)).toFixed(2)
                     : null,
                 }
               : undefined
