@@ -1089,15 +1089,26 @@
     "creado_ok": "Material criado e adicionado ao orçamento.",
     "error_crear": "Não foi possível criar o material."
   },
-  "compras": {
+ "compras": {
   "title": "Compras",
   "title_nueva": "Nova compra",
   "title_editar": "Editar compra",
   "nueva": "Nova compra",
-  "empty": { "desc": "Ainda não há compras registradas" },
+  "loading": "Carregando compras...",
+  "empty": { "title": "Sem compras", "desc": "Ainda não há compras registradas" },
   "tabla": {
     "fecha": "Data", "obra": "Obra", "descripcion": "Descrição",
-    "especialidad": "Especialidade", "material": "Material", "monto": "Valor"
+    "especialidad": "Especialidade", "material": "Material", "monto": "Valor",
+    "acciones": "Ações"
+  },
+  "confirm": {
+    "eliminar_title": "Excluir compra",
+    "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido.",
+    "eliminar_btn": "Excluir"
+  },
+  "notify": {
+    "eliminada": "Compra excluída com sucesso",
+    "error_eliminar": "Erro ao excluir a compra"
   },
   "form": {
     "precio_unitario": "Preço unitário",
@@ -1108,24 +1119,17 @@
     "comprobante_cargado": "Comprovante enviado ✓", "es_compra_material": "É compra de material?",
     "material": "Material", "cantidad": "Quantidade", "guardar": "Salvar compra"
   },
-  "confirm": {
-  "eliminar_title": "Excluir compra",
-  "eliminar_msg": "Excluir esta compra? Se estiver vinculada a um material, o estoque será revertido.",
-  "eliminar_btn": "Excluir"
-},
-"notify": {
-  "eliminada": "Compra excluída com sucesso",
-  "error_eliminar": "Erro ao excluir a compra"
-},
-  "acciones": { "editar": "Editar", "eliminar": "Excluir", "ver_comprobante": "Ver comprovante" },
+  "acciones": {
+    "editar": "Editar", "eliminar": "Excluir", "ver_comprobante": "Ver comprovante", "cancelar": "Cancelar"
+  },
   "multi_item": {
-  "boton": "Enviar comprovante com IA",
-  "title": "Analisar comprovante com IA",
-  "analizando": "Detectando itens do comprovante...",
-  "marcar_material": "Marcar como material",
-  "es_gasto": "Despesa geral",
-  "guardar_todas": "Salvar {{count}} compra(s)"
-}
+    "boton": "Enviar comprovante com IA",
+    "title": "Analisar comprovante com IA",
+    "analizando": "Detectando itens do comprovante...",
+    "marcar_material": "Marcar como material",
+    "es_gasto": "Despesa geral",
+    "guardar_todas": "Salvar {{count}} compra(s)"
+  }
 },
   "pagos": {
     "title": "Pagamentos",

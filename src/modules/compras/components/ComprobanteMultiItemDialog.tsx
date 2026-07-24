@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Button,
   Box, Typography, TextField, MenuItem, CircularProgress, Table, TableHead,
-  TableBody, TableRow, TableCell, Chip, useTheme,
+  TableBody, TableRow, TableCell, Chip, useTheme, useMediaQuery,
 } from '@mui/material';
 import { Close, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -142,6 +142,7 @@ function FilaItem({
 export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiItemDialogProps) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const { data: materiales = [] } = useMaterialesList();
   const { data: especialidades = [] } = useEspecialidadesList();
@@ -233,7 +234,13 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
         {!comprobanteUrl && (
           <Button variant="outlined" component="label" disabled={uploadComprobante.isPending}>
             {t('compras.form.subir_comprobante')}
-            <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
+            <input
+              type="file"
+              hidden
+              accept="image/*,application/pdf"
+              capture={isMobile ? 'environment' : undefined}
+              onChange={handleFileChange}
+            />
           </Button>
         )}
 

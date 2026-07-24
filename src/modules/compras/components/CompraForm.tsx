@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, TextField, MenuItem, Switch, FormControlLabel, Button, CircularProgress } from '@mui/material';
+import { Box, TextField, MenuItem, Switch, FormControlLabel, Button, useTheme, CircularProgress } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import { useEspecialidadesList } from '../../trabajadores/hooks/useEspecialidade
 import { useMaterialesList } from '../../materiales/hooks/useMateriales';
 import { useUploadComprobante, useAnalizarComprobanteConIA } from '../hooks/useCompras';
 import { flattenSectorTree, nombreCompletoSector, type Sector } from '../../obras/types/sector.types';
-
+import { useMediaQuery } from '@mui/material';
 interface CompraFormProps {
   defaultValues?: Partial<CompraFormValues>;
   onSubmit: (values: CompraFormValues) => void;
@@ -26,7 +26,8 @@ const fieldSx = { flex: 1, minWidth: 0 };
 
 export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraFormProps) {
   const { t } = useTranslation();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<CompraFormValues>({
     resolver: zodResolver(compraSchema),
     defaultValues: {
@@ -325,8 +326,13 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
       <Button variant="outlined" component="label" disabled={uploadComprobante.isPending || analizando} sx={{ alignSelf: 'flex-start' }}>
         {analizando ? <CircularProgress size={18} sx={{ mr: 1 }} /> : null}
         {comprobanteUrl ? t('compras.form.comprobante_cargado') : t('compras.form.subir_comprobante')}
-        <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
-      </Button>
+        <input
+          type="file"
+          hidden
+          accept="image/*,application/pdf"
+          capture={isMobile ? 'environment' : undefined}
+          onChange={handleFileChange}
+        />      </Button>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button type="submit" variant="contained" disabled={isSubmitting}>

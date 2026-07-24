@@ -1095,19 +1095,22 @@
   "title_nueva": "New purchase",
   "title_editar": "Edit purchase",
   "nueva": "New purchase",
-  "empty": { "desc": "No purchases registered yet" },
+  "loading": "Loading purchases...",
+  "empty": { "title": "No purchases", "desc": "No purchases registered yet" },
   "tabla": {
     "fecha": "Date", "obra": "Project", "descripcion": "Description",
-    "especialidad": "Specialty", "material": "Material", "monto": "Amount"
-  },"confirm": {
-  "eliminar_title": "Delete purchase",
-  "eliminar_msg": "Delete this purchase? If linked to a material, stock will be reverted.",
-  "eliminar_btn": "Delete"
-},
-"notify": {
-  "eliminada": "Purchase deleted successfully",
-  "error_eliminar": "Error deleting purchase"
-},
+    "especialidad": "Specialty", "material": "Material", "monto": "Amount",
+    "acciones": "Actions"
+  },
+  "confirm": {
+    "eliminar_title": "Delete purchase",
+    "eliminar_msg": "Delete this purchase? If linked to a material, stock will be reverted.",
+    "eliminar_btn": "Delete"
+  },
+  "notify": {
+    "eliminada": "Purchase deleted successfully",
+    "error_eliminar": "Error deleting purchase"
+  },
   "form": {
     "precio_unitario": "Unit price",
     "total_calculado": "Total (calculated)",
@@ -1117,15 +1120,17 @@
     "comprobante_cargado": "Receipt uploaded ✓", "es_compra_material": "Is this a material purchase?",
     "material": "Material", "cantidad": "Quantity", "guardar": "Save purchase"
   },
-  "acciones": { "editar": "Edit", "eliminar": "Delete", "ver_comprobante": "View receipt" },
+  "acciones": {
+    "editar": "Edit", "eliminar": "Delete", "ver_comprobante": "View receipt", "cancelar": "Cancel"
+  },
   "multi_item": {
-  "boton": "Upload receipt with AI",
-  "title": "Analyze receipt with AI",
-  "analizando": "Detecting receipt items...",
-  "marcar_material": "Mark as material",
-  "es_gasto": "General expense",
-  "guardar_todas": "Save {{count}} purchase(s)"
-}
+    "boton": "Upload receipt with AI",
+    "title": "Analyze receipt with AI",
+    "analizando": "Detecting receipt items...",
+    "marcar_material": "Mark as material",
+    "es_gasto": "General expense",
+    "guardar_todas": "Save {{count}} purchase(s)"
+  }
 },
   "pagos": {
     "title": "Payments",
