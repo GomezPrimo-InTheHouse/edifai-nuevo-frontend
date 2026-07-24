@@ -1,8 +1,10 @@
+
 import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { CompraForm } from './CompraForm';
 import { useCreateCompra, useUpdateCompra } from '../hooks/useCompras';
+import { useNotify } from '../../../shared/hooks/useNotify';
 import type { CompraFormValues } from '../schemas/compra.schema';
 import type { Compra } from '../types/compra.types';
 
@@ -13,40 +15,48 @@ interface CompraFormDialogProps {
 }
 
 export function CompraFormDialog({ open, onClose, compra }: CompraFormDialogProps) {
+
   const { t } = useTranslation();
+  const notify = useNotify();
   const createCompra = useCreateCompra();
   const updateCompra = useUpdateCompra();
 
   const isEdit = Boolean(compra);
 
   const handleSubmit = async (values: CompraFormValues) => {
-    if (isEdit && compra) {
-      await updateCompra.mutateAsync({
-        id: compra.id,
-        obra_id: values.obra_id,
-        sector_id: values.sector_id ?? null,
-        especialidad_id: values.especialidad_id,
-        descripcion: values.descripcion,
-        proveedor: values.proveedor,
-        monto: values.monto,
-        fecha: values.fecha,
-        comprobante_url: values.comprobante_url,
-      });
-    } else {
-      await createCompra.mutateAsync({
-        obra_id: values.obra_id,
-        sector_id: values.sector_id ?? null,
-        especialidad_id: values.especialidad_id,
-        descripcion: values.descripcion,
-        proveedor: values.proveedor,
-        monto: values.monto,
-        fecha: values.fecha,
-        comprobante_url: values.comprobante_url,
-        material_id: values.es_compra_material ? values.material_id : null,
-        cantidad: values.es_compra_material ? values.cantidad : null,
-      });
+    try {
+      if (isEdit && compra) {
+        await updateCompra.mutateAsync({
+          id: compra.id,
+          obra_id: values.obra_id,
+          sector_id: values.sector_id ?? null,
+          especialidad_id: values.especialidad_id,
+          descripcion: values.descripcion,
+          proveedor: values.proveedor,
+          monto: values.monto,
+          fecha: values.fecha,
+          comprobante_url: values.comprobante_url,
+        });
+        notify.success(t('compras.notify.actualizada'));
+      } else {
+        await createCompra.mutateAsync({
+          obra_id: values.obra_id,
+          sector_id: values.sector_id ?? null,
+          especialidad_id: values.especialidad_id,
+          descripcion: values.descripcion,
+          proveedor: values.proveedor,
+          monto: values.monto,
+          fecha: values.fecha,
+          comprobante_url: values.comprobante_url,
+          material_id: values.es_compra_material ? values.material_id : null,
+          cantidad: values.es_compra_material ? values.cantidad : null,
+        });
+        notify.success(t('compras.notify.creada'));
+      }
+      onClose();
+    } catch {
+      notify.error(isEdit ? t('compras.notify.error_actualizar') : t('compras.notify.error_crear'));
     }
-    onClose();
   };
 
   return (

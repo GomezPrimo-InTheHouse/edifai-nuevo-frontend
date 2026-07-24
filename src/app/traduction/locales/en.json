@@ -1108,9 +1108,13 @@
     "eliminar_btn": "Delete"
   },
   "notify": {
-    "eliminada": "Purchase deleted successfully",
-    "error_eliminar": "Error deleting purchase"
-  },
+  "creada": "Purchase registered successfully",
+  "actualizada": "Purchase updated successfully",
+  "error_crear": "Error registering purchase",
+  "error_actualizar": "Error updating purchase",
+  "eliminada": "Purchase deleted successfully",
+  "error_eliminar": "Error deleting purchase"
+},
   "form": {
     "precio_unitario": "Unit price",
     "total_calculado": "Total (calculated)",

@@ -1107,9 +1107,13 @@
     "eliminar_btn": "Excluir"
   },
   "notify": {
-    "eliminada": "Compra excluída com sucesso",
-    "error_eliminar": "Erro ao excluir a compra"
-  },
+  "creada": "Compra registrada com sucesso",
+  "actualizada": "Compra atualizada com sucesso",
+  "error_crear": "Erro ao registrar a compra",
+  "error_actualizar": "Erro ao atualizar a compra",
+  "eliminada": "Compra excluída com sucesso",
+  "error_eliminar": "Erro ao excluir a compra"
+},
   "form": {
     "precio_unitario": "Preço unitário",
     "total_calculado": "Total (calculado)",

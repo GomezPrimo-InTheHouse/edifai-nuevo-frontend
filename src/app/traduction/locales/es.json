@@ -1511,14 +1511,18 @@
     "especialidad": "Especialidad", "material": "Material", "monto": "Monto",
     "acciones": "Acciones"
   },
+  "notify": {
+  "creada": "Compra registrada con éxito",
+  "actualizada": "Compra actualizada con éxito",
+  "error_crear": "Error al registrar la compra",
+  "error_actualizar": "Error al actualizar la compra",
+  "eliminada": "Compra eliminada correctamente",
+  "error_eliminar": "Error al eliminar la compra"
+},
   "confirm": {
     "eliminar_title": "Eliminar compra",
     "eliminar_msg": "¿Eliminar esta compra? Si está vinculada a un material, se revertirá el stock.",
     "eliminar_btn": "Eliminar"
-  },
-  "notify": {
-    "eliminada": "Compra eliminada correctamente",
-    "error_eliminar": "Error al eliminar la compra"
   },
   "form": {
     "precio_unitario": "Precio unitario",
