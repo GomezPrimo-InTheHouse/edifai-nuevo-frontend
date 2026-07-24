@@ -48,6 +48,8 @@ export interface UpdateCompraPayload {
   monto: number;
   fecha: string;
   comprobante_url?: string;
+  material_id?: number | null;
+  cantidad?: number | null;
 }
 
 export interface ComprasPorObraResponse {

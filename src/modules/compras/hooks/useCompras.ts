@@ -51,6 +51,10 @@ export function useUpdateCompra() {
       queryClient.invalidateQueries({ queryKey: comprasQueryKeys.all });
       queryClient.invalidateQueries({ queryKey: comprasQueryKeys.detail(vars.id) });
       queryClient.invalidateQueries({ queryKey: comprasQueryKeys.byObra(data.obra_id) });
+      if (vars.material_id || data.material_id) {
+        queryClient.invalidateQueries({ queryKey: ['materiales'] });
+        queryClient.invalidateQueries({ queryKey: ['historial-incrementos'] });
+      }
     },
   });
 }
