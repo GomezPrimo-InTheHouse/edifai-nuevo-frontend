@@ -98,3 +98,12 @@ export function useArchivarObra() {
     },
   });
 }
+
+
+export function useResumenFinancieroObra(id: number | string) {
+  return useQuery({
+    queryKey: ['obras', id, 'resumen-financiero'],
+    queryFn: () => obraApi.getResumenFinanciero(id),
+    enabled: Boolean(id),
+  });
+}

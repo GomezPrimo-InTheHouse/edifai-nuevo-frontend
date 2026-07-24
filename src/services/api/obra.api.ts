@@ -38,4 +38,11 @@ export const obraApi = {
   async archivar(id: number | string, archivar: boolean): Promise<void> {
     await httpClient.put(`${obraBaseUrl}/archivar/${id}`, { archivar });
   },
+
+  async getResumenFinanciero(id: number | string): Promise<{ total_mano_obra: number; total_materiales_presupuestado: number }> {
+  const response = await httpClient.get<{ success: boolean; data: { total_mano_obra: number; total_materiales_presupuestado: number } }>(
+    `${obraBaseUrl}/${id}/resumen-financiero`
+  );
+  return response.data.data;
+},
 };
