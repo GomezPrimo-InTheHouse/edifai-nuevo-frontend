@@ -69,6 +69,7 @@ export interface ItemDetectadoIA {
   monto: number;
   cantidad?: number | null;
   unidad?: string | null;
+  precio_unitario?: number | null;
   material_id?: number | null;
   material_nombre?: string | null;
   especialidad_id?: number | null;

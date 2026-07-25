@@ -32,6 +32,13 @@ function formatMoney(n: number): string {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
 }
 
+function recalcularMonto(row: ItemRevisionRow): ItemRevisionRow {
+  if (row.es_compra_material && row.cantidad && row.precio_unitario) {
+    return { ...row, monto: +(row.cantidad * row.precio_unitario).toFixed(2) };
+  }
+  return row;
+}
+
 let tempIdCounter = 0;
 
 // ── Selects compartidos (obra/sector/especialidad/material) ─────
@@ -98,11 +105,16 @@ function SelectsItem({
           <TextField
             size="small" fullWidth type="number" label={t('compras.form.cantidad')}
             value={row.cantidad ?? ''}
-            onChange={(e) => onChange({ ...row, cantidad: e.target.value ? Number(e.target.value) : null })}
+            onChange={(e) => onChange(recalcularMonto({ ...row, cantidad: e.target.value ? Number(e.target.value) : null }))}
+          />
+          <TextField
+            size="small" fullWidth type="number" label={t('compras.form.precio_unitario')}
+            value={row.precio_unitario ?? ''}
+            onChange={(e) => onChange(recalcularMonto({ ...row, precio_unitario: e.target.value ? Number(e.target.value) : null }))}
           />
           <Chip
             size="small" label={t('compras.multi_item.es_gasto')}
-            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null })}
+            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null, precio_unitario: null })}
             sx={{ alignSelf: 'flex-start' }}
           />
         </>
@@ -169,7 +181,7 @@ function FilaItemDesktop({
           {especialidades.map((esp) => <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>)}
         </TextField>
       </TableCell>
-      <TableCell sx={{ minWidth: 180 }}>
+      <TableCell sx={{ minWidth: 200 }}>
         {row.es_compra_material ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             <TextField select fullWidth size="small" value={row.material_id ?? ''}
@@ -177,9 +189,14 @@ function FilaItemDesktop({
               <MenuItem value="">—</MenuItem>
               {materiales.map((m) => <MenuItem key={m.id} value={m.id}>{m.nombre}</MenuItem>)}
             </TextField>
-            <TextField size="small" type="number" placeholder={t('compras.form.cantidad')}
-              value={row.cantidad ?? ''}
-              onChange={(e) => onChange({ ...row, cantidad: e.target.value ? Number(e.target.value) : null })} />
+            <Box sx={{ display: 'flex', gap: 0.5 }}>
+              <TextField size="small" type="number" placeholder={t('compras.form.cantidad')}
+                value={row.cantidad ?? ''}
+                onChange={(e) => onChange(recalcularMonto({ ...row, cantidad: e.target.value ? Number(e.target.value) : null }))} />
+              <TextField size="small" type="number" placeholder={t('compras.form.precio_unitario')}
+                value={row.precio_unitario ?? ''}
+                onChange={(e) => onChange(recalcularMonto({ ...row, precio_unitario: e.target.value ? Number(e.target.value) : null }))} />
+            </Box>
           </Box>
         ) : (
           <Chip size="small" label={t('compras.multi_item.marcar_material')}
@@ -187,7 +204,7 @@ function FilaItemDesktop({
         )}
         {row.es_compra_material && (
           <Chip size="small" label={t('compras.multi_item.es_gasto')}
-            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null })}
+            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null, precio_unitario: null })}
             sx={{ mt: 0.5 }} />
         )}
       </TableCell>
@@ -279,13 +296,17 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
       });
 
       setRows(
-        resultado.items.map((item) => ({
-          ...item,
-          tempId: `item-${tempIdCounter++}`,
-          obra_id: obraUnica,
-          sector_id: null,
-          es_compra_material: Boolean(item.material_id),
-        }))
+        resultado.items.map((item) => {
+          const precioUnitario = item.precio_unitario ?? (item.cantidad ? +(item.monto / item.cantidad).toFixed(2) : null);
+          return {
+            ...item,
+            precio_unitario: precioUnitario,
+            tempId: `item-${tempIdCounter++}`,
+            obra_id: obraUnica,
+            sector_id: null,
+            es_compra_material: Boolean(item.material_id),
+          };
+        })
       );
     } finally {
       setAnalizando(false);
