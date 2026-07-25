@@ -1,6 +1,6 @@
 import { Box, Paper, Typography, Chip, IconButton, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { Eye, Pencil, MapPin, Calendar, Package } from 'lucide-react';
+import { Eye, Pencil, MapPin, Calendar, Package, Truck } from 'lucide-react';
 import type { Compra } from '../types/compra.types';
 
 interface ComprasCardsProps {
@@ -62,6 +62,12 @@ export function ComprasCards({ compras, onView, onEdit }: ComprasCardsProps) {
                 {new Date(compra.fecha).toLocaleDateString('es-AR')}
               </Typography>
             </Box>
+            {compra.proveedor && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Truck size={14} color={theme.palette.text.secondary} />
+                <Typography variant="body2" color="text.secondary">{compra.proveedor}</Typography>
+              </Box>
+            )}
             {compra.material_nombre && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Package size={14} color={theme.palette.text.secondary} />

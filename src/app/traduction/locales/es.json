@@ -1509,7 +1509,7 @@
   "tabla": {
     "fecha": "Fecha", "obra": "Obra", "descripcion": "Descripción",
     "especialidad": "Especialidad", "material": "Material", "monto": "Monto",
-    "acciones": "Acciones"
+    "acciones": "Acciones", "proveedor": "Proveedor"
   },
   "tabs": {
   "listado": "Listado",
@@ -1561,7 +1561,8 @@
     "analizando": "Detectando ítems del comprobante...",
     "marcar_material": "Marcar como material",
     "es_gasto": "Gasto general",
-    "guardar_todas": "Guardar {{count}} compra(s)"
+    "guardar_todas": "Guardar {{count}} compra(s)",
+    "analizando_sub": "Detectando materiales, precios y cantidades..."
   }
 },
   "market": {

@@ -1099,7 +1099,7 @@
   "tabla": {
     "fecha": "Data", "obra": "Obra", "descripcion": "Descrição",
     "especialidad": "Especialidade", "material": "Material", "monto": "Valor",
-    "acciones": "Ações"
+    "acciones": "Ações","proveedor": "Fornecedor"
   },
   "confirm": {
     "eliminar_title": "Excluir compra",
@@ -1151,7 +1151,8 @@
     "analizando": "Detectando itens do comprovante...",
     "marcar_material": "Marcar como material",
     "es_gasto": "Despesa geral",
-    "guardar_todas": "Salvar {{count}} compra(s)"
+    "guardar_todas": "Salvar {{count}} compra(s)",
+    "analizando_sub": "Detectando materiais, preços e quantidades..."
   }
 },
   "pagos": {

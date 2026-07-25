@@ -344,7 +344,7 @@
 // }
 
 import React from 'react';
-import { Box, TextField, MenuItem, Switch, FormControlLabel, Button, CircularProgress, useTheme, useMediaQuery } from '@mui/material';
+import { Box, TextField, MenuItem, Switch, FormControlLabel, Button, CircularProgress} from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -370,9 +370,7 @@ const rowSx = { display: 'flex', flexDirection: { xs: 'column', md: 'row' } as c
 const fieldSx = { flex: 1, minWidth: 0 };
 
 export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraFormProps) {
-  const theme = useTheme();
   const { t } = useTranslation();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<CompraFormValues>({
     resolver: zodResolver(compraSchema),
@@ -680,7 +678,6 @@ export function CompraForm({ defaultValues, onSubmit, isSubmitting }: CompraForm
           type="file"
           hidden
           accept="image/*,application/pdf"
-          capture={isMobile ? 'environment' : undefined}
           onChange={handleFileChange}
         />
       </Button>

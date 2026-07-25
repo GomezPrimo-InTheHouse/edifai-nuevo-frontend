@@ -11,6 +11,17 @@ import type {
 
 const BASE = `${env.obraApiUrl}/compras`;
 
+function esPdf(url: string): boolean {
+  return url.toLowerCase().includes('.pdf');
+}
+
+function construirBloqueArchivo(imageUrl: string) {
+  if (esPdf(imageUrl)) {
+    return { type: 'document' as const, source: { type: 'url' as const, url: imageUrl } };
+  }
+  return { type: 'image' as const, source: { type: 'url' as const, url: imageUrl } };
+}
+
 export const compraApi = {
   async getAll(): Promise<Compra[]> {
     const res = await httpClient.get<{ success: boolean; data: Compra[] }>(BASE);
@@ -70,7 +81,7 @@ export const compraApi = {
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'url', url: imageUrl } },
+            construirBloqueArchivo(imageUrl),
             {
               type: 'text',
               text: `Analizá este comprobante de compra y extraé los datos. Devolvé SOLO un JSON válido sin markdown ni texto adicional.
@@ -94,29 +105,30 @@ Respondé ÚNICAMENTE con el JSON.`,
     const clean = rawText.replace(/```json|```/g, '').trim();
     return JSON.parse(clean);
   },
+
   async analizarComprobanteMultiItemConIA(
-  imageUrl: string,
-  materiales: { id: number; nombre: string; unidad: string }[],
-  especialidades: { id: number; nombre: string }[]
-): Promise<AnalisisMultiItemResult> {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5',
-      max_tokens: 2000,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'url', url: imageUrl } },
-          {
-            type: 'text',
-            text: `Analizá este comprobante de compra (factura/ticket) y extraé CADA línea de artículo como un ítem separado. Devolvé SOLO un JSON válido sin markdown ni texto adicional.
+    imageUrl: string,
+    materiales: { id: number; nombre: string; unidad: string }[],
+    especialidades: { id: number; nombre: string }[]
+  ): Promise<AnalisisMultiItemResult> {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 2000,
+        messages: [{
+          role: 'user',
+          content: [
+            construirBloqueArchivo(imageUrl),
+            {
+              type: 'text',
+              text: `Analizá este comprobante de compra (factura/ticket) y extraé CADA línea de artículo como un ítem separado. Devolvé SOLO un JSON válido sin markdown ni texto adicional.
 
 ESTRUCTURA DE RESPUESTA:
 {
@@ -125,9 +137,10 @@ ESTRUCTURA DE RESPUESTA:
   "items": [
     {
       "descripcion": string (nombre del artículo tal cual figura),
-      "monto": number (total de esa línea, sin símbolos),
-      "cantidad": number (cantidad comprada, si figura),
-      "unidad": string (unidad de esa línea si figura, ej: UN, BL, KM, KG),
+      "cantidad": number (cantidad comprada — buscá la columna "Cantidad" o "Cant." del comprobante, es OBLIGATORIA, si no la ves claramente asumí 1),
+      "unidad": string (unidad de medida de ESA línea — buscá la columna "Unid." o similar en el comprobante; valores típicos: UN (unidad), KG, BL (bolsa), M (metro), M2, M3, ROLLO, LTS, KM. Copiá exactamente la abreviatura del comprobante si existe, no inventes ni traduzcas),
+      "precio_unitario": number (precio POR UNIDAD de esa línea — buscá la columna "Precio" o "Precio unit." del comprobante, sin símbolos ni separadores de miles; NO es el subtotal de la línea),
+      "monto": number (el TOTAL de esa línea = precio_unitario × cantidad, tal cual figura en la columna "Total" del comprobante),
       "material_id": number | null (ver instrucciones abajo),
       "material_nombre": string | null (nombre del material si hiciste match),
       "especialidad_id": number | null (ver instrucciones abajo),
@@ -135,6 +148,13 @@ ESTRUCTURA DE RESPUESTA:
     }
   ]
 }
+
+REGLA CRÍTICA sobre precio_unitario vs monto:
+- Un comprobante típico tiene columnas: Cantidad | Unidad | Precio unitario | Total
+- "precio_unitario" es SIEMPRE el valor por 1 unidad (la columna "Precio", "Precio unit." o "P.Unit.")
+- "monto" es SIEMPRE cantidad × precio_unitario (la columna "Total", "Importe" o "Subtotal" de esa línea)
+- NUNCA confundas estos dos campos. Si el comprobante solo muestra el total de la línea sin desglosar precio unitario, calculá precio_unitario = monto / cantidad.
+- Verificá matemáticamente antes de responder: precio_unitario × cantidad debe dar aproximadamente el monto de esa línea.
 
 CATÁLOGO DE MATERIALES DISPONIBLES (matchear por nombre/similitud, ser flexible con mayúsculas/variaciones):
 ${JSON.stringify(materiales)}
@@ -149,15 +169,15 @@ Completá especialidad_id y especialidad_nombre con la que mejor corresponda de 
 Extraé TODAS las líneas de producto/servicio que veas, no omitas ninguna. No incluyas líneas de subtotal, IVA o totales generales como ítems.
 
 Respondé ÚNICAMENTE con el JSON.`,
-          },
-        ],
-      }],
-    }),
-  });
+            },
+          ],
+        }],
+      }),
+    });
 
-  const data = await response.json();
-  const rawText = data.content?.[0]?.text ?? '{"items":[]}';
-  const clean = rawText.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
-},
+    const data = await response.json();
+    const rawText = data.content?.[0]?.text ?? '{"items":[]}';
+    const clean = rawText.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  },
 };

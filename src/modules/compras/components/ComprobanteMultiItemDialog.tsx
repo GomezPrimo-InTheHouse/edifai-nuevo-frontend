@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Button,
   Box, Typography, TextField, MenuItem, CircularProgress, Table, TableHead,
-  TableBody, TableRow, TableCell, Chip, useTheme, useMediaQuery,
+  TableBody, TableRow, TableCell, Chip, Paper, useTheme, useMediaQuery,
 } from '@mui/material';
 import { Close, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -28,12 +28,99 @@ function esHoja(sector: Sector, todos: Sector[]): boolean {
   return !todos.some((s) => s.parent_id === sector.id);
 }
 
+function formatMoney(n: number): string {
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
+}
+
 let tempIdCounter = 0;
 
-function FilaItem({
+// ── Selects compartidos (obra/sector/especialidad/material) ─────
+function SelectsItem({
   row,
   onChange,
-  onRemove,
+}: {
+  row: ItemRevisionRow;
+  onChange: (updated: ItemRevisionRow) => void;
+}) {
+  const { t } = useTranslation();
+  const { data: obras = [] } = useObrasList();
+  const { data: sectores = [] } = useSectoresPorObra(row.obra_id ?? 0);
+  const { data: especialidades = [] } = useEspecialidadesList();
+  const { data: materiales = [] } = useMaterialesList();
+  const arbolSectores = flattenSectorTree(sectores);
+
+  return (
+    <>
+      <TextField
+        select fullWidth size="small" label={t('compras.form.obra')}
+        value={row.obra_id ?? ''}
+        onChange={(e) => onChange({ ...row, obra_id: Number(e.target.value), sector_id: null })}
+      >
+        {obras.map((o) => <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>)}
+      </TextField>
+
+      <TextField
+        select fullWidth size="small" label={t('compras.form.sector')}
+        value={row.sector_id ?? ''}
+        disabled={!row.obra_id || sectores.length === 0}
+        onChange={(e) => onChange({ ...row, sector_id: e.target.value ? Number(e.target.value) : null })}
+      >
+        <MenuItem value="">{t('compras.form.sin_sector')}</MenuItem>
+        {arbolSectores.map(({ sector, depth }) => {
+          const hoja = esHoja(sector, sectores);
+          return (
+            <MenuItem key={sector.id} value={sector.id} disabled={!hoja} sx={{ pl: 2 + depth * 2 }}>
+              {nombreCompletoSector(sector)}
+            </MenuItem>
+          );
+        })}
+      </TextField>
+
+      <TextField
+        select fullWidth size="small" label={t('compras.form.especialidad')}
+        value={row.especialidad_id ?? ''}
+        onChange={(e) => onChange({ ...row, especialidad_id: e.target.value ? Number(e.target.value) : null })}
+      >
+        <MenuItem value="">—</MenuItem>
+        {especialidades.map((esp) => <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>)}
+      </TextField>
+
+      {row.es_compra_material ? (
+        <>
+          <TextField
+            select fullWidth size="small" label={t('compras.form.material')}
+            value={row.material_id ?? ''}
+            onChange={(e) => onChange({ ...row, material_id: e.target.value ? Number(e.target.value) : null })}
+          >
+            <MenuItem value="">—</MenuItem>
+            {materiales.map((m) => <MenuItem key={m.id} value={m.id}>{m.nombre}</MenuItem>)}
+          </TextField>
+          <TextField
+            size="small" fullWidth type="number" label={t('compras.form.cantidad')}
+            value={row.cantidad ?? ''}
+            onChange={(e) => onChange({ ...row, cantidad: e.target.value ? Number(e.target.value) : null })}
+          />
+          <Chip
+            size="small" label={t('compras.multi_item.es_gasto')}
+            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null })}
+            sx={{ alignSelf: 'flex-start' }}
+          />
+        </>
+      ) : (
+        <Chip
+          size="small" label={t('compras.multi_item.marcar_material')}
+          onClick={() => onChange({ ...row, es_compra_material: true })}
+          variant="outlined"
+          sx={{ alignSelf: 'flex-start' }}
+        />
+      )}
+    </>
+  );
+}
+
+// ── Fila desktop (tabla) ──
+function FilaItemDesktop({
+  row, onChange, onRemove,
 }: {
   row: ItemRevisionRow;
   onChange: (updated: ItemRevisionRow) => void;
@@ -44,40 +131,26 @@ function FilaItem({
   const { data: sectores = [] } = useSectoresPorObra(row.obra_id ?? 0);
   const { data: especialidades = [] } = useEspecialidadesList();
   const { data: materiales = [] } = useMaterialesList();
-
   const arbolSectores = flattenSectorTree(sectores);
 
   return (
     <TableRow>
       <TableCell sx={{ minWidth: 180 }}>
-        <TextField
-          fullWidth size="small" value={row.descripcion}
-          onChange={(e) => onChange({ ...row, descripcion: e.target.value })}
-        />
+        <TextField fullWidth size="small" value={row.descripcion} onChange={(e) => onChange({ ...row, descripcion: e.target.value })} />
       </TableCell>
-
       <TableCell sx={{ minWidth: 130 }}>
-        <TextField
-          fullWidth size="small" type="number" value={row.monto}
-          onChange={(e) => onChange({ ...row, monto: Number(e.target.value) })}
-        />
+        <TextField fullWidth size="small" type="number" value={row.monto} onChange={(e) => onChange({ ...row, monto: Number(e.target.value) })} />
       </TableCell>
-
       <TableCell sx={{ minWidth: 160 }}>
-        <TextField
-          select fullWidth size="small" value={row.obra_id ?? ''}
-          onChange={(e) => onChange({ ...row, obra_id: Number(e.target.value), sector_id: null })}
-        >
+        <TextField select fullWidth size="small" value={row.obra_id ?? ''}
+          onChange={(e) => onChange({ ...row, obra_id: Number(e.target.value), sector_id: null })}>
           {obras.map((o) => <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>)}
         </TextField>
       </TableCell>
-
       <TableCell sx={{ minWidth: 160 }}>
-        <TextField
-          select fullWidth size="small" value={row.sector_id ?? ''}
+        <TextField select fullWidth size="small" value={row.sector_id ?? ''}
           disabled={!row.obra_id || sectores.length === 0}
-          onChange={(e) => onChange({ ...row, sector_id: e.target.value ? Number(e.target.value) : null })}
-        >
+          onChange={(e) => onChange({ ...row, sector_id: e.target.value ? Number(e.target.value) : null })}>
           <MenuItem value="">{t('compras.form.sin_sector')}</MenuItem>
           {arbolSectores.map(({ sector, depth }) => {
             const hoja = esHoja(sector, sectores);
@@ -89,53 +162,85 @@ function FilaItem({
           })}
         </TextField>
       </TableCell>
-
       <TableCell sx={{ minWidth: 160 }}>
-        <TextField
-          select fullWidth size="small" value={row.especialidad_id ?? ''}
-          onChange={(e) => onChange({ ...row, especialidad_id: e.target.value ? Number(e.target.value) : null })}
-        >
+        <TextField select fullWidth size="small" value={row.especialidad_id ?? ''}
+          onChange={(e) => onChange({ ...row, especialidad_id: e.target.value ? Number(e.target.value) : null })}>
           <MenuItem value="">—</MenuItem>
           {especialidades.map((esp) => <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>)}
         </TextField>
       </TableCell>
-
       <TableCell sx={{ minWidth: 180 }}>
         {row.es_compra_material ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            <TextField
-              select fullWidth size="small" value={row.material_id ?? ''}
-              onChange={(e) => onChange({ ...row, material_id: e.target.value ? Number(e.target.value) : null })}
-            >
+            <TextField select fullWidth size="small" value={row.material_id ?? ''}
+              onChange={(e) => onChange({ ...row, material_id: e.target.value ? Number(e.target.value) : null })}>
               <MenuItem value="">—</MenuItem>
               {materiales.map((m) => <MenuItem key={m.id} value={m.id}>{m.nombre}</MenuItem>)}
             </TextField>
-            <TextField
-              size="small" type="number" placeholder={t('compras.form.cantidad')}
+            <TextField size="small" type="number" placeholder={t('compras.form.cantidad')}
               value={row.cantidad ?? ''}
-              onChange={(e) => onChange({ ...row, cantidad: e.target.value ? Number(e.target.value) : null })}
-            />
+              onChange={(e) => onChange({ ...row, cantidad: e.target.value ? Number(e.target.value) : null })} />
           </Box>
         ) : (
-          <Chip
-            size="small" label={t('compras.multi_item.marcar_material')}
-            onClick={() => onChange({ ...row, es_compra_material: true })}
-            variant="outlined"
-          />
+          <Chip size="small" label={t('compras.multi_item.marcar_material')}
+            onClick={() => onChange({ ...row, es_compra_material: true })} variant="outlined" />
         )}
         {row.es_compra_material && (
-          <Chip
-            size="small" label={t('compras.multi_item.es_gasto')}
+          <Chip size="small" label={t('compras.multi_item.es_gasto')}
             onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null })}
-            sx={{ mt: 0.5 }}
-          />
+            sx={{ mt: 0.5 }} />
         )}
       </TableCell>
-
       <TableCell>
         <IconButton size="small" onClick={onRemove}><Delete fontSize="small" /></IconButton>
       </TableCell>
     </TableRow>
+  );
+}
+
+// ── Card mobile ──
+function FilaItemCard({
+  row, onChange, onRemove,
+}: {
+  row: ItemRevisionRow;
+  onChange: (updated: ItemRevisionRow) => void;
+  onRemove: () => void;
+}) {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <Paper sx={{
+      p: 2, borderRadius: 3, boxShadow: 'none',
+      border: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper',
+    }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+        <TextField
+          fullWidth size="small" value={row.descripcion}
+          onChange={(e) => onChange({ ...row, descripcion: e.target.value })}
+          sx={{ mr: 1 }}
+        />
+        <IconButton size="small" onClick={onRemove} sx={{ flexShrink: 0 }}>
+          <Delete fontSize="small" />
+        </IconButton>
+      </Box>
+
+      <TextField
+        fullWidth size="small" type="number" label={t('compras.tabla.monto')}
+        value={row.monto} onChange={(e) => onChange({ ...row, monto: Number(e.target.value) })}
+        sx={{ mb: 1.5 }}
+      />
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <SelectsItem row={row} onChange={onChange} />
+      </Box>
+
+      <Box sx={{ mt: 1.5, textAlign: 'right' }}>
+        <Typography variant="body2" fontWeight={700} color="text.primary">
+          {formatMoney(row.monto)}
+        </Typography>
+      </Box>
+    </Paper>
   );
 }
 
@@ -224,7 +329,7 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
   const filasIncompletas = rows.some((r) => !r.obra_id || !r.especialidad_id);
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth={isMobile ? 'sm' : 'xl'} fullWidth fullScreen={isMobile}>
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {t('compras.multi_item.title')}
         <IconButton onClick={handleClose} size="small"><Close /></IconButton>
@@ -234,47 +339,66 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
         {!comprobanteUrl && (
           <Button variant="outlined" component="label" disabled={uploadComprobante.isPending}>
             {t('compras.form.subir_comprobante')}
-            <input
-              type="file"
-              hidden
-              accept="image/*,application/pdf"
-              capture={isMobile ? 'environment' : undefined}
-              onChange={handleFileChange}
-            />
+            <input type="file" hidden accept="image/*,application/pdf" onChange={handleFileChange} />
           </Button>
         )}
 
         {analizando && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
-            <CircularProgress size={20} />
-            <Typography variant="body2">{t('compras.multi_item.analizando')}</Typography>
+          <Box sx={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            gap: 2, mt: 3, py: 5, px: 3,
+            borderRadius: 3, bgcolor: theme.palette.action.hover,
+            border: `1px dashed ${theme.palette.divider}`,
+          }}>
+            <CircularProgress size={40} thickness={4} sx={{ color: '#F59E0B' }} />
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body1" fontWeight={700} sx={{ mb: 0.5 }}>
+                {t('compras.multi_item.analizando')}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t('compras.multi_item.analizando_sub')}
+              </Typography>
+            </Box>
           </Box>
         )}
 
         {rows.length > 0 && (
-          <Table sx={{ mt: 2 }}>
-            <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
-              <TableRow>
-                <TableCell>{t('compras.tabla.descripcion')}</TableCell>
-                <TableCell>{t('compras.tabla.monto')}</TableCell>
-                <TableCell>{t('compras.form.obra')}</TableCell>
-                <TableCell>{t('compras.form.sector')}</TableCell>
-                <TableCell>{t('compras.form.especialidad')}</TableCell>
-                <TableCell>{t('compras.form.material')}</TableCell>
-                <TableCell />
-              </TableRow>
-            </TableHead>
-            <TableBody>
+          isMobile ? (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 2 }}>
               {rows.map((row) => (
-                <FilaItem
+                <FilaItemCard
                   key={row.tempId}
                   row={row}
                   onChange={(updated) => handleRowChange(row.tempId, updated)}
                   onRemove={() => handleRowRemove(row.tempId)}
                 />
               ))}
-            </TableBody>
-          </Table>
+            </Box>
+          ) : (
+            <Table sx={{ mt: 2 }}>
+              <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
+                <TableRow>
+                  <TableCell>{t('compras.tabla.descripcion')}</TableCell>
+                  <TableCell>{t('compras.tabla.monto')}</TableCell>
+                  <TableCell>{t('compras.form.obra')}</TableCell>
+                  <TableCell>{t('compras.form.sector')}</TableCell>
+                  <TableCell>{t('compras.form.especialidad')}</TableCell>
+                  <TableCell>{t('compras.form.material')}</TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <FilaItemDesktop
+                    key={row.tempId}
+                    row={row}
+                    onChange={(updated) => handleRowChange(row.tempId, updated)}
+                    onRemove={() => handleRowRemove(row.tempId)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          )
         )}
       </DialogContent>
 

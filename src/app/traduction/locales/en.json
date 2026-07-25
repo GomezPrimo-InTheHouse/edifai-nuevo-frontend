@@ -1100,7 +1100,7 @@
   "tabla": {
     "fecha": "Date", "obra": "Project", "descripcion": "Description",
     "especialidad": "Specialty", "material": "Material", "monto": "Amount",
-    "acciones": "Actions"
+    "acciones": "Actions","proveedor": "Supplier"
   },
   "confirm": {
     "eliminar_title": "Delete purchase",
@@ -1152,7 +1152,8 @@
     "analizando": "Detecting receipt items...",
     "marcar_material": "Mark as material",
     "es_gasto": "General expense",
-    "guardar_todas": "Save {{count}} purchase(s)"
+    "guardar_todas": "Save {{count}} purchase(s)",
+    "analizando_sub": "Detecting materials, prices, and quantities..."
   }
 },
   "pagos": {

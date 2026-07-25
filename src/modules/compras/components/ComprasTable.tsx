@@ -57,37 +57,39 @@ export function ComprasTable({ compras, isLoading, isMobile, onView, onEdit }: C
     <>
       <Paper sx={{ border: `1px solid ${theme.palette.divider}`, boxShadow: 'none', bgcolor: 'background.paper' }}>
         <Table>
-          <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
-            <TableRow>
-              <TableCell>{t('compras.tabla.fecha')}</TableCell>
-              <TableCell>{t('compras.tabla.obra')}</TableCell>
-              <TableCell>{t('compras.tabla.descripcion')}</TableCell>
-              <TableCell>{t('compras.tabla.especialidad')}</TableCell>
-              <TableCell>{t('compras.tabla.material')}</TableCell>
-              <TableCell align="right">{t('compras.tabla.monto')}</TableCell>
-              <TableCell align="right">{t('compras.tabla.acciones')}</TableCell>
-            </TableRow>
-          </TableHead>
+<TableHead sx={{ bgcolor: theme.palette.action.hover }}>
+  <TableRow>
+    <TableCell>{t('compras.tabla.fecha')}</TableCell>
+    <TableCell>{t('compras.tabla.obra')}</TableCell>
+    <TableCell>{t('compras.tabla.descripcion')}</TableCell>
+    <TableCell>{t('compras.tabla.especialidad')}</TableCell>
+    <TableCell>{t('compras.tabla.proveedor')}</TableCell>
+    <TableCell>{t('compras.tabla.material')}</TableCell>
+    <TableCell align="right">{t('compras.tabla.monto')}</TableCell>
+    <TableCell align="right">{t('compras.tabla.acciones')}</TableCell>
+  </TableRow>
+</TableHead>
           <TableBody>
             {paginatedData.map((compra) => (
-              <TableRow key={compra.id} hover>
-                <TableCell>{new Date(compra.fecha).toLocaleDateString('es-AR')}</TableCell>
-                <TableCell>{compra.obra_nombre}</TableCell>
-                <TableCell>{compra.descripcion}</TableCell>
-                <TableCell>{compra.especialidad_nombre}</TableCell>
-                <TableCell>{compra.material_nombre ?? '—'}</TableCell>
-                <TableCell align="right">{formatMoney(compra.monto)}</TableCell>
-                <TableCell align="right">
-                  <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
-                    <IconButton size="small" onClick={() => onView(compra)}>
-                      <Eye size={18} />
-                    </IconButton>
-                    <IconButton size="small" onClick={() => onEdit(compra)}>
-                      <Pencil size={18} />
-                    </IconButton>
-                  </Stack>
-                </TableCell>
-              </TableRow>
+<TableRow key={compra.id} hover>
+  <TableCell>{new Date(compra.fecha).toLocaleDateString('es-AR')}</TableCell>
+  <TableCell>{compra.obra_nombre}</TableCell>
+  <TableCell>{compra.descripcion}</TableCell>
+  <TableCell>{compra.especialidad_nombre}</TableCell>
+  <TableCell>{compra.proveedor ?? '—'}</TableCell>
+  <TableCell>{compra.material_nombre ?? '—'}</TableCell>
+  <TableCell align="right">{formatMoney(compra.monto)}</TableCell>
+  <TableCell align="right">
+    <Stack direction="row" justifyContent="flex-end" spacing={0.5}>
+      <IconButton size="small" onClick={() => onView(compra)}>
+        <Eye size={18} />
+      </IconButton>
+      <IconButton size="small" onClick={() => onEdit(compra)}>
+        <Pencil size={18} />
+      </IconButton>
+    </Stack>
+  </TableCell>
+</TableRow>
             ))}
           </TableBody>
         </Table>
