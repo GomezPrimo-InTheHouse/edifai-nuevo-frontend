@@ -1152,7 +1152,11 @@
     "marcar_material": "Marcar como material",
     "es_gasto": "Despesa geral",
     "guardar_todas": "Salvar {{count}} compra(s)",
-    "analizando_sub": "Detectando materiais, preços e quantidades..."
+    "analizando_sub": "Detectando materiais, preços e quantidades...",
+    "es_material": "É um material do inventário",
+"ayuda_material": "Será somado ao estoque e atualizará o preço deste material.",
+"ayuda_gasto": "Será registrado como despesa geral, sem afetar o inventário.",
+"proveedor_placeholder": "Nome do fornecedor (aplica-se a todos os itens)"
   }
 },
   "pagos": {

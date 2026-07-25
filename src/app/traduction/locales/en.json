@@ -1153,7 +1153,11 @@
     "marcar_material": "Mark as material",
     "es_gasto": "General expense",
     "guardar_todas": "Save {{count}} purchase(s)",
-    "analizando_sub": "Detecting materials, prices, and quantities..."
+    "analizando_sub": "Detecting materials, prices, and quantities...",
+    "es_material": "This is an inventory material",
+"ayuda_material": "It will be added to stock and update this material's price.",
+"ayuda_gasto": "It will be registered as a general expense, without affecting inventory.",
+"proveedor_placeholder": "Supplier name (applies to all items)"
   }
 },
   "pagos": {

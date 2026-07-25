@@ -1562,7 +1562,11 @@
     "marcar_material": "Marcar como material",
     "es_gasto": "Gasto general",
     "guardar_todas": "Guardar {{count}} compra(s)",
-    "analizando_sub": "Detectando materiales, precios y cantidades..."
+    "analizando_sub": "Detectando materiales, precios y cantidades...",
+    "es_material": "Es un material del inventario",
+"ayuda_material": "Se sumará al stock y actualizará el precio de este material.",
+"ayuda_gasto": "Se registrará como gasto general, sin afectar el inventario.",
+"proveedor_placeholder": "Nombre del proveedor (aplica a todos los ítems)"
   }
 },
   "market": {

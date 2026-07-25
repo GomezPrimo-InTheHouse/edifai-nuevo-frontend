@@ -90,7 +90,7 @@ CAMPOS A EXTRAER:
 - descripcion: string (qué se compró, resumido)
 - monto: number (monto total sin símbolos)
 - fecha: string (formato YYYY-MM-DD, si no se ve claramente omitir)
-- proveedor: string (nombre del comercio/proveedor, si se puede leer)
+- "proveedor": string (nombre del comercio, empresa o proveedor que emitió el comprobante — buscá el encabezado, membrete, logo o "Razón Social" en la parte superior del documento; es distinto del cliente/comprador que suele aparecer más abajo),
 
 Si no podés determinar un campo con certeza, no lo incluyas.
 Respondé ÚNICAMENTE con el JSON.`,

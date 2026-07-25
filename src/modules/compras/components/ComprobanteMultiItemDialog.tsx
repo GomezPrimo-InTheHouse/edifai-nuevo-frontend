@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Button,
   Box, Typography, TextField, MenuItem, CircularProgress, Table, TableHead,
-  TableBody, TableRow, TableCell, Chip, Paper, useTheme, useMediaQuery,
+  TableBody, TableRow, TableCell, Paper, Switch, FormControlLabel, useTheme, useMediaQuery,
 } from '@mui/material';
 import { Close, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +41,41 @@ function recalcularMonto(row: ItemRevisionRow): ItemRevisionRow {
 
 let tempIdCounter = 0;
 
-// ── Selects compartidos (obra/sector/especialidad/material) ─────
+// ── Toggle material/gasto con texto explicativo ──
+function ToggleMaterial({ row, onChange }: { row: ItemRevisionRow; onChange: (updated: ItemRevisionRow) => void }) {
+  const { t } = useTranslation();
+  return (
+    <Box>
+      <FormControlLabel
+        control={
+          <Switch
+            size="small"
+            checked={row.es_compra_material}
+            onChange={(e) =>
+              onChange(
+                e.target.checked
+                  ? { ...row, es_compra_material: true }
+                  : { ...row, es_compra_material: false, material_id: null, cantidad: null, precio_unitario: null }
+              )
+            }
+          />
+        }
+        label={
+          <Typography variant="caption" fontWeight={600}>
+            {t('compras.multi_item.es_material')}
+          </Typography>
+        }
+      />
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 4.5, mt: -0.5 }}>
+        {row.es_compra_material
+          ? t('compras.multi_item.ayuda_material')
+          : t('compras.multi_item.ayuda_gasto')}
+      </Typography>
+    </Box>
+  );
+}
+
+// ── Selects compartidos (obra/sector/especialidad/material) — usado en card mobile ──
 function SelectsItem({
   row,
   onChange,
@@ -92,7 +126,9 @@ function SelectsItem({
         {especialidades.map((esp) => <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>)}
       </TextField>
 
-      {row.es_compra_material ? (
+      <ToggleMaterial row={row} onChange={onChange} />
+
+      {row.es_compra_material && (
         <>
           <TextField
             select fullWidth size="small" label={t('compras.form.material')}
@@ -102,29 +138,19 @@ function SelectsItem({
             <MenuItem value="">—</MenuItem>
             {materiales.map((m) => <MenuItem key={m.id} value={m.id}>{m.nombre}</MenuItem>)}
           </TextField>
-          <TextField
-            size="small" fullWidth type="number" label={t('compras.form.cantidad')}
-            value={row.cantidad ?? ''}
-            onChange={(e) => onChange(recalcularMonto({ ...row, cantidad: e.target.value ? Number(e.target.value) : null }))}
-          />
-          <TextField
-            size="small" fullWidth type="number" label={t('compras.form.precio_unitario')}
-            value={row.precio_unitario ?? ''}
-            onChange={(e) => onChange(recalcularMonto({ ...row, precio_unitario: e.target.value ? Number(e.target.value) : null }))}
-          />
-          <Chip
-            size="small" label={t('compras.multi_item.es_gasto')}
-            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null, precio_unitario: null })}
-            sx={{ alignSelf: 'flex-start' }}
-          />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TextField
+              size="small" fullWidth type="number" label={t('compras.form.cantidad')}
+              value={row.cantidad ?? ''}
+              onChange={(e) => onChange(recalcularMonto({ ...row, cantidad: e.target.value ? Number(e.target.value) : null }))}
+            />
+            <TextField
+              size="small" fullWidth type="number" label={t('compras.form.precio_unitario')}
+              value={row.precio_unitario ?? ''}
+              onChange={(e) => onChange(recalcularMonto({ ...row, precio_unitario: e.target.value ? Number(e.target.value) : null }))}
+            />
+          </Box>
         </>
-      ) : (
-        <Chip
-          size="small" label={t('compras.multi_item.marcar_material')}
-          onClick={() => onChange({ ...row, es_compra_material: true })}
-          variant="outlined"
-          sx={{ alignSelf: 'flex-start' }}
-        />
       )}
     </>
   );
@@ -146,21 +172,27 @@ function FilaItemDesktop({
   const arbolSectores = flattenSectorTree(sectores);
 
   return (
-    <TableRow>
+    <TableRow sx={{ verticalAlign: 'top' }}>
       <TableCell sx={{ minWidth: 180 }}>
-        <TextField fullWidth size="small" value={row.descripcion} onChange={(e) => onChange({ ...row, descripcion: e.target.value })} />
+        <TextField fullWidth size="small" label={t('compras.tabla.descripcion')} value={row.descripcion} onChange={(e) => onChange({ ...row, descripcion: e.target.value })} />
       </TableCell>
-      <TableCell sx={{ minWidth: 130 }}>
-        <TextField fullWidth size="small" type="number" value={row.monto} onChange={(e) => onChange({ ...row, monto: Number(e.target.value) })} />
+      <TableCell sx={{ minWidth: 150 }}>
+        <TextField
+          fullWidth size="small" type="number"
+          label={t(row.es_compra_material ? 'compras.form.total_calculado' : 'compras.tabla.monto')}
+          value={row.monto}
+          disabled={row.es_compra_material}
+          onChange={(e) => onChange({ ...row, monto: Number(e.target.value) })}
+        />
       </TableCell>
       <TableCell sx={{ minWidth: 160 }}>
-        <TextField select fullWidth size="small" value={row.obra_id ?? ''}
+        <TextField select fullWidth size="small" label={t('compras.form.obra')} value={row.obra_id ?? ''}
           onChange={(e) => onChange({ ...row, obra_id: Number(e.target.value), sector_id: null })}>
           {obras.map((o) => <MenuItem key={o.id} value={o.id}>{o.nombre}</MenuItem>)}
         </TextField>
       </TableCell>
       <TableCell sx={{ minWidth: 160 }}>
-        <TextField select fullWidth size="small" value={row.sector_id ?? ''}
+        <TextField select fullWidth size="small" label={t('compras.form.sector')} value={row.sector_id ?? ''}
           disabled={!row.obra_id || sectores.length === 0}
           onChange={(e) => onChange({ ...row, sector_id: e.target.value ? Number(e.target.value) : null })}>
           <MenuItem value="">{t('compras.form.sin_sector')}</MenuItem>
@@ -175,37 +207,30 @@ function FilaItemDesktop({
         </TextField>
       </TableCell>
       <TableCell sx={{ minWidth: 160 }}>
-        <TextField select fullWidth size="small" value={row.especialidad_id ?? ''}
+        <TextField select fullWidth size="small" label={t('compras.form.especialidad')} value={row.especialidad_id ?? ''}
           onChange={(e) => onChange({ ...row, especialidad_id: e.target.value ? Number(e.target.value) : null })}>
           <MenuItem value="">—</MenuItem>
           {especialidades.map((esp) => <MenuItem key={esp.id} value={esp.id}>{esp.nombre}</MenuItem>)}
         </TextField>
       </TableCell>
-      <TableCell sx={{ minWidth: 200 }}>
-        {row.es_compra_material ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            <TextField select fullWidth size="small" value={row.material_id ?? ''}
+      <TableCell sx={{ minWidth: 260 }}>
+        <ToggleMaterial row={row} onChange={onChange} />
+        {row.es_compra_material && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, mt: 1 }}>
+            <TextField select fullWidth size="small" label={t('compras.form.material')} value={row.material_id ?? ''}
               onChange={(e) => onChange({ ...row, material_id: e.target.value ? Number(e.target.value) : null })}>
               <MenuItem value="">—</MenuItem>
               {materiales.map((m) => <MenuItem key={m.id} value={m.id}>{m.nombre}</MenuItem>)}
             </TextField>
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <TextField size="small" type="number" placeholder={t('compras.form.cantidad')}
+            <Box sx={{ display: 'flex', gap: 0.75 }}>
+              <TextField size="small" fullWidth type="number" label={t('compras.form.cantidad')}
                 value={row.cantidad ?? ''}
                 onChange={(e) => onChange(recalcularMonto({ ...row, cantidad: e.target.value ? Number(e.target.value) : null }))} />
-              <TextField size="small" type="number" placeholder={t('compras.form.precio_unitario')}
+              <TextField size="small" fullWidth type="number" label={t('compras.form.precio_unitario')}
                 value={row.precio_unitario ?? ''}
                 onChange={(e) => onChange(recalcularMonto({ ...row, precio_unitario: e.target.value ? Number(e.target.value) : null }))} />
             </Box>
           </Box>
-        ) : (
-          <Chip size="small" label={t('compras.multi_item.marcar_material')}
-            onClick={() => onChange({ ...row, es_compra_material: true })} variant="outlined" />
-        )}
-        {row.es_compra_material && (
-          <Chip size="small" label={t('compras.multi_item.es_gasto')}
-            onClick={() => onChange({ ...row, es_compra_material: false, material_id: null, cantidad: null, precio_unitario: null })}
-            sx={{ mt: 0.5 }} />
         )}
       </TableCell>
       <TableCell>
@@ -233,7 +258,7 @@ function FilaItemCard({
     }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
         <TextField
-          fullWidth size="small" value={row.descripcion}
+          fullWidth size="small" label={t('compras.tabla.descripcion')} value={row.descripcion}
           onChange={(e) => onChange({ ...row, descripcion: e.target.value })}
           sx={{ mr: 1 }}
         />
@@ -242,18 +267,15 @@ function FilaItemCard({
         </IconButton>
       </Box>
 
-      <TextField
-        fullWidth size="small" type="number" label={t('compras.tabla.monto')}
-        value={row.monto} onChange={(e) => onChange({ ...row, monto: Number(e.target.value) })}
-        sx={{ mb: 1.5 }}
-      />
-
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         <SelectsItem row={row} onChange={onChange} />
       </Box>
 
-      <Box sx={{ mt: 1.5, textAlign: 'right' }}>
-        <Typography variant="body2" fontWeight={700} color="text.primary">
+      <Box sx={{ mt: 1.5, pt: 1.5, borderTop: `1px dashed ${theme.palette.divider}`, textAlign: 'right' }}>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+          {t('compras.tabla.monto')}
+        </Typography>
+        <Typography variant="body1" fontWeight={800} color="text.primary">
           {formatMoney(row.monto)}
         </Typography>
       </Box>
@@ -275,6 +297,7 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
   const createBulk = useCreateComprasBulk();
 
   const [comprobanteUrl, setComprobanteUrl] = React.useState<string | null>(null);
+  const [proveedor, setProveedor] = React.useState('');
   const [rows, setRows] = React.useState<ItemRevisionRow[]>([]);
   const [analizando, setAnalizando] = React.useState(false);
 
@@ -294,6 +317,8 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
         materiales: materiales.map((m) => ({ id: m.id, nombre: m.nombre, unidad: m.unidad })),
         especialidades: especialidades.map((esp) => ({ id: esp.id, nombre: esp.nombre })),
       });
+
+      setProveedor(resultado.proveedor ?? '');
 
       setRows(
         resultado.items.map((item) => {
@@ -329,7 +354,7 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
         sector_id: r.sector_id,
         especialidad_id: r.especialidad_id!,
         descripcion: r.descripcion,
-        proveedor: undefined,
+        proveedor: proveedor || undefined,
         monto: r.monto,
         fecha: new Date().toISOString().slice(0, 10),
         comprobante_url: comprobanteUrl ?? undefined,
@@ -343,6 +368,7 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
 
   const handleClose = () => {
     setComprobanteUrl(null);
+    setProveedor('');
     setRows([]);
     onClose();
   };
@@ -384,42 +410,51 @@ export function ComprobanteMultiItemDialog({ open, onClose }: ComprobanteMultiIt
         )}
 
         {rows.length > 0 && (
-          isMobile ? (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 2 }}>
-              {rows.map((row) => (
-                <FilaItemCard
-                  key={row.tempId}
-                  row={row}
-                  onChange={(updated) => handleRowChange(row.tempId, updated)}
-                  onRemove={() => handleRowRemove(row.tempId)}
-                />
-              ))}
-            </Box>
-          ) : (
-            <Table sx={{ mt: 2 }}>
-              <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
-                <TableRow>
-                  <TableCell>{t('compras.tabla.descripcion')}</TableCell>
-                  <TableCell>{t('compras.tabla.monto')}</TableCell>
-                  <TableCell>{t('compras.form.obra')}</TableCell>
-                  <TableCell>{t('compras.form.sector')}</TableCell>
-                  <TableCell>{t('compras.form.especialidad')}</TableCell>
-                  <TableCell>{t('compras.form.material')}</TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-              <TableBody>
+          <>
+            <TextField
+              fullWidth size="small" label={t('compras.form.proveedor')}
+              value={proveedor} onChange={(e) => setProveedor(e.target.value)}
+              placeholder={t('compras.multi_item.proveedor_placeholder')}
+              sx={{ mt: 2, mb: 2, maxWidth: 360 }}
+            />
+
+            {isMobile ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {rows.map((row) => (
-                  <FilaItemDesktop
+                  <FilaItemCard
                     key={row.tempId}
                     row={row}
                     onChange={(updated) => handleRowChange(row.tempId, updated)}
                     onRemove={() => handleRowRemove(row.tempId)}
                   />
                 ))}
-              </TableBody>
-            </Table>
-          )
+              </Box>
+            ) : (
+              <Table>
+                <TableHead sx={{ bgcolor: theme.palette.action.hover }}>
+                  <TableRow>
+                    <TableCell>{t('compras.tabla.descripcion')}</TableCell>
+                    <TableCell>{t('compras.tabla.monto')}</TableCell>
+                    <TableCell>{t('compras.form.obra')}</TableCell>
+                    <TableCell>{t('compras.form.sector')}</TableCell>
+                    <TableCell>{t('compras.form.especialidad')}</TableCell>
+                    <TableCell>{t('compras.form.material')}</TableCell>
+                    <TableCell />
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map((row) => (
+                    <FilaItemDesktop
+                      key={row.tempId}
+                      row={row}
+                      onChange={(updated) => handleRowChange(row.tempId, updated)}
+                      onRemove={() => handleRowRemove(row.tempId)}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </>
         )}
       </DialogContent>
 
