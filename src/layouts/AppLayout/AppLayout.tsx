@@ -169,7 +169,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
       display: 'flex',
       flexDirection: 'column',
     }}>
-      <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <Box sx={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <img
           src="/graficas/edifai_logo_centrado.svg"
           alt="EdifAI"
