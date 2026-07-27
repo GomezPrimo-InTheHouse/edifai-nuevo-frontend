@@ -171,7 +171,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
     }}>
       <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <img
-          src="/graficas/edifai_logo_transparent.svg"
+          src="/graficas/edifai_logo_centrado.svg"
           alt="EdifAI"
           style={{ width: '100%', maxWidth: 210, height: 'auto', marginLeft: '16px' }}
         />
