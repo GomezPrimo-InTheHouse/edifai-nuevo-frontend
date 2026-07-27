@@ -169,13 +169,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, noPadding = fals
       display: 'flex',
       flexDirection: 'column',
     }}>
-      <Box sx={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <img
-          src="/graficas/edifai_logo_centrado.svg"
-          alt="EdifAI"
-          style={{ width: '100%', maxWidth: 210, height: 'auto', marginLeft: '16px' }}
-        />
-      </Box>
+<Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <img
+    src="/graficas/edifai_logo_centrado.svg"
+    alt="EdifAI"
+    style={{ width: '100%', maxWidth: 210, height: 'auto' }}
+  />
+</Box>
 
       <Box sx={{ px: 1.5, py: 2, flex: 1, overflowY: 'auto' }}>
         {isAdmin && (
