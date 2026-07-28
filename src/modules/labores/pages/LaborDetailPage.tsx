@@ -24,7 +24,7 @@ import { estadoApi } from '../../../services/api/estado.api';
 import { useNotify } from '../../../shared/hooks/useNotify';
 import { AvancesLabor } from '../components/AvancesLabor';
 import { useAuthStore } from '../../../app/store/auth.store';
-import { LaborPresupuestosPanel } from '../components/LaboresPresupuestosPanel';
+// import { LaborPresupuestosPanel } from '../components/LaboresPresupuestosPanel';
 import { PresupuestoConfirmadoCard } from '../components/PresupuestoConfirmadoCard';
 import { useSectoresPorObra } from '../../obras/hooks/useSectores';
 import { nombreCompletoSector } from '../../obras/types/sector.types';
