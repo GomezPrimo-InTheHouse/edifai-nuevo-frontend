@@ -414,7 +414,7 @@ export function LaborForm({ initialData, obraIdFijo, onSubmit, isSubmitting = fa
     laborasDelTrabajador.some((l: Labor) => l.id === p.labor_id)
   );
   const totalPresupuestado = presupuestosDelTrabajador.reduce(
-    (acc, p) => acc + Number(p.total_estimado ?? 0), 0
+    (acc, p) => acc + Number(p.costo_mano_obra ?? 0), 0
   );
   const totalPagado = pagosDelTrabajador
     .filter((p) => p.estado === 'Pagado')
