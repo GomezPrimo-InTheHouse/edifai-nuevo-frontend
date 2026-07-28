@@ -440,14 +440,14 @@ export const LaborDetailPage: React.FC = () => {
         <AvancesLabor obra_id={labor.obra_id} labor_id={laborId} sectorId={labor.sector_id} />
       )}
 
-      {labor.modo === 'cotizacion' && (
+      {/* {labor.modo === 'cotizacion' && (
         <LaborPresupuestosPanel
           labor_id={laborId}
           estado_id={labor.estado_id}
           labor={labor}
           onPresupuestoConfirmado={refetch}
         />
-      )}
+      )} */}
 
       <PresupuestoConfirmadoCard labor_id={laborId} esAdmin={esAdmin} />
     </AppLayout>
