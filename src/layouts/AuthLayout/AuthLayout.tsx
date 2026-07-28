@@ -37,7 +37,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         {/* Logo */}
         <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img
-            src="/graficas/edifai_logo_sin_fondo.png"
+            src="/graficas/edifai_logo_alineado_final.png"
             alt="EdifAI"
             style={{ width: '100%', maxWidth: 260, height: 'auto' }}
           />
