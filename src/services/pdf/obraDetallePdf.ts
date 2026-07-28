@@ -115,7 +115,7 @@ export function generarPdfDetalleObra(obra: ObraExportData) {
   const totalMaterialesPresupuestado = obra.labores.reduce((a, l) => a + l.costo_materiales, 0);
   const totalPresupuestado = totalManoObra + totalMaterialesPresupuestado;
 
-  const totalCompras = obra.compras.reduce((a, c) => a + c.monto, 0);
+const totalCompras = obra.compras.reduce((a, c) => a + Number(c.monto), 0);
   const totalEjecutado = totalManoObra + totalCompras;
 
   const diferencia = totalEjecutado - totalPresupuestado;
@@ -354,7 +354,7 @@ export function generarExcelDetalleObra(obra: ObraExportData) {
   const totalManoObra = obra.labores.reduce((a, l) => a + l.costo_mano_obra, 0);
   const totalMaterialesPresupuestado = obra.labores.reduce((a, l) => a + l.costo_materiales, 0);
   const totalPresupuestado = totalManoObra + totalMaterialesPresupuestado;
-  const totalCompras = obra.compras.reduce((a, c) => a + c.monto, 0);
+const totalCompras = obra.compras.reduce((a, c) => a + Number(c.monto), 0);
   const totalEjecutado = totalManoObra + totalCompras;
   const diferencia = totalEjecutado - totalPresupuestado;
 

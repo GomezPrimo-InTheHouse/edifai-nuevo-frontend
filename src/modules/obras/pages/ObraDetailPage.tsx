@@ -440,20 +440,20 @@ export const ObraDetailPage: React.FC = () => {
   };
 
   const buildComprasExportData = (): CompraExportData[] => {
-    return compras.map((c) => ({
-      fecha: c.fecha,
-      descripcion: c.descripcion,
-      obra_nombre: c.obra_nombre,
-      sector_nombre: c.sector_valor && c.sector_tipo
-        ? nombreCompletoSector({ tipo: c.sector_tipo, valor: c.sector_valor })
-        : null,
-      especialidad_nombre: c.especialidad_nombre ?? null,
-      material_nombre: c.material_nombre ?? null,
-      cantidad: c.cantidad,
-      proveedor: c.proveedor,
-      monto: c.monto,
-    }));
-  };
+  return compras.map((c) => ({
+    fecha: c.fecha,
+    descripcion: c.descripcion,
+    obra_nombre: c.obra_nombre,
+    sector_nombre: c.sector_valor && c.sector_tipo
+      ? nombreCompletoSector({ tipo: c.sector_tipo, valor: c.sector_valor })
+      : null,
+    especialidad_nombre: c.especialidad_nombre ?? null,
+    material_nombre: c.material_nombre ?? null,
+    cantidad: c.cantidad != null ? Number(c.cantidad) : null,
+    proveedor: c.proveedor,
+    monto: Number(c.monto),
+  }));
+};
 
   const buildObraExportData = async (): Promise<ObraExportData> => {
     const estadosMap: Record<number, string> = {};
