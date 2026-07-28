@@ -337,6 +337,21 @@ export const LaboresListPage = () => {
                               </TableCell>
                             )}
                             <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
+                            <TableCell><Typography variant="body2">{l.fecha_fin_estimada ? new Date(l.fecha_fin_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
+                            {!esWorker && (
+                              <TableCell>
+                                {l.especialidad_nombre ? (
+                                  <Chip
+                                    label={l.especialidad_nombre}
+                                    size="small"
+                                    sx={{ bgcolor: '#EFF6FF', color: '#1D4ED8', fontWeight: 700, fontSize: 11 }}
+                                  />
+                                ) : (
+                                  <Typography variant="caption" color="text.disabled">-</Typography>
+                                )}
+                              </TableCell>
+                            )}
+                            <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
                             <TableCell><Typography variant="body2">{l.fecha_inicio_estimada ? new Date(l.fecha_inicio_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
                             <TableCell><Typography variant="body2">{l.fecha_fin_estimada ? new Date(l.fecha_fin_estimada).toLocaleDateString('es-AR') : '-'}</Typography></TableCell>
                             <TableCell sx={{ minWidth: 160 }}>
