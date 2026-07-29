@@ -1575,6 +1575,7 @@
     "mis_publicaciones": "Mis publicaciones",
     "loading": "Cargando market...",
     "error": "No se pudo cargar el market.",
+    "buscar_placeholder":"Buscar",
     "empty": {
       "title": "Sin publicaciones activas",
       "desc": "Todavía no hay materiales publicados en el market.",
