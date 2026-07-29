@@ -1464,7 +1464,8 @@
       "campos_requeridos": "Campos requeridos",
       "registrando": "Registrando...",
       "registrar": "Registrar",
-      "cancelar": "Cancelar"
+      "cancelar": "Cancelar",
+      "sector": "Sector", "sin_sector": "Sin sector"
     },
     "estado_modal": {
       "title": "Cambiar estado",

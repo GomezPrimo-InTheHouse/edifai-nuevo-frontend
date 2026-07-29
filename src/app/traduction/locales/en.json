@@ -1529,7 +1529,8 @@
       "campos_requeridos": "Required fields",
       "registrando": "Registering...",
       "registrar": "Register",
-      "cancelar": "Cancel"
+      "cancelar": "Cancel",
+      "sector": "Sector", "sin_sector": "No sector"
     },
     "estado_modal": {
       "title": "Change status",

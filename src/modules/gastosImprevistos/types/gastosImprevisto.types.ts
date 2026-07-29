@@ -3,6 +3,7 @@
 export interface GastoImprevisto {
   id: number;
   obra_id: number;
+  sector_id: number | null;
   especialidad_id: number;
   descripcion: string;
   motivo: string;
@@ -18,6 +19,8 @@ export interface GastoImprevisto {
   updated_at: string;
   // JOINs
   obra_nombre?: string;
+  sector_tipo?: string;
+  sector_valor?: string;
   especialidad_nombre?: string;
   forma_pago_nombre?: string;
   estado_nombre?: string;
@@ -29,6 +32,7 @@ export interface GastoImprevisto {
 
 export interface CreateGastoImprevistoPayload {
   obra_id: number;
+  sector_id?: number | null;
   especialidad_id: number;
   descripcion: string;
   motivo: string;
@@ -54,6 +58,7 @@ export interface FormaPagoDetalle {
 
 export interface CreateGastoImprevistoPayloadV2 {
   obra_id: number;
+  sector_id?: number | null;
   especialidad_id: number;
   descripcion: string;
   motivo?: string | null;

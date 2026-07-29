@@ -70,3 +70,11 @@ export function useJefesConEquipo(especialidad_id: number) {
     enabled: Boolean(especialidad_id),
   });
 }
+
+export function useObrasPorTrabajador(trabajadorId: number | string | undefined) {
+  return useQuery({
+    queryKey: ['trabajadores', trabajadorId, 'obras'],
+    queryFn: () => trabajadorApi.getObrasPorTrabajador(trabajadorId!),
+    enabled: Boolean(trabajadorId),
+  });
+}

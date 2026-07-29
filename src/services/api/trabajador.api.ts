@@ -70,4 +70,11 @@ async create(payload: CreateTrabajadorPayload): Promise<Trabajador> {
   async remove(id: number | string): Promise<void> {
     await httpClient.delete(`${baseUrl}/eliminar/${id}`);
   },
+
+  async getObrasPorTrabajador(id: number | string): Promise<{ id: number; nombre: string; estado_id: number; archivado: boolean }[]> {
+  const response = await httpClient.get<{ success: boolean; obras: { id: number; nombre: string; estado_id: number; archivado: boolean }[] }>(
+    `${baseUrl}/${id}/obras`
+  );
+  return response.data.obras;
+},
 };

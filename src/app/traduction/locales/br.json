@@ -1528,7 +1528,8 @@
       "campos_requeridos": "Campos obrigatórios",
       "registrando": "Registrando...",
       "registrar": "Registrar",
-      "cancelar": "Cancelar"
+      "cancelar": "Cancelar",
+      "sector": "Setor", "sin_sector": "Sem setor"
     },
     "estado_modal": {
       "title": "Alterar status",
