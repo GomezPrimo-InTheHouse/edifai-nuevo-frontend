@@ -2,9 +2,27 @@
 import React from 'react';
 import { Box, Card, CardContent, Stack, Typography, useTheme } from '@mui/material';
 
-export function formatMoney(n: number): string {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(n);
-}
+// DashboardShared.tsx — reemplaza formatMoney por esta versión compacta
+
+export const formatMoney = (value: number): string => {
+  const abs = Math.abs(value);
+  let compact = String(value);
+
+  if (abs >= 1_000_000) {
+    compact = trimZero(value / 1_000_000) + 'M';
+  } else if (abs > 9999) {
+    compact = trimZero(value / 1_000) + 'K';
+  } else {
+    compact = value.toLocaleString('es-AR');
+  }
+
+  return `$ ${compact}`;
+};
+
+const trimZero = (n: number): string => {
+  const rounded = Math.round(n * 10) / 10;
+  return rounded % 1 === 0 ? String(rounded) : rounded.toFixed(1);
+};
 
 export function tiempoRelativo(fecha: string): string {
   const diff = Date.now() - new Date(fecha).getTime();
