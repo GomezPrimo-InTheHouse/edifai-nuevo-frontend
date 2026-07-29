@@ -841,7 +841,7 @@ function ProgresoOverlay({ items }: { items: ProgresoItem[] }) {
                 </Stack>
 
                 {/* Barra de progreso global */}
-                <Box sx={{ width: '100%' }}>
+                <Box sx={{ width: '100%', height:'50%' }}>
                     <Stack direction="row" justifyContent="space-between" mb={0.5}>
                         <Typography variant="caption" color="text.secondary" fontWeight={600}>Progreso</Typography>
                         <Typography variant="caption" fontWeight={800} color="#F59E0B">{pct}%</Typography>
