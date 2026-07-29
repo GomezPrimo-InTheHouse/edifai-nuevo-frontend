@@ -1569,6 +1569,7 @@
     "mis_publicaciones": "Minhas publicações",
     "loading": "Carregando market...",
     "error": "Não foi possível carregar o market.",
+    "buscar_placeholder":"Procurar",
     "empty": {
       "title": "Sem publicações ativas",
       "desc": "Ainda não há materiais publicados no market.",

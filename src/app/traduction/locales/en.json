@@ -1570,6 +1570,7 @@
     "mis_publicaciones": "My listings",
     "loading": "Loading market...",
     "error": "Could not load the market.",
+    "buscar_placeholder":"Search",
     "empty": {
       "title": "No active listings",
       "desc": "No materials have been listed in the market yet.",
